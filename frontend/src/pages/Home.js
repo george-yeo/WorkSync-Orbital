@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 
 // components
 import TaskDetails from "../components/TaskDetails"
+import TaskForm from "../components/TaskForm"
 
 const Home = () => {
 
@@ -27,6 +28,7 @@ const Home = () => {
               <TaskDetails task={task} key={task._id} />
             ))}
           </div>
+          <TaskForm />
         </div>
     )
 }
