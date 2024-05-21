@@ -1,10 +1,34 @@
+import { useEffect, useState } from "react"
+
+// components
+import TaskDetails from "../components/TaskDetails"
+
 const Home = () => {
 
+    const [tasks, setTasks] = useState(null)
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            const response = await fetch('/api/tasks')
+            const json = await response.json()
+
+            if (response.ok) {
+                setTasks(json)
+            }
+        }
+
+        fetchTasks()
+    }, [])
+
     return (
-      <div className="home">
-        <h2>Home</h2>
-      </div>
+        <div className="home">
+          <div className="tasks">
+            {tasks && tasks.map(task => (
+              <TaskDetails task={task} key={task._id} />
+            ))}
+          </div>
+        </div>
     )
-  }
+}
   
-  export default Home
+export default Home
