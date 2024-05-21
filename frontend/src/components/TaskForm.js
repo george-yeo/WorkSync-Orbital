@@ -48,14 +48,14 @@ const TaskForm = () => {
                 <input
                     type="text"
                     onChange={(e) => setDescription(e.target.value)}
-                    value={title}
+                    value={description}
                 />
 
             <label>Deadline: </label>
                 <input
                     type="date"
                     onChange={(e) => setDeadline(e.target.value)}
-                    value={title}
+                    value={deadline}
                 />
 
             <button>Add Task</button>
