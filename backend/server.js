@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const express = require('express')
-const taskRoutes = require('./routes/tasks')
+const mongoose = require('mongoose')
 
 // express app
 const app = express()
@@ -19,5 +19,5 @@ app.use('/api/tasks', taskRoutes)
 
 // listen for requests
 app.listen(process.env.PORT, () => {
-  console.log('listening on port', process.env.PORT)
+    console.log('listening on port', process.env.PORT)
 })
