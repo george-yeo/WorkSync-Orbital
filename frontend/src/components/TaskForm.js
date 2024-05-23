@@ -1,10 +1,13 @@
 import { useState } from "react"
+import { useTaskContext } from "../hooks/useTaskContext"
 
 const TaskForm = () => {
+    const { dispatch } = useTaskContext()
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [deadline, setDeadline] = useState(0)
     const [error, setError] = useState(null)
+    const [emptyFields, setEmptyFields] = useState([])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -23,12 +26,15 @@ const TaskForm = () => {
 
         if (!response.ok) {
             setError(json.error)
+            setEmptyFields(json.emptyFields)
         }
         if (response.ok) {
             setTitle('')
             setDescription('')
             setDeadline(0)
             setError(null)
+            setEmptyFields([])
+            dispatch({type: 'CREATE_TASK', payload: json})
             console.log("new task added", json)
         }
     }
@@ -42,6 +48,7 @@ const TaskForm = () => {
                 type="text"
                 onChange={(e) => setTitle(e.target.value)}
                 value={title}
+                className={emptyFields.includes('title') ? 'error' : ''}
             />
 
             <label>Description: </label>
@@ -59,6 +66,7 @@ const TaskForm = () => {
                 />
 
             <button>Add Task</button>
+            {error && <div className='error'>{error}</div>}
         </form>
     )
 }
