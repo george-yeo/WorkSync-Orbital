@@ -1,8 +1,11 @@
 import { useState } from "react"
 import { useTaskContext } from "../hooks/useTaskContext"
+import { useAuthContext } from '../hooks/useAuthContext'
 
 const TaskForm = () => {
     const { dispatch } = useTaskContext()
+    const { user } = useAuthContext()
+
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [deadline, setDeadline] = useState(0)
@@ -12,13 +15,19 @@ const TaskForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        if (!user) {
+            setError('You must be logged in')
+            return
+        }
+
         const task = {title, description, deadline, isCompleted: false}
 
         const response = await fetch('/api/tasks', {
             method: 'POST',
             body: JSON.stringify(task),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
             }
         })
 
