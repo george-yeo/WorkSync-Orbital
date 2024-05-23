@@ -9,7 +9,9 @@ const checkValidId = (id) => {
 
 // get all tasks
 const getAllTasks = async (req, res) => {
-    const tasks = await Task.find({}).sort({createdAt: -1})
+    const user_id = req.user._id
+
+    const tasks = await Task.find({ user_id }).sort({createdAt: -1})
 
     res.status(200).json(tasks)
 }
@@ -46,7 +48,8 @@ const createTask = async (req, res) => {
     }
 
     try {
-        const task = await Task.create({title, description, deadline, isCompleted})
+        const user_id = req.user._id
+        const task = await Task.create({title, description, deadline, isCompleted, user_id})
         res.status(200).json(task)
     } catch (error) {
         res.status(400).json({error: error.message})
