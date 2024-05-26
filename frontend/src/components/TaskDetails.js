@@ -26,14 +26,14 @@ const TaskDetails = ({ task }) => {
     }
 
     return (
-        <div className="task-details">
+        <li className="task-details">
             <h4>{task.title}</h4>
             <p><strong>Description: </strong>{task.description}</p>
             <p><strong>Deadline: </strong>{task.deadline}</p>
             <p><strong>Completed: </strong>{task.isCompleted}</p>
             <p>Created {formatDistanceToNow(new Date(task.createdAt), { addSuffix: true })}</p>
             <span className="material-symbols-outlined" onClick={handleClick}>delete</span>
-        </div>
+        </li>
     )
 }
 

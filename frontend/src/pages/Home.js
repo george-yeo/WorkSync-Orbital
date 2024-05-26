@@ -1,13 +1,15 @@
 import { useEffect } from "react"
 import { useTaskContext } from "../hooks/useTaskContext"
+import { useSectionContext } from "../hooks/useSectionContext"
 import { useAuthContext } from "../hooks/useAuthContext"
 
 // components
-import TaskDetails from "../components/TaskDetails"
-import TaskForm from "../components/TaskForm"
+import Section from "../components/Section"
+import SectionForm from "../components/SectionForm"
 
 const Home = () => {
-  const {tasks, dispatch} = useTaskContext()
+  const taskContext = useTaskContext()
+  const sectionContext = useSectionContext()
   const {user} = useAuthContext()
 
   useEffect(() => {
@@ -15,26 +17,40 @@ const Home = () => {
       const response = await fetch('/api/tasks', {
         headers: {'Authorization': `Bearer ${user.token}`},
       })
+      
       const json = await response.json()
 
       if (response.ok) {
-          dispatch({type: 'SET_TASKS', payload: json})
+        taskContext.dispatch({type: 'SET_TASKS', payload: json})
+      }
+    }
+
+    const fetchSections = async () => {
+      const response = await fetch('/api/sections', {
+        headers: {'Authorization': `Bearer ${user.token}`},
+      })
+      
+      const json = await response.json()
+
+      if (response.ok) {
+        sectionContext.dispatch({type: 'SET_SECTIONS', payload: json})
       }
     }
 
     if (user) {
       fetchTasks()
+      fetchSections()
     }
-  }, [dispatch, user])
+  }, [user])
 
   return (
     <div className="home">
-      <div className="tasks">
-        {tasks && tasks.map(task => (
-          <TaskDetails task={task} key={task._id} />
+      <div className="sections">
+        <SectionForm />
+        {sectionContext.sections && sectionContext.sections.map(section => (
+          <Section section={section} tasks={taskContext.tasks} key={section._id} />
         ))}
       </div>
-      <TaskForm />
     </div>
   )
 }
