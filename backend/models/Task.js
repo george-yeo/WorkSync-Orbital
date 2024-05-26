@@ -15,6 +15,10 @@ const taskSchema = new Schema({
         type: Date,
         required: false
     },
+    sectionId: {
+        type: String,
+        required: true,
+    },
     isCompleted: {
         type: Boolean,
         required: true,

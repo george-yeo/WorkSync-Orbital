@@ -3,7 +3,7 @@
 
 /* layout */
 :root {
-  --primary: #1aac83;
+  --primary: #d88260;
   --error: #e7195a;
 }
 body {
@@ -68,8 +68,17 @@ header a {
 }
 
 /* new task form */
+.task-detail-box {
+  background: #fff;
+  border-radius: 4px;
+  margin: 20px auto;
+  position: relative;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+}
+
 label, input {
   display: block;
+  font-family: "Poppins";
 }
 input {
   padding: 10px;
@@ -99,6 +108,20 @@ div.error {
 }
 input.error {
   border: 1px solid var(--error);
+}
+
+.task-detail-form {
+  padding: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  border: 0px solid #ddd;
+  border-radius: 4px;
+  margin: 0px auto;
+  position: relative;
+  outline: none;
+}
+.task-detail-deadline {
+  padding: 10px;
 }
 
 /* navbar */

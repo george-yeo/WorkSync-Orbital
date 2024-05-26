@@ -35,7 +35,7 @@ const getTask = async (req, res) => {
 
 // create new task
 const createTask = async (req, res) => {
-    const {title, description, deadline, isCompleted} = req.body
+    const {title, description, deadline, isCompleted, sectionId} = req.body
 
     let emptyFields = []
 
@@ -49,10 +49,10 @@ const createTask = async (req, res) => {
 
     try {
         const user_id = req.user._id
-        const task = await Task.create({title, description, deadline, isCompleted, user_id})
+        const task = await Task.create({title, description, deadline, isCompleted, sectionId, user_id})
         res.status(200).json(task)
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: error.message, emptyFields: emptyFields})
     }
 }
 
