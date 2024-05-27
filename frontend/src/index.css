@@ -3,7 +3,7 @@
 
 /* layout */
 :root {
-  --primary: #d88260;
+  --primary: #3b9c3b;
   --error: #e7195a;
 }
 body {
@@ -40,16 +40,18 @@ header a {
 }
 .task-details {
   background: #fff;
-  border-radius: 4px;
-  margin: 20px auto;
-  padding: 20px;
+  border-radius: 8px;
+  margin: 5px auto;
+  padding-top: 5px;
+  padding-bottom: 3px;
+  padding-left: 20px;
   position: relative;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
 }
 .task-details h4 {
-  margin: 0 0 10px 0;
+  margin: 0 0 0px 24px;
   font-size: 1.2em;
-  color: var(--primary);
+  color: #555;
 }
 .task-details p {
   margin: 0;
@@ -58,13 +60,27 @@ header a {
 }
 .task-details span {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 0px;
   cursor: pointer;
-  background: #f1f1f1;
+  background: #f1f1f100;
   padding: 6px;
   border-radius: 50%;
   color: #333;
+}
+.task-details span.delete {
+  right: 5px;
+}
+.task-details span.checkbox {
+  left: 5px;
+}
+.task-details span.tick {
+  left: 0px;
+}
+.task-details .hide {
+  visibility: hidden;
+}
+.task-details span.checkbox:hover > .hide {
+  visibility: visible;
 }
 
 /* new task form */
@@ -122,6 +138,40 @@ input.error {
 }
 .task-detail-deadline {
   padding: 10px;
+}
+
+/* task-list */
+.hide {
+  visibility: hidden;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style-type: none;
+}
+ul li {
+  cursor: pointer;
+  position: relative;
+  background: #eee;
+  transition: 0.2s;
+
+  /* make the list items unselectable */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+ul li:hover {
+  background: #ddd;
+}
+ul li:hover > .hide {
+  visibility: visible;
+}
+ul li.checked {
+  background: #888;
+  color: #fff;
+  text-decoration: line-through;
 }
 
 /* navbar */
