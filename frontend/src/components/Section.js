@@ -3,7 +3,7 @@ import { useSectionContext } from "../hooks/useSectionContext"
 import { useAuthContext } from "../hooks/useAuthContext";
 
 import TaskDetails from "../components/TaskDetails"
-import TaskForm from "../components/TaskForm"
+import TaskFormBtn from "../components/TaskFormBtn"
 
 const Section = ({ section, tasks }) => {
     //const { taskDispatch } = useTaskContext();
@@ -18,7 +18,7 @@ const Section = ({ section, tasks }) => {
                     <TaskDetails task={task} key={task._id} />
                 ))}
             </ul>
-            <TaskForm section={section} />
+            <TaskFormBtn section={section} />
         </div>
     )
 }
