@@ -6,6 +6,11 @@ const noTaskFound = "No such Task found"
 const checkValidId = (id) => {
     return mongoose.Types.ObjectId.isValid(id)
 }
+const populateEmptyFields = (task, emptyFields) => {
+    if (!task.title) {
+        emptyFields.push('title')
+    }
+}
 
 // get all tasks
 const getAllTasks = async (req, res) => {
@@ -39,9 +44,7 @@ const createTask = async (req, res) => {
 
     let emptyFields = []
 
-    if (!title) {
-        emptyFields.push('title')
-    }
+    populateEmptyFields(req.body, emptyFields)
 
     if (emptyFields.length > 0) {
         return res.status(400).json({error: 'Please fill in required fields', emptyFields})
@@ -81,6 +84,14 @@ const updateTask = async (req, res) => {
         return res.status(404).json({error: noTaskFound})
     }
 
+    let emptyFields = []
+
+    populateEmptyFields(req.body, emptyFields)
+
+    if (emptyFields.length > 0) {
+        return res.status(400).json({error: 'Please fill in required fields', emptyFields})
+    }
+
     const task = await Task.findOneAndUpdate({_id: id}, {
         ...req.body
     })
@@ -89,7 +100,7 @@ const updateTask = async (req, res) => {
         return res.status(404).json({error: noTaskFound})
     }
 
-    res.status(200).json(task)
+    res.status(200).json(await Task.findById(id))
 }
 
 // export module

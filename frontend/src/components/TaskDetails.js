@@ -1,13 +1,26 @@
+import { useState } from "react";
 import { useTaskContext } from "../hooks/useTaskContext"
 import { useAuthContext } from "../hooks/useAuthContext";
 
+// components
+import TaskForm from './TaskForm';
+
 // date-fns
-import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { formatDistanceToNow, differenceInSeconds } from "date-fns"
 
 const TaskDetails = ({ task }) => {
     const { dispatch } = useTaskContext();
     const { user } = useAuthContext()
-    
+    const [isOpen, setIsOpen] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
+
+    const openPopup = () => {
+        setShowPopup(true);
+    };
+
+    const closePopup = () => {
+        setShowPopup(false);
+    };
 
     const handleDeleteClick = async () => {
         if (!user) {
@@ -43,25 +56,43 @@ const TaskDetails = ({ task }) => {
         const json = await response.json()
 
         if (response.ok) {
-            dispatch({type: 'UPDATE_TASK', payload: JSON.stringify(task)})
+            dispatch({type: 'UPDATE_TASK', payload: json})
         }
     }
 
+    const handleExpandClick = () => {
+        setIsOpen((prev) => !prev)
+    }
+
+    const isOverdue = task.deadline ? differenceInSeconds(new Date(), new Date(task.deadline)) >= 0 : false
+
+    const contents = (
+        <div>
+            <p><strong>Description: </strong>{task.description}</p>
+            {task.deadline && <p className={isOverdue ? "overdue" : ''}><strong>Deadline: </strong>{formatDistanceToNow(new Date(task.deadline), { addSuffix: true })}</p>}
+            <p>Created {formatDistanceToNow(new Date(task.createdAt), { addSuffix: true })}</p>
+        </div>
+    )
+
     return (
         <li className={"task-details" + (task.isCompleted ? " checked" : "")}>
+            <h4 
+            className={(task.isCompleted ? " checked" : "")}
+            onClick={handleExpandClick}>
+                {task.title}
+            </h4>
             <span className="material-symbols-outlined checkbox" onClick={handleCompleteClick}>
                 circle
                 <span className={"material-symbols-outlined tick" + (!task.isCompleted ? " hide" : "")}>check</span>
             </span>
-            <h4>{task.title}</h4>
+            <div>{isOpen && <div className="task-details-contents">{contents}</div>}</div>
             <span className="material-symbols-outlined delete hide" onClick={handleDeleteClick}>delete</span>
+            {isOpen && <span className="material-symbols-outlined edit hide" onClick={openPopup}>edit</span>}
+            {showPopup && <TaskForm editingTask={task} closePopup={closePopup} />}
         </li>
     )
 }
 
-/*<p><strong>Description: </strong>{task.description}</p>
-            <p><strong>Deadline: </strong>{task.deadline}</p>
-            <p><strong>Completed: </strong>{task.isCompleted}</p>
-            <p>Created {formatDistanceToNow(new Date(task.createdAt), { addSuffix: true })}</p>*/
+/**/
 
 export default TaskDetails

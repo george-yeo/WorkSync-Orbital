@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useTaskContext } from '../hooks/useTaskContext';
 import { useAuthContext } from '../hooks/useAuthContext';
 
-const TaskForm = ({ section, closePopup }) => {
+const TaskForm = ({ section, closePopup, editingTask }) => {
   const { dispatch } = useTaskContext();
   const { user } = useAuthContext();
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [deadline, setDeadline] = useState(null);
+  const [title, setTitle] = useState(editingTask ? editingTask.title : '');
+  const [description, setDescription] = useState(editingTask ? editingTask.description : '');
+  const [deadline, setDeadline] = useState(editingTask ? editingTask.deadline : null);
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
 
@@ -20,16 +20,36 @@ const TaskForm = ({ section, closePopup }) => {
       return;
     }
 
-    const task = { title, description, deadline, isCompleted: false, sectionId: section._id };
+    let response, task;
 
-    const response = await fetch('/api/tasks', {
-      method: 'POST',
-      body: JSON.stringify(task),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${user.token}`
+    if (editingTask) {
+      task = {
+        title,
+        description,
+        deadline,
+        isCompleted: editingTask.isCompleted,
+        sectionId: editingTask.sectionId
       }
-    });
+      response = await fetch('/api/tasks/' + editingTask._id, {
+        method: 'PATCH',
+        body: JSON.stringify(task),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`
+        }
+      })
+    } else {
+      task = { title, description, deadline, isCompleted: false, sectionId: section._id }
+
+      response = await fetch('/api/tasks', {
+        method: 'POST',
+        body: JSON.stringify(task),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        }
+      });
+    }
 
     const json = await response.json();
 
@@ -43,7 +63,9 @@ const TaskForm = ({ section, closePopup }) => {
       setDeadline(null);
       setError(null);
       setEmptyFields([]);
-      dispatch({ type: 'CREATE_TASK', payload: json });
+
+      dispatch({ type: editingTask ? 'UPDATE_TASK' : 'CREATE_TASK', payload: json });
+
       closePopup();
     }
   };
@@ -53,7 +75,7 @@ const TaskForm = ({ section, closePopup }) => {
       <div className="popup-content">
         <span className="close-btn" onClick={closePopup}>&times;</span>
         <form className="create" onSubmit={handleSubmit}>
-          <h3>Add a new Task</h3>
+          <h3>{editingTask && "Edit Task"}{!editingTask && "Add a new Task"}</h3>
           <div className="task-detail-box">
             <input
               type="text"
@@ -66,7 +88,7 @@ const TaskForm = ({ section, closePopup }) => {
               type="text"
               onChange={(e) => setDescription(e.target.value)}
               value={description}
-              placeholder="Description"
+              placeholder="Description (Optional)"
               className="task-detail-form"
             />
             <label className="task-detail-deadline">Deadline: </label>
@@ -74,10 +96,11 @@ const TaskForm = ({ section, closePopup }) => {
               type="date"
               onChange={(e) => setDeadline(e.target.value)}
               value={deadline}
+              defaultValue={deadline}
               className="task-detail-form"
             />
           </div>
-          <button>Add Task</button>
+          <button>{editingTask && "Confirm Edit"}{!editingTask && "Add Task"}</button>
           {error && <div className='error'>{error}</div>}
         </form>
       </div>
