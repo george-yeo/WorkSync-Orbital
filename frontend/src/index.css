@@ -5,6 +5,7 @@
 :root {
   --primary: #3b9c3b;
   --error: #e7195a;
+  --overdue: #fd4e4e;
 }
 body {
   background: #f1f1f1;
@@ -60,7 +61,6 @@ header a {
 }
 .task-details span {
   position: absolute;
-  top: 0px;
   cursor: pointer;
   background: #f1f1f100;
   padding: 6px;
@@ -68,12 +68,19 @@ header a {
   color: #333;
 }
 .task-details span.delete {
+  top: 0px;
   right: 5px;
 }
+.task-details .edit {
+  right: 5px;
+  bottom: 5px;
+}
 .task-details span.checkbox {
+  top: 0px;
   left: 5px;
 }
 .task-details span.tick {
+  top: 0px;
   left: 0px;
 }
 .task-details .hide {
@@ -85,7 +92,7 @@ header a {
 
 /* new task form */
 .task-detail-box {
-  background: #fff;
+  background: #dfdfdf;
   border-radius: 4px;
   margin: 20px auto;
   position: relative;
@@ -97,6 +104,7 @@ label, input {
   font-family: "Poppins";
 }
 input {
+  background: #eeeeee00;
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 20px;
@@ -154,7 +162,10 @@ ul li {
   cursor: pointer;
   position: relative;
   background: #eee;
-  transition: 0.2s;
+  
+  transition-property: height;
+  transition-duration: 200ms;
+  overflow: hidden;
 
   /* make the list items unselectable */
   -webkit-user-select: none;
@@ -171,7 +182,12 @@ ul li:hover > .hide {
 ul li.checked {
   background: #888;
   color: #fff;
+}
+ul li h4.checked {
   text-decoration: line-through;
+}
+ul .overdue {
+  color: var(--overdue);
 }
 
 /* navbar */
