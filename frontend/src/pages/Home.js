@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useTaskContext } from "../hooks/useTaskContext"
 import { useSectionContext } from "../hooks/useSectionContext"
 import { useAuthContext } from "../hooks/useAuthContext"
@@ -10,11 +10,14 @@ import SectionForm from "../components/SectionForm"
 const Home = () => {
   const taskContext = useTaskContext()
   const sectionContext = useSectionContext()
+
   const {user} = useAuthContext()
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('asc');
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const response = await fetch('/api/tasks', {
+      const response = await fetch(`/api/tasks?sortBy=${sortBy}&sortOrder=${sortOrder}`, {
         headers: {'Authorization': `Bearer ${user.token}`},
       })
       
@@ -41,16 +44,38 @@ const Home = () => {
       fetchTasks()
       fetchSections()
     }
-  }, [user])
+  }, [user, sortBy, sortOrder])
+
+  const handleSortChange = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortOrder('asc');
+    }
+  };
 
   return (
     <div className="home">
-      <div className="sections">
-        <SectionForm />
+      <SectionForm />
+      <div className="sorting-controls">
+        <label>Sort by: </label>
+        <select
+          value={sortBy}
+          onChange={(e) => handleSortChange(e.target.value)}
+        >
+          <option value="createdAt">Creation Date</option>
+          <option value="title">Title</option>
+          <option value="description">Description</option>
+          <option value="deadline">Deadline</option>
+        </select>
+        <button onClick={() => handleSortChange(sortBy)}>
+          {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+        </button>
+      </div>
         {sectionContext.sections && sectionContext.sections.map(section => (
           <Section section={section} tasks={taskContext.tasks} key={section._id} />
         ))}
-      </div>
     </div>
   )
 }

@@ -15,8 +15,10 @@ const populateEmptyFields = (task, emptyFields) => {
 // get all tasks
 const getAllTasks = async (req, res) => {
     const user_id = req.user._id
+    const sortBy = req.query.sortBy || 'createdAt';
+    const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
 
-    const tasks = await Task.find({ user_id }).sort({createdAt: -1})
+    const tasks = await Task.find({ user_id }).sort({ [sortBy]: sortOrder })
 
     res.status(200).json(tasks)
 }
