@@ -35,9 +35,9 @@ header a {
 
 /* homepage */
 .home {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 100px;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
 }
 .task-details {
   background: #fff;
