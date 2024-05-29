@@ -1,6 +1,6 @@
-import { useTaskContext } from "../hooks/useTaskContext"
-import { useSectionContext } from "../hooks/useSectionContext"
-import { useAuthContext } from "../hooks/useAuthContext";
+//import { useTaskContext } from "../hooks/useTaskContext"
+//import { useSectionContext } from "../hooks/useSectionContext"
+//import { useAuthContext } from "../hooks/useAuthContext";
 
 import TaskDetails from "../components/TaskDetails"
 import TaskFormBtn from "../components/TaskFormBtn"
@@ -8,7 +8,7 @@ import TaskFormBtn from "../components/TaskFormBtn"
 const Section = ({ section, tasks }) => {
     //const { taskDispatch } = useTaskContext();
     //const { sectionDispatch } = useSectionContext();
-    const { user } = useAuthContext()
+    //const { user } = useAuthContext()
 
     return (
         <div className="task-section">
