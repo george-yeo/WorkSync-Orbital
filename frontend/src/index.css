@@ -272,3 +272,28 @@ form.signup, form.login {
 .open-form-btn:hover {
   background-color: #45a049; /* Darker green on hover */
 }
+
+.sorting-controls {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-bottom: -20px;
+}
+
+.sorting-controls label {
+  margin-right: 10px;
+}
+
+.sorting-controls select {
+  margin-right: 10px;
+  font-family: "Poppins";
+}
+
+.sorting-controls button {
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}

@@ -69,9 +69,9 @@ const Home = () => {
           <option value="description">Description</option>
           <option value="deadline">Deadline</option>
         </select>
-        <button onClick={() => handleSortChange(sortBy)}>
-          {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
-        </button>
+        <span class="material-symbols-outlined arrow" onClick={() => handleSortChange(sortBy)}>
+          {sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward'}
+        </span>
       </div>
         {sectionContext.sections && sectionContext.sections.map(section => (
           <Section section={section} tasks={taskContext.tasks} key={section._id} />
