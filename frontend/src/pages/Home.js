@@ -69,7 +69,7 @@ const Home = () => {
           <option value="description">Description</option>
           <option value="deadline">Deadline</option>
         </select>
-        <span class="material-symbols-outlined arrow" onClick={() => handleSortChange(sortBy)}>
+        <span className="material-symbols-outlined arrow" onClick={() => handleSortChange(sortBy)}>
           {sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward'}
         </span>
       </div>
