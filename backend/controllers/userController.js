@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
 const checkValidId = (id) => {
   return mongoose.Types.ObjectId.isValid(id)
@@ -19,8 +20,9 @@ const loginUser = async (req, res) => {
 
     // create a token
     const token = createToken(user._id)
+    const _id = user._id
 
-    res.status(200).json({email, token})
+    res.status(200).json({email, token, _id})
   } catch (error) {
     res.status(400).json({error: error.message})
   }
@@ -35,9 +37,9 @@ const signupUser = async (req, res) => {
 
     // create a token
     const token = createToken(user._id)
-    const user_id = user._id
+    const _id = user._id
 
-    res.status(200).json({email, token, user_id})
+    res.status(200).json({email, token, _id})
   } catch (error) {
     res.status(400).json({error: error.message})
   }
@@ -45,20 +47,20 @@ const signupUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { id } = req.params
+  const {email, password, username} = req.body
 
-    if (!checkValidId(id)) {
-        return res.status(404).json({error: noUserFound})
-    }
+  try {
+    const salt = await bcrypt.genSalt(10)
+    const hash = await bcrypt.hash(password, salt)
 
     const user = await User.findOneAndUpdate({_id: id}, {
-        ...req.body
+        email, password: hash , username
     })
 
-    if (!user) {
-        return res.status(404).json({error: noUserFound})
-    }
-
     res.status(200).json(user)
+  } catch (error) {
+    res.status(400).json({error: error.message})
+  }
 }
 
-module.exports = { signupUser, loginUser, updateUser}
+module.exports = { signupUser, loginUser, updateUser }
