@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useProfile } from '../hooks/useProfile';
+import { useLogin } from "../hooks/useLogin"
 
 const Profile = ({ }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [username, setUsername] = useState('')
     const {update, error, isLoading} = useProfile()
+    const {login} = useLogin()
   
     const handleSubmit = async (e) => {
       e.preventDefault()
   
       await update(email, password, username)
+      await login(email, password)
     }
   
     return (
