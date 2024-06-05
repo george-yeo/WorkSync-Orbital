@@ -45,7 +45,7 @@ const SectionForm = ({ section }) => {
     }
 
     return (
-        <form className="create" onSubmit={handleSubmit}>
+        <form className="create section-form" onSubmit={handleSubmit}>
             <h3>Add a new Section</h3>
 
             <label>Section Name: </label>

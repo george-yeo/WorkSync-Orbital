@@ -21,14 +21,17 @@ const userSchema = new Schema({
 })
 
 // static signup method
-userSchema.statics.signup = async function(email, password, username) {
+userSchema.statics.signup = async function(email, password, confirmPassword, username) {
 
   //validation
-  if (!email || !password || !username) {
+  if (!email || !password || !confirmPassword || !username) {
     throw Error('All fields must be filled')
   }
   if (!validator.isEmail(email)) {
     throw Error('Email not valid')
+  }
+  if (password !== confirmPassword) {
+    throw Error('Passwords do not match')
   }
   //strongPassword is length 7 with uppercase, lowercase, number and special char
   if (!validator.isStrongPassword(password)) {
