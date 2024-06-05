@@ -4,13 +4,14 @@ import { useSignup } from "../hooks/useSignup"
 const Signup = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [username, setUsername] = useState('')
   const {signup, error, isLoading} = useSignup()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    await signup(email, password, username)
+    await signup(email, password, confirmPassword, username)
   }
 
   return (
@@ -34,6 +35,18 @@ const Signup = () => {
         type="password" 
         onChange={(e) => setPassword(e.target.value)} 
         value={password} 
+        />
+        <ul className="password-reqs">
+          <li>7 characters</li>
+          <li>Upper and lowercase</li>
+          <li>Numbers and special characters</li>
+        </ul>
+
+        <label>Confirm password:</label>
+        <input 
+        type="password" 
+        onChange={(e) => setConfirmPassword(e.target.value)} 
+        value={confirmPassword} 
         />
         
         <button disabled={isLoading}>Sign up</button>
