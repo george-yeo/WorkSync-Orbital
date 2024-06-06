@@ -48,14 +48,11 @@ const signupUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { id } = req.params
-  const {email, password, username} = req.body
+  const {email, username} = req.body
 
   try {
-    const salt = await bcrypt.genSalt(10)
-    const hash = await bcrypt.hash(password, salt)
-
     const user = await User.findOneAndUpdate({_id: id}, {
-        email, password: hash , username
+        email, username
     })
 
     res.status(200).json(await User.find({_id: id }))
@@ -64,13 +61,13 @@ const updateUser = async (req, res) => {
   }
 }
 
-// const getUser =  async (req, res) => {
-//   const user_id = req.user._id
+const getUser =  async (req, res) => {
+  const { id } = req.params
 
-//   const user = await User.find({ user_id })
+  const user = await User.find({ _id : id })
 
-//   res.status(200).json(user)
-// }
+  res.status(200).json(await User.find({_id: id }))
+}
 
 const searchUsername = async (req, res) => {
   try {
@@ -87,4 +84,4 @@ const searchUsername = async (req, res) => {
   }
 }
 
-module.exports = { signupUser, loginUser, updateUser, searchUsername }
+module.exports = { signupUser, loginUser, updateUser, searchUsername, getUser }
