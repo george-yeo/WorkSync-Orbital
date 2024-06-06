@@ -236,6 +236,11 @@ form.signup .password-reqs {
   color:#555;
 }
 
+form.signup .username-reqs {
+  font-size: .8em;
+  color:#555;
+}
+
 /* chat */
 .chat {
   background: #f1f1f1;
