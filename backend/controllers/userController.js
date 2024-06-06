@@ -64,12 +64,27 @@ const updateUser = async (req, res) => {
   }
 }
 
-const getUser =  async (req, res) => {
-  const user_id = req.user._id
+// const getUser =  async (req, res) => {
+//   const user_id = req.user._id
 
-  const user = await User.find({ user_id })
+//   const user = await User.find({ user_id })
 
-  res.status(200).json(user)
+//   res.status(200).json(user)
+// }
+
+const searchUsername = async (req, res) => {
+  try {
+    const { user: username } = req.params
+
+    const users = await User.findUserByUsername(username)
+    
+    const safeUsers = users.map(user => user.getSafeData())
+
+    res.status(200).json(safeUsers)
+  } catch (error) {
+    console.log("searchUsername error: ", error.message)
+    res.status(500).json({error: error.message})
+  }
 }
 
-module.exports = { signupUser, loginUser, updateUser, getUser }
+module.exports = { signupUser, loginUser, updateUser, searchUsername }

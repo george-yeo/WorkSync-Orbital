@@ -85,7 +85,7 @@ const TaskDetails = ({ task }) => {
                 circle
                 <span className={"material-symbols-outlined tick" + (!task.isCompleted ? " hide" : "")}>check</span>
             </span>
-            <div>{isOpen && <div className="task-details-contents">{contents}</div>}</div>
+            <div>{isOpen && <div className="task-details-contents" onClick={openPopup}>{contents}</div>}</div>
             <span className="material-symbols-outlined delete hide" onClick={handleDeleteClick}>delete</span>
             {isOpen && <span className="material-symbols-outlined edit hide" onClick={openPopup}>edit</span>}
             {showPopup && <TaskForm editingTask={task} closePopup={closePopup} />}

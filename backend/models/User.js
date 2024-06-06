@@ -17,6 +17,24 @@ const userSchema = new Schema({
   username: {
     type: String,
     required: true
+  },
+  displayname: {
+    type: String,
+  },
+  recentChatChannels: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ChatChannel",
+        default: []
+    }
+  ],
+  gender: {
+    type: String,
+    enum: ["male", "female", "others"]
+  },
+  profilePic: {
+    type: String,
+    default: ''
   }
 })
 
@@ -71,6 +89,20 @@ userSchema.statics.login = async function(email, password) {
   }
 
   return user
+}
+
+// static find similar usernames method
+userSchema.statics.findUserByUsername = async function(username) {
+  return this.find({ username: {"$regex": "^"+username, "$options": "i"} }).limit(8).exec()
+}
+
+// get safe userdata method
+userSchema.methods.getSafeData = function() {
+  return {
+    username: this.username,
+    profilePic: this.profilePic,
+    _id: this._id,
+  }
 }
 
 module.exports = mongoose.model('User', userSchema)
