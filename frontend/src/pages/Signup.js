@@ -25,7 +25,7 @@ const Signup = () => {
         value={username}
         /> 
         <ul className="username-reqs">
-          <li>7-20 characters</li>
+          <li>4-20 characters</li>
           <li>Only letters and numbers (a-z A-Z 0-9)</li>
         </ul>
         <label>Email address:</label>

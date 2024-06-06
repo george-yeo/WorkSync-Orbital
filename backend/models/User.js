@@ -59,7 +59,7 @@ userSchema.statics.signup = async function(email, password, confirmPassword, use
     throw Error('Username can only contain contains only letters and numbers (a-z A-Z 0-9)')
   }
   if (!validator.isLength(username, { min: 4, max: 20 })) {
-    throw Error('Username can only contain contains only letters and numbers (a-z A-Z 0-9)')
+    throw Error('Username must be 4-20 characters long')
   }
 
   const exists = await this.findOne({ email })
