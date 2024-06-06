@@ -42,7 +42,7 @@ const findChannelsByUsername = async (req, res) => {
 
     const user = await User.findById(senderId)
     if (!user) return res.status(404).json({ error: "User not found" })
-    const receivers = await User.findUserByUsername(username)
+    const receivers = await User.findUserByUsername(username.trim())
 
     let chatChannels = []
     for (i in receivers) {
@@ -90,7 +90,7 @@ const sendDirectMessage = async (req, res) => {
         const newMessage = new ChatMessage({
             senderId: senderId,
             channelId: chatChannel._id,
-            message: message
+            message: message.trim()
         })
 
         if (newMessage) {
