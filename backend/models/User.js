@@ -20,6 +20,7 @@ const userSchema = new Schema({
   },
   displayname: {
     type: String,
+    default: ''
   },
   recentChatChannels: [
     {

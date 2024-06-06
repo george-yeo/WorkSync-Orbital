@@ -1,47 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProfile } from '../hooks/useProfile';
 import { useLogin } from "../hooks/useLogin"
+import { useAuthContext } from '../hooks/useAuthContext';
+import EditProfileBtn from '../components/EditProfileBtn';
+import DP from '../DP.jpg'
 
 const Profile = () => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [username, setUsername] = useState('')
-    const {update, error, isLoading} = useProfile()
-    const {login} = useLogin()
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault()
-  
-      await update(email, password, username)
-      await login(email, password)
-    }
+    const { user } = useAuthContext()
   
     return (
-      <form className="Profile" onSubmit={handleSubmit}>
-          <h3>Profile</h3>
-  
-          <label>Username:</label>
-          <input 
-          type="username" 
-          onChange={(e) => setUsername(e.target.value)} 
-          value={username} 
-          />
-          <label>Email address:</label>
-          <input 
-          type="email" 
-          onChange={(e) => setEmail(e.target.value)} 
-          value={email} 
-          />
-          <label>Password:</label>
-          <input 
-          type="password" 
-          onChange={(e) => setPassword(e.target.value)} 
-          value={password} 
-          />
-          
-          <button disabled={isLoading}>Edit</button>
-          {error && <div className="error">{error}</div>}
-      </form>
+      <div className='profile'>
+          <h2 className='profile-title'>Profile Page</h2>
+          <div className='profile-content'>
+              <div className='profile-container'>
+                  <img src={DP} alt="Profile" />
+                  <h3>{user.username}</h3>
+                  <p><strong>Display Name: </strong><span>{user.displayname}</span></p>
+                  <p><strong>Email: </strong><span>{user.email}</span></p>
+              </div>
+              <div className='profile-info'>
+                  <div className='info-item'>
+                      <strong>User Name: </strong><span>{user.username}</span>
+                  </div>
+                  <div className='info-item'>
+                      <strong>Display Name: </strong><span>{user.displayname}</span>
+                  </div>
+                  <div className='info-item'>
+                      <strong>Email: </strong><span>{user.email}</span>
+                  </div>
+                  <div className='info-item'>
+                      <strong>Gender: </strong><span>{user.gender}</span>
+                  </div>
+              </div>
+          </div>
+          <div className="buttons">
+                <EditProfileBtn></EditProfileBtn>
+                <button className="button-change-password">Change Password</button>
+          </div>
+      </div>
     )
   }
   
