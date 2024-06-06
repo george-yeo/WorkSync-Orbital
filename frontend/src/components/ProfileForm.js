@@ -20,11 +20,11 @@ const ProfileForm = ({ closePopup }) => {
         
         const json = await response.json()
         console.log('user', json)
-        setUserData(json);
-        setUsername(json.username)
-        setEmail(json.email)
-        setDisplayname(json.displayname)
-        setGender(json.gender)
+        setUserData(json[0]);
+        setUsername(json[0].username)
+        setEmail(json[0].email)
+        setDisplayname(json[0].displayname)
+        setGender(json[0].gender)
         setIsLoading(false)
       }
       if(user){
@@ -50,19 +50,30 @@ const ProfileForm = ({ closePopup }) => {
             <h3>Edit Profile</h3>
             <label>
               Username:
-              <input type="text" name="username" defaultValue={user.username} onChange={(e) => setUsername(e.target.value)} />
+              <input type="text" name="username" defaultValue={userData.username} onChange={(e) => setUsername(e.target.value)} />
             </label>
             <label>
               Display Name:
-              <input type="text" name="displayname" defaultValue={user.displayname} onChange={(e) => setDisplayname(e.target.value)}/>
+              <input type="text" name="displayname" defaultValue={userData.displayname} onChange={(e) => setDisplayname(e.target.value)}/>
             </label>
             <label>
               Email:
-              <input type="text" name="email" defaultValue={user.email} onChange={(e) => setEmail(e.target.value)}/>
+              <input type="text" name="email" defaultValue={userData.email} onChange={(e) => setEmail(e.target.value)}/>
             </label>
             <label>
               Gender:
-              <input type="text" name="gender" defaultValue={user.gender} onChange={(e) => setGender(e.target.value)}/>
+              <p>
+                <select 
+                name="gender" 
+                value={gender} 
+                onChange={(e) => setGender(e.target.value)}
+                >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+                </select>
+              </p>
             </label>
             <button type="submit">Save Changes</button>
         </form>

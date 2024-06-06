@@ -52,7 +52,7 @@ const updateUser = async (req, res) => {
 
   try {
     const user = await User.findOneAndUpdate({_id: id}, {
-      ...req.body
+      email, username, displayname, gender
     })
 
     res.status(200).json(await User.find({_id: id }))
