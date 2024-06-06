@@ -48,11 +48,11 @@ const signupUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { id } = req.params
-  const {email, username} = req.body
+  const {email, username, displayname, gender} = req.body
 
   try {
     const user = await User.findOneAndUpdate({_id: id}, {
-        email, username
+      ...req.body
     })
 
     res.status(200).json(await User.find({_id: id }))
