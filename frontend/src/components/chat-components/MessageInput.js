@@ -38,7 +38,7 @@ const MessageInput = () => {
     }
     if (response.ok) {
       setError(null)
-      chatContext.dispatch({type: 'UPDATE_MESSAGE', payload: json})
+      chatContext.dispatch({type: 'UPDATE_MESSAGES', payload: json})
     }
   }
   

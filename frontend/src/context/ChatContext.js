@@ -19,7 +19,8 @@ export const chatReducer = (state, action) => {
                 ...state,
                 messages: action.payload
             }
-        case 'UPDATE_MESSAGE':
+        case 'UPDATE_MESSAGES':
+
             return {
                 ...state,
                 messages: [action.payload, ...state.messages]
