@@ -4,6 +4,7 @@ import { useAuthContext } from './hooks/useAuthContext'
 // pages & components
 import Home from './pages/Home'
 import Navbar from './components/Navbar'
+import ChatBar from './components/ChatBar'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
@@ -35,6 +36,7 @@ function App() {
             />
           </Routes>
         </div>
+        <ChatBar />
       </BrowserRouter>
     </div>
   );

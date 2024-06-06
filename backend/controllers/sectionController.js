@@ -19,12 +19,17 @@ const getAllSections = async (req, res) => {
 // get single section
 const getSection = async (req, res) => {
     const { id } = req.params
+    const user_id = req.user._id
+
 
     if (!checkValidId(id)) {
         return res.status(404).json({error: noSectionFound})
     }
 
-    const section = await Section.findById(id)
+    const section = await Section.find({
+        user_id: user_id,
+        _id: id
+    })
 
     if (!section) {
         return res.status(404).json({error: noSectionFound})
@@ -59,12 +64,16 @@ const createSection = async (req, res) => {
 // delete a section
 const deleteSection = async (req, res) => {
     const { id } = req.params
+    const user_id = req.user._id
 
     if (!checkValidId(id)) {
         return res.status(404).json({error: noSectionFound})
     }
 
-    const section = await Section.findOneAndDelete({_id: id})
+    const section = await Section.findOneAndDelete({
+        user_id: user_id,
+        _id: id
+    })
 
     if (!section) {
         return res.status(404).json({error: noSectionFound})

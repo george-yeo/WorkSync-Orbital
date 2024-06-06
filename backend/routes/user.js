@@ -1,7 +1,13 @@
 const express = require('express')
 
 // controller functions
-const { loginUser, signupUser, updateUser } = require('../controllers/userController')
+const {
+    loginUser,
+    signupUser,
+    updateUser,
+    searchUsername,
+} = require('../controllers/userController')
+const requireAuth = require('../middleware/requireAuth')
 
 const router = express.Router()
 
@@ -12,6 +18,9 @@ router.post('/login', loginUser)
 router.post('/signup', signupUser)
 
 // update route
-router.patch('/update/:id', updateUser)
+router.patch('/update/:id', requireAuth, updateUser)
+
+// search username, needs auth
+router.get('/search/:user', searchUsername)
 
 module.exports = router

@@ -26,12 +26,16 @@ const getAllTasks = async (req, res) => {
 // get single task
 const getTask = async (req, res) => {
     const { id } = req.params
+    const user_id = req.user._id
 
     if (!checkValidId(id)) {
         return res.status(404).json({error: noTaskFound})
     }
 
-    const task = await Task.findById(id)
+    const task = await Task.find({
+        user_id: user_id,
+        _id: id
+    })
 
     if (!task) {
         return res.status(404).json({error: noTaskFound})
@@ -64,12 +68,16 @@ const createTask = async (req, res) => {
 // delete a task
 const deleteTask = async (req, res) => {
     const { id } = req.params
+    const user_id = req.user._id
 
     if (!checkValidId(id)) {
         return res.status(404).json({error: noTaskFound})
     }
 
-    const task = await Task.findOneAndDelete({_id: id})
+    const task = await Task.findOneAndDelete({
+        user_id: user_id,
+        _id: id
+    })
 
     if (!task) {
         return res.status(404).json({error: noTaskFound})
@@ -81,6 +89,7 @@ const deleteTask = async (req, res) => {
 // update a task
 const updateTask = async (req, res) => {
     const { id } = req.params
+    const user_id = req.user._id
 
     if (!checkValidId(id)) {
         return res.status(404).json({error: noTaskFound})
@@ -94,7 +103,10 @@ const updateTask = async (req, res) => {
         return res.status(400).json({error: 'Please fill in required fields', emptyFields})
     }
 
-    const task = await Task.findOneAndUpdate({_id: id}, {
+    const task = await Task.findOneAndUpdate({
+        user_id: user_id,
+        _id: id
+    }, {
         ...req.body
     })
 
