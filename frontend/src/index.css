@@ -557,10 +557,15 @@ form.signup ul {
   color: #999999; 
 }
 
-.profile .material-symbols-outlined {
+.profile-pic {
+  position: relative;
+}
+
+.profile-pic .material-symbols-outlined {
+  top: 44%;
+  left: 50%;
   position: absolute;
-  left: 215px;
-  top: 305px;
+  transform: translate(-50%, -50%);
   font-size: 30px;
   justify-content: center;
   align-items: center;
