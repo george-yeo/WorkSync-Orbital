@@ -2,10 +2,8 @@ const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const validator = require('validator')
 
-const checkValidId = (id) => {
-  return mongoose.Types.ObjectId.isValid(id)
-}
 const createToken = (_id) => {
   return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' })
 }
@@ -51,9 +49,55 @@ const updateUser = async (req, res) => {
   const {email, username, displayname, gender} = req.body
 
   try {
+    if (!email || !username) {
+      throw Error('Email and Username cannot be empty')
+    }
+    if (!validator.isEmail(email)) {
+      throw Error('Email not valid')
+    }
+    if (!validator.isAlphanumeric(username)) {
+      throw Error('Username can only contain contains only letters and numbers (a-z A-Z 0-9)')
+    }
+    if (!validator.isLength(username, { min: 4, max: 20 })) {
+      throw Error('Username must be 4-20 characters long')
+    }
+    
     const user = await User.findOneAndUpdate({_id: id}, {
       email, username, displayname, gender
     })
+
+    res.status(200).json(await User.find({_id: id }))
+  } catch (error) {
+    res.status(400).json({error: error.message})
+  }
+}
+
+const changePassword = async (req, res) => {
+  const { id } = req.params
+  const { currPassword, newPassword, confirmPassword } = req.body
+
+  try {
+    if (!currPassword || !newPassword || !confirmPassword){
+      throw Error('All fields must be filled')
+    }
+    const user = await User.findOne({_id: id })
+    const match = await bcrypt.compare(currPassword, user.password)
+    if (!match) {
+      throw Error('Incorrect password')
+    }
+
+    if (newPassword != confirmPassword) {
+      throw Error('Password do not match')
+    }
+
+    if (!validator.isStrongPassword(newPassword)) {
+      throw Error('Password not strong enough')
+    }
+
+    const salt = await bcrypt.genSalt(10)
+    const hash = await bcrypt.hash(newPassword, salt)
+
+    await User.findOneAndUpdate({_id: id}, { password:hash })
 
     res.status(200).json(await User.find({_id: id }))
   } catch (error) {
@@ -84,4 +128,4 @@ const searchUsername = async (req, res) => {
   }
 }
 
-module.exports = { signupUser, loginUser, updateUser, searchUsername, getUser }
+module.exports = { signupUser, loginUser, updateUser, searchUsername, getUser, changePassword }

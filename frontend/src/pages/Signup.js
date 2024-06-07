@@ -7,6 +7,8 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [username, setUsername] = useState('')
   const {signup, error, isLoading} = useSignup()
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowComfirmPassword] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -35,11 +37,22 @@ const Signup = () => {
         value={email} 
         />
         <label>Password:</label>
-        <input 
-        type="password" 
-        onChange={(e) => setPassword(e.target.value)} 
-        value={password} 
-        />
+        <div className="password-field">
+          <input 
+            type={showPassword ? "text" : "password"}
+            onChange={(e) => setPassword(e.target.value)} 
+            value={password} 
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="toggle-btn"
+          >
+            <span className="material-symbols-outlined">
+              {showPassword ? 'visibility_off' : 'visibility'}
+            </span>
+          </button>
+        </div>
         <ul className="password-reqs">
           <li>7 characters</li>
           <li>Upper and lowercase</li>
@@ -47,12 +60,22 @@ const Signup = () => {
         </ul>
 
         <label>Confirm password:</label>
-        <input 
-        type="password" 
-        onChange={(e) => setConfirmPassword(e.target.value)} 
-        value={confirmPassword} 
-        />
-        
+        <div className="password-field">
+          <input 
+            type={showConfirmPassword ? "text" : "password"}
+            onChange={(e) => setConfirmPassword(e.target.value)} 
+            value={confirmPassword} 
+          />
+          <button
+            type="button"
+            onClick={() => setShowComfirmPassword(!showConfirmPassword)}
+            className="toggle-btn"
+          >
+          <span className="material-symbols-outlined">
+            {showConfirmPassword ? 'visibility_off' : 'visibility'}
+          </span>
+          </button>
+        </div>
         <button disabled={isLoading}>Sign up</button>
         {error && <div className="error">{error}</div>}
     </form>

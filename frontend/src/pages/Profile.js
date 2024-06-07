@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useProfile } from '../hooks/useProfile';
-import { useLogin } from "../hooks/useLogin"
 import { useAuthContext } from '../hooks/useAuthContext';
 import EditProfileBtn from '../components/EditProfileBtn';
+import PasswordBtn from '../components/PasswordBtn';
 import DP from '../DP.jpg'
 
 const Profile = () => {
@@ -51,7 +50,7 @@ const Profile = () => {
           </div>
           <div className="buttons">
                 <EditProfileBtn></EditProfileBtn>
-                <button className="button-change-password">Change Password</button>
+                <PasswordBtn></PasswordBtn>
           </div>
       </div>
     )
