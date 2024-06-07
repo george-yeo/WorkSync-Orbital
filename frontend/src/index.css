@@ -574,7 +574,7 @@ form.signup ul {
 }
 
 .profile-pic:hover .material-symbols-outlined {
-  opacity: 0.8; /* Show the icon when hovering */
+  opacity: 0.9; /* Show the icon when hovering */
 }
 
 .profile-pic:hover img {
