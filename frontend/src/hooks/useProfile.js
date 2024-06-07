@@ -50,5 +50,27 @@ export const useProfile = ( ) => {
     return true
   }
 
-  return { update, changePassword, isLoading, error }
+  const uploadPic = async ( profilePic ) => {
+    const formData = new FormData();
+    formData.append('profilePic', profilePic);
+    console.log(formData)
+
+    const response = await fetch ('api/user/upload-profile-pic/' + user._id, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${user.token}`
+      },
+      body: formData
+    })
+    const json = await response.json()
+
+    if (!response.ok) {
+      setError(json.error)
+      return false
+    }
+
+    return true
+  }
+
+  return { update, changePassword, uploadPic, isLoading, error }
 }
