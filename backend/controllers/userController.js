@@ -80,6 +80,9 @@ const changePassword = async (req, res) => {
     if (!currPassword || !newPassword || !confirmPassword){
       throw Error('All fields must be filled')
     }
+    if (currPassword === newPassword) {
+      throw Error('New password same as current password')
+    }
     const user = await User.findOne({_id: id })
     const match = await bcrypt.compare(currPassword, user.password)
     if (!match) {
