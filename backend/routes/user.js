@@ -1,4 +1,5 @@
 const express = require('express')
+const multer = require('multer')
 
 // controller functions
 const {
@@ -7,7 +8,8 @@ const {
     updateUser,
     searchUsername,
     getUser,
-    changePassword
+    changePassword,
+    uploadProfilePic
 } = require('../controllers/userController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -30,5 +32,14 @@ router.get('/search/:user', searchUsername)
 
 // get user
 router.get('/getUser/:id', getUser)
+
+// Multer setup for file upload
+const storage = multer.memoryStorage() // Store file in memory buffer temporarily
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // Limit size to 10MB
+})
+
+router.patch('/upload-profile-pic/:id', upload.single('profilePic'), uploadProfilePic)
 
 module.exports = router

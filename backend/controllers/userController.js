@@ -131,4 +131,27 @@ const searchUsername = async (req, res) => {
   }
 }
 
-module.exports = { signupUser, loginUser, updateUser, searchUsername, getUser, changePassword }
+const uploadProfilePic = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' })
+    }
+
+    if (!req.file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+      throw Error('Only image files are allowed!')
+    }
+    // Convert file buffer to Base64 string
+    const base64String = req.file.buffer.toString('base64')
+
+    const { id } = req.params
+
+    await User.findOneAndUpdate({_id: id}, { profilePic:base64String })
+
+    res.status(200).json({ message: 'Profile picture updated successfully' })
+
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
+module.exports = { signupUser, loginUser, updateUser, searchUsername, getUser, changePassword , uploadProfilePic}

@@ -462,17 +462,18 @@ form.signup ul {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 400px;
+  width: 300px;
   text-align: center;
   margin-top: 50px;
   margin-left: -100px;
 }
 
 .profile-container img {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   margin-bottom: 20px;
+  object-fit: cover;
 }
 
 .profile-info {
@@ -510,6 +511,7 @@ form.signup ul {
   border-radius: 4px;
   cursor: pointer;
   margin-top: 20px;
+  margin-left: -50px;
 }
 
 .button-change-password {
@@ -553,4 +555,23 @@ form.signup ul {
 
 .toggle-btn .material-symbols-outlined {
   color: #999999; 
+}
+
+.profile .material-symbols-outlined {
+  position: absolute;
+  left: 215px;
+  top: 305px;
+  font-size: 30px;
+  justify-content: center;
+  align-items: center;
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s ease;
+}
+
+.profile-pic:hover .material-symbols-outlined {
+  opacity: 0.8; /* Show the icon when hovering */
+}
+
+.profile-pic:hover img {
+  filter: grayscale(75%)
 }
