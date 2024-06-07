@@ -231,12 +231,14 @@ form.signup, form.login {
 form.signup ul {
   list-style-position: none;
 }
-form.signup .password-reqs {
+.password-reqs {
+  margin-top: -10px;
   font-size: .8em;
   color:#555;
 }
 
-form.signup .username-reqs {
+.username-reqs {
+  margin-top: -10px;
   font-size: .8em;
   color:#555;
 }
@@ -519,5 +521,36 @@ form.signup .username-reqs {
   border-radius: 4px;
   cursor: pointer;
   margin-top: 20px;
-  margin-left: 20px;
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input {
+  width: 100%;
+  padding-right: 40px; /* Add padding to avoid text under the button */
+  box-sizing: border-box; /* Ensure padding is included in width */
+}
+
+.toggle-btn {
+  position: absolute;
+  right: 10px; /* Align the button to the right inside the input */
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+}
+
+.toggle-btn .material-symbols-outlined {
+  color: #999999; 
 }

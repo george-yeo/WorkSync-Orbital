@@ -21,6 +21,34 @@ export const useProfile = ( ) => {
       },
       body: JSON.stringify({ email, username, displayname, gender})
     })
+    const json = await response.json()
+
+    if (!response.ok) {
+      setIsLoading(false)
+      setError(json.error)
+      return false
+    }
+    return true
   }
-  return { update, isLoading, error }
+
+  const changePassword = async ( currPassword, newPassword, confirmPassword ) => {
+    const response = await fetch('/api/user/changePassword/' + user._id, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user.token}`
+      },
+      body: JSON.stringify({ currPassword, newPassword, confirmPassword })
+    })
+    const json = await response.json()
+
+    if (!response.ok) {
+      setError(json.error)
+      return false
+    }
+
+    return true
+  }
+
+  return { update, changePassword, isLoading, error }
 }

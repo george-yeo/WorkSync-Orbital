@@ -6,7 +6,8 @@ const {
     signupUser,
     updateUser,
     searchUsername,
-    getUser
+    getUser,
+    changePassword
 } = require('../controllers/userController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -21,9 +22,13 @@ router.post('/signup', signupUser)
 // update route
 router.patch('/update/:id', requireAuth, updateUser)
 
+//change password
+router.patch('/changePassword/:id',requireAuth, changePassword)
+
 // search username, needs auth
 router.get('/search/:user', searchUsername)
 
+// get user
 router.get('/getUser/:id', getUser)
 
 module.exports = router
