@@ -6,6 +6,7 @@ const taskRoutes = require('./routes/tasks')
 const sectionRoutes = require('./routes/section')
 const userRoutes = require('./routes/user')
 const chatRoutes = require('./routes/chat')
+const groupRoutes = require('./routes/group')
 
 // express app
 const { app, server }  = require("./socket/socket.js")
@@ -32,6 +33,7 @@ app.use('/api/tasks', taskRoutes)
 app.use('/api/sections', sectionRoutes)
 app.use('/api/chats', chatRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/group', groupRoutes)
 
 // connect to db
 mongoose.connect(process.env.MONGO_URI)

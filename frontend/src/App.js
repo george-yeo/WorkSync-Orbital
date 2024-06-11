@@ -8,6 +8,7 @@ import ChatBar from './components/ChatBar'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
+import Group from './pages/Group'
 
 function App() {
   const { user } = useAuthContext()
@@ -33,6 +34,10 @@ function App() {
             <Route 
               path="/profile" 
               element={user ? <Profile /> : <Navigate to="/profile" />} 
+            />
+            <Route 
+              path="/group" 
+              element={user ? <Group /> : <Navigate to="/group" />} 
             />
           </Routes>
         </div>
