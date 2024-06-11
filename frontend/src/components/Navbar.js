@@ -33,6 +33,9 @@ const Navbar = () => {
         <Link to="/">
           <h1>WorkSync</h1>
         </Link>
+        <Link to="/group">
+          <h2>Groups</h2>
+        </Link>
         <nav>
         {user && (
           <div>
