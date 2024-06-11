@@ -38,20 +38,23 @@ const MessageInput = () => {
     }
     if (response.ok) {
       setError(null)
-      chatContext.dispatch({type: 'UPDATE_MESSAGES', payload: json})
+      if (json.channel) {
+        chatContext.dispatch({type: 'UPDATE_CHANNEL', payload: json.channel})
+      }
+      chatContext.dispatch({type: 'UPDATE_MESSAGES', payload: json.message})
     }
   }
   
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="chat-message-form">
         <input
         type="text"
         onChange={(e) => setMessage(e.target.value)}
         value={message}
         className="chat-message-input"
         />
-        <button className="material-symbols-outlined search">send</button>
+        <button className="material-symbols-outlined send">send</button>
       </form>
     </div>
   )

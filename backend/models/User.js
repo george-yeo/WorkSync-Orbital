@@ -118,4 +118,14 @@ userSchema.methods.getSafeData = function() {
   }
 }
 
+// add recent channel method
+userSchema.methods.addRecentChatChannel = function(channelId) {
+  const index = this.recentChatChannels.indexOf(channelId);
+  if (index > -1) {
+    this.recentChatChannels.splice(index, 1)
+  }
+  this.recentChatChannels.push(channelId)
+  this.save()
+}
+
 module.exports = mongoose.model('User', userSchema)

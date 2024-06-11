@@ -6,18 +6,21 @@ import { TaskContextProvider } from './context/TaskContext'
 import { SectionContextProvider } from './context/SectionContext'
 import { ChatContextProvider } from './context/ChatContext'
 import { AuthContextProvider } from './context/AuthContext'
+import { SocketContextProvider } from './context/SocketContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthContextProvider>
-      <ChatContextProvider>
-        <SectionContextProvider>
-          <TaskContextProvider>
-            <App />
-          </TaskContextProvider>
-        </SectionContextProvider>
-      </ChatContextProvider>
+      <SocketContextProvider>
+        <ChatContextProvider>
+          <SectionContextProvider>
+            <TaskContextProvider>
+              <App />
+            </TaskContextProvider>
+          </SectionContextProvider>
+        </ChatContextProvider>
+      </SocketContextProvider>
     </AuthContextProvider>
   </React.StrictMode>
 );

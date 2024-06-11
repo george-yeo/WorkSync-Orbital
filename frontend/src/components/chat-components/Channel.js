@@ -11,7 +11,10 @@ const Channel = ({ channel, selectChannel }) => {
     return (
       <li className="chat-channel" onClick={handleClick}>
         <span className="picture">
-            <img src={channel.pic} alt=""/>
+            <img
+              src= {`data:image/jpeg;base64, ${channel.pic}`}  
+              alt="Channel Picture" 
+            />
         </span>
         <span className="content">
             <h4>{channel.name}</h4>

@@ -2,12 +2,15 @@ const ChatChannel = require('../models/ChatChannel.js')
 const ChatMessage = require('../models/ChatMessage.js')
 const User = require('../models/User.js')
 const mongoose = require('mongoose')
+const { io, getSocketId } = require('../socket/socket.js')
 
 // get channel messages
 const getChannelMessages = async (req, res) => {
     try {
         const { id: channelId } = req.params
         const senderId = req.user._id
+        
+        if (!mongoose.Types.ObjectId.isValid(channelId)) return res.status(200).json([])
         
         const chatChannel = await ChatChannel.findOne({
             _id: channelId,
@@ -32,7 +35,15 @@ const getRecentChannels = async (req, res) => {
     
     if (!chatChannels) return res.status(404).json({error: "Chat channels not found"})
 
-    res.status(200).json(chatChannels)
+    let channelInfo = []
+    await Promise.all(await chatChannels.map(channel => {
+        return new Promise(async (resolve, reject) => {
+            channelInfo.push(await channel.getChannelInfo(req.user._id))
+            resolve()
+        })
+    }))
+
+    res.status(200).json(channelInfo)
 }
 
 // find channels by username
@@ -56,7 +67,7 @@ const findChannelsByUsername = async (req, res) => {
         if (!channel) {
             channel = ChatChannel.createDirectChannelInfo(user, receiver)
         } else {
-            channel = await channel.getChannelInfo(receiver)
+            channel = await channel.getChannelInfo(senderId)
         }
         chatChannels.push(channel)
     }
@@ -74,7 +85,8 @@ const sendDirectMessage = async (req, res) => {
         const receiver = await User.findById(receiverId)
 
         if (!receiver) return res.status(404).json({ error: "User not found" })
-
+        
+        let isNewChannel = false
         let chatChannel = await ChatChannel.findOne({
             participants: { $all: [senderId, receiver._id] },
             type: "direct"
@@ -85,6 +97,7 @@ const sendDirectMessage = async (req, res) => {
                 participants: [senderId, receiver._id],
                 type: "direct"
             })
+            isNewChannel = true
         }
 
         const newMessage = new ChatMessage({
@@ -97,10 +110,42 @@ const sendDirectMessage = async (req, res) => {
             chatChannel.messages.push(newMessage._id)
         }
 
-        await chatChannel.save()
-        await newMessage.save()
+        // update recent chats
+        await Promise.all(await chatChannel.participants.map(async p => {
+            return new Promise(async (resolve, reject) => {
+                const user = await User.findById(p._id)
+                user.addRecentChatChannel(chatChannel._id)
+                resolve()
+            })
+        }))
         
-        res.status(201).json(newMessage)
+        // save all in parallel
+        await Promise.all([chatChannel.save(), newMessage.save()])
+        
+        // update in realtime using socket
+        chatChannel.participants.forEach(async p => {
+            if (!p.equals(senderId)) {
+                const socketId = getSocketId(p._id)
+                if (socketId) {
+                    if (isNewChannel) {
+                        io.to(socketId).emit("newChannel", await chatChannel.getChannelInfo(p._id))
+                    }
+                    io.to(socketId).emit("newMessage", newMessage)
+                }
+            }
+        })
+        
+        if (isNewChannel) {
+            res.status(200).json({
+                channel: await chatChannel.getChannelInfo(senderId),
+                message: newMessage
+            })
+        } else {
+            res.status(200).json({
+                message: newMessage
+            })
+        }
+        
     } catch (error) {
         console.log("Error in sendDirectMessage controller: ", error.message)
         res.status(500).json({ error: "Internal server error" })

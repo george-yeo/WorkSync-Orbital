@@ -34,7 +34,7 @@ const chatChannelSchema = new Schema({
 }, { timestamps: true })
 
 // get safe channel info method, removing messages
-chatChannelSchema.methods.getChannelInfo = async function(receiver) {
+chatChannelSchema.methods.getChannelInfo = async function(senderId) {
     let info = (({ messages, ...object }) => object)((await ChatChannel.populate(this, {path: "participants"}))._doc)
     
     info.participants = info.participants.map(user => user.getSafeData())
@@ -45,8 +45,9 @@ chatChannelSchema.methods.getChannelInfo = async function(receiver) {
         info.lastMessage = ''
      }
 
-    // if direct message and receiver is provided
-    if (info.type === "direct" && receiver) {
+    // if direct message and sender is provided
+    if (info.type === "direct" && senderId) {
+        const receiver = this.participants.find(p => !p.equals(senderId))
         info.pic = receiver.profilePic
         info.name = receiver.username
     }

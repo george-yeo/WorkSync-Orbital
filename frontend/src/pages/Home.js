@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useTaskContext } from "../hooks/useTaskContext"
 import { useSectionContext } from "../hooks/useSectionContext"
 import { useAuthContext } from "../hooks/useAuthContext"
+import { useSocketContext } from "../hooks/useSocketContext"
 
 // components
 import Section from "../components/Section"
@@ -11,7 +12,7 @@ const Home = () => {
   const taskContext = useTaskContext()
   const sectionContext = useSectionContext()
 
-  const {user} = useAuthContext()
+  const { user } = useAuthContext()
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('asc');
 

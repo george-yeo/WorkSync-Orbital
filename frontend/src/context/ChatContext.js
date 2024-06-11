@@ -12,18 +12,39 @@ export const chatReducer = (state, action) => {
         case 'SET_CHANNELS':
             return {
                 ...state,
-                channels: action.payload
+                channels: action.payload,
+                isRecent: action.isRecent
+            }
+        case 'UPDATE_CHANNEL':
+            var updated = [...state.channels]
+            let index = state.channels.findIndex((channel) => channel._id === action.payload._id);
+            if (index == -1 && action.payload.type == "direct") {
+                index = state.channels.findIndex((channel) => channel.name === action.payload.name);
+            }
+            if (index > -1) {
+                updated[index] = action.payload
+            } else {
+                updated.push(action.payload)
+            }
+            return {
+                ...state,
+                channels: updated,
             }
         case 'SET_MESSAGES':
             return {
                 ...state,
-                messages: action.payload
+                messages: action.payload,
+                newMessageUpdate: false,
             }
         case 'UPDATE_MESSAGES':
-
+            var updated = [...state.channels]
+            const i = state.channels.findIndex((channel) => channel._id === action.payload.channelId);
+            updated[i].lastMessage = action.payload.message
             return {
                 ...state,
-                messages: [action.payload, ...state.messages]
+                channels: updated,
+                messages: [...state.messages, action.payload],
+                newMessageUpdate: true,
             }
         default:
             return state
@@ -33,6 +54,8 @@ export const chatReducer = (state, action) => {
 export const ChatContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(chatReducer, {
         directTarget: '',
+        newMessageUpdate: false,
+        isRecent: true,
         channels: [],
         messages: [],
     })

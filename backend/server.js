@@ -8,7 +8,7 @@ const userRoutes = require('./routes/user')
 const chatRoutes = require('./routes/chat')
 
 // express app
-const app = express()
+const { app, server }  = require("./socket/socket.js")
 
 // middleware
 app.use(express.json())
@@ -37,7 +37,7 @@ app.use('/api/user', userRoutes)
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     // listen for requests
-    app.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT, () => {
       console.log('connected to db & listening on port', process.env.PORT)
     })
   })

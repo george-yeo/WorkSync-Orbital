@@ -16,11 +16,12 @@ const Channel = () => {
         return
     }
 
+    let api = '/api/chats/search-user/' + keyword
     if (!keyword) {
-      return
+      api = '/api/chats/recent/'
     }
 
-    const response = await fetch('/api/chats/search-user/' + keyword, {
+    const response = await fetch(api, {
       headers: {'Authorization': `Bearer ${user.token}`},
     })
 
@@ -31,7 +32,7 @@ const Channel = () => {
     }
     if (response.ok) {
         setError(null)
-        chatContext.dispatch({type: 'SET_CHANNELS', payload: json})
+        chatContext.dispatch({type: 'SET_CHANNELS', payload: json, isRecent: !keyword})
     }
   }
 

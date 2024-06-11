@@ -5,28 +5,30 @@ import { useChatContext } from '../hooks/useChatContext'
 // components
 import Search from './chat-components/Search';
 import Channels from './chat-components/Channels';
+import ChannelHeader from './chat-components/ChannelHeader';
 import Messages from './chat-components/Messages';
 import MessageInput from './chat-components/MessageInput'
+import NoChatSelected from './chat-components/NoChatSelected'
 
 const ChatBar = () => {
   const { user } = useAuthContext()
   const chatContext = useChatContext()
 
   const [channel, setChannel] = useState(null)
-  const [message, setMessage] = useState('')
   const [error, setError] = useState(null)
 
-  const selectChannel = async (channel) => {
-    if (channel.type === "direct") {
-      for (const i in channel.participants) {
-        const receiver = channel.participants[i]
+  const selectChannel = async (newChannel) => {
+    if (newChannel == channel) return
+    if (newChannel.type === "direct") {
+      for (const i in newChannel.participants) {
+        const receiver = newChannel.participants[i]
         if (receiver._id !== user._id) {
           chatContext.dispatch({type: 'SET_DIRECT', payload: receiver._id})
         }
       }
     }
-    setChannel(channel._id)
-    fetchSelectedChannel(channel._id)
+    setChannel(newChannel)
+    fetchSelectedChannel(newChannel._id)
   }
 
   const fetchSelectedChannel = async (channelId) => {
@@ -51,10 +53,10 @@ const ChatBar = () => {
       })
       
       const json = await response.json()
-
+      
       if (response.ok) {
         setError(null)
-        chatContext.dispatch({type: 'SET_CHANNELS', payload: json})
+        chatContext.dispatch({type: 'SET_CHANNELS', payload: json, isRecent: true})
       } else {
         setError(json.error)
       }
@@ -62,9 +64,6 @@ const ChatBar = () => {
 
     if (user) {
       fetchChannels()
-      if (channel) {
-        fetchSelectedChannel(channel)
-      }
     }
   }, [user])
 
@@ -79,10 +78,12 @@ const ChatBar = () => {
             <Channels channels={chatContext.channels} selectChannel={selectChannel}/>
           </div>
           <div className='chat-chat'>
-            <div className='messages'>
-              <Messages messages={chatContext.messages} />
-            </div>
-            <MessageInput />
+            {channel && <ChannelHeader channel={channel} />}
+            {channel && <div className='messages'>
+              <Messages channel={channel} messages={chatContext.messages} />
+            </div>}
+            {channel && <MessageInput />}
+            {!channel && <NoChatSelected />}
           </div>
         </div>
     </div>
