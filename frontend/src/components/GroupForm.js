@@ -18,7 +18,7 @@ const GroupForm = ({ group }) => {
 
         const group = {name}
 
-        console.log(user._id)
+        console.log(name)
 
         const response = await fetch('/api/group/create', {
             method: 'POST',
@@ -33,12 +33,6 @@ const GroupForm = ({ group }) => {
 
         if (!response.ok) {
             setError(json.error)
-            setEmptyFields(json.emptyFields)
-        }
-        if (response.ok) {
-            setName('')
-            setError(null)
-            setEmptyFields([])
         }
     }
 

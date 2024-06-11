@@ -10,7 +10,7 @@ const groupSchema = new Schema ({
         unique: true
     },
     createdBy: {
-        type: String,
+        type: Schema.Types.ObjectId,
         required: true
     },
     pending: {
@@ -28,8 +28,13 @@ groupSchema.statics.createGroup = async function (name, createdBy) {
     if (!validator.isLength(name, { min: 4, max: 20 })) {
         throw Error('Group name must be 4-20 characters long')
     }
+    
+    const exist = await this.findOne({ name })
+    if (exist) {
+        throw Error('Group name already in use')
+    }
 
-    const group = await this.create(name, createdBy)
+    const group = await this.create({name, createdBy})
     
     return group
 }
