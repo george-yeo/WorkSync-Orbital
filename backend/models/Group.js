@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const validator = require('validator')
 
 const Schema = mongoose.Schema
 
@@ -9,7 +10,7 @@ const groupSchema = new Schema ({
         unique: true
     },
     createdBy: {
-        type: Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     pending: {
@@ -33,4 +34,4 @@ groupSchema.statics.createGroup = async function (name, createdBy) {
     return group
 }
 
-module.exports = mongoose.Model('Group', groupSchema)
+module.exports = mongoose.model('Group', groupSchema)

@@ -3,7 +3,6 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import EditProfileBtn from '../components/EditProfileBtn';
 import PasswordBtn from '../components/PasswordBtn';
 import ProfilePic from '../components/ProfilePic';
-import DP from '../DP.jpg'
 
 const Profile = () => {
     const { user } = useAuthContext()
