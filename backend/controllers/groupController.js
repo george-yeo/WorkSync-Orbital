@@ -6,8 +6,9 @@ const mongoose = require('mongoose')
 const createGroup = async (req, res) => {
     const {name, createdBy} = req.body
     try {
-        const group = await Group.createGroup(name, createdBy)
-        res.status(200).json(name, createdBy)
+        const createdById = new mongoose.Types.ObjectId(createdBy)
+        const group = await Group.createGroup(name, createdById)
+        res.status(200).json(group)
     } catch(error) {
         res.status(400).json({error: error.message})
     }
