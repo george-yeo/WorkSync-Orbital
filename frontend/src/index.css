@@ -280,6 +280,7 @@ form.signup ul {
 .chat-channels ul {
   padding-left: 0px;
   padding-top: 0;
+  margin: 0;
   list-style-type: none;
   height: 70%;
   max-height: 70%;
@@ -303,12 +304,17 @@ form.signup ul {
 }
 .chat-channel .picture {
   width: 20%;
-  padding-bottom:20%;
-  height: 0;
+  height: 100%;
   float: left;
 }
+.chat-channel .picture img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
 .chat-channel .content {
-  width: 80%;
+  width: 77.5%;
   height: 100%;
   left: 30%;
   float: right;
@@ -351,14 +357,90 @@ form.signup ul {
   top: 0;
   box-sizing: border-box;
 }
+
+.channel-header h4,h5 {
+  margin: 0;
+}
+.chat-chat .channel-header{
+  height: 10%;
+  position: relative;
+  display: flow-root;
+  box-sizing: content-box;
+  margin: 5px auto;
+}
+.chat-chat .channel-header .picture{
+  width: 12.5%;
+  height: 100%;
+  float: left;
+}
+.chat-chat .channel-header .picture img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+.chat-chat .channel-header .content {
+  width: 85%;
+  height: 100%;
+  float: right;
+}
+
+.chat-chat .none-selected {
+  text-align: center;
+  margin-top: 50%; margin-left: 50%; transform: translate(-50%, -50%)
+}
+
 .chat-chat .messages {
-  height: 80%;
+  height: 67.5%;
   max-height: 80%;
   overflow-y: auto;
 }
 .chat-chat ul {
   padding-left: 5px;
   list-style-type: none;
+}
+.chat-chat .chat-message {
+  position: relative;
+  display: flow-root;
+  box-sizing: content-box;
+  margin: 5px auto;
+}
+.chat-chat .chat-message .picture {
+  width: 10%;
+  height: 100%;
+}
+.chat-chat .chat-message .picture img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+.chat-chat .chat-message .content {
+  background: #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  width: 84%;
+  height: 100%;
+}
+.chat-chat .chat-message .left {
+  float: left;
+}
+.chat-chat .chat-message .right {
+  float: right;
+}
+
+.chat-message-form {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin: 5px;
+}
+.chat-message-form input {
+  width: 100%;
+}
+.chat-message-form .send {
+  margin: 10px;
+  height: 100%;
 }
 
 /* Styles for the popup form */
