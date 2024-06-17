@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useAuthContext } from '../hooks/useAuthContext'
 
-const GroupForm = ({ group }) => {
+const GroupForm = ({ onGroupCreated  }) => {
     const { user } = useAuthContext()
 
     const [name, setName] = useState('')
@@ -16,23 +16,35 @@ const GroupForm = ({ group }) => {
             return
         }
 
-        const group = {name}
+        const group = { 
+            name, 
+            createdBy: user.username,
+            createdByID: user._id
+        }
 
-        console.log(name)
+        console.log(user._id)
 
         const response = await fetch('/api/group/create', {
             method: 'POST',
-            body: JSON.stringify(group, user._id),
+            body: JSON.stringify(group),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${user.token}`
             }
         })
 
+        console.log(JSON.stringify(group))
+
         const json = await response.json()
 
         if (!response.ok) {
             setError(json.error)
+        }
+        if (response.ok) {
+            setError(null)
+            setEmptyFields([])
+            setName('')
+            onGroupCreated(json);
         }
     }
 

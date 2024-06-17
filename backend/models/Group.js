@@ -9,19 +9,25 @@ const groupSchema = new Schema ({
         required: true,
         unique: true
     },
-    createdBy: {
+    createdByID: {
         type: Schema.Types.ObjectId,
         required: true
     },
-    pending: {
+    pendingID: {
         type: [Schema.Types.ObjectId]
     },
-    members: {
+    pending:{
+        type: [String]
+    },
+    membersID: {
         type: [Schema.Types.ObjectId]
+    },
+    members:{
+        type: [String]
     }
 })
 
-groupSchema.statics.createGroup = async function (name, createdBy) {
+groupSchema.statics.createGroup = async function (name, createdBy, createdByID) {
     if (!validator.isAlphanumeric(name)) {
         throw Error('Group name can only contain contains only letters and numbers (a-z A-Z 0-9)')
     }
@@ -34,7 +40,7 @@ groupSchema.statics.createGroup = async function (name, createdBy) {
         throw Error('Group name already in use')
     }
 
-    const group = await this.create({name, createdBy})
+    const group = await this.create({name, createdByID, membersID: createdByID, members: createdBy})
     
     return group
 }
