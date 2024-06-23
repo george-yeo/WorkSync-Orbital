@@ -79,16 +79,16 @@ const Group = () => {
     };
 
     return (
-        <div className="groups">
-            <GroupForm onGroupCreated={(newGroup) => dispatch({ type: 'CREATE_GROUP', payload: newGroup })} />
+        <div className="groups">   
             <div className="groups-list">
+                <GroupForm onGroupCreated={(newGroup) => dispatch({ type: 'CREATE_GROUP', payload: newGroup })} />
                 {groups ? (
                     groups.length > 0 ? (
                         groups.map((group) => (
                             <div className="group-item">
-                                <h3>{group.name}</h3>
-                                <h4>Members: {group.members.join(", ")}</h4>
-                                <h4>Pending: {group.pending.join(", ")}</h4>
+                                <h2>{group.name}</h2>
+                                <p><b>Members:</b> {group.members.join(", ")}</p>
+                                <p><b>Pending:</b> {group.pending.join(", ")}</p>
                                 <button onClick={() => handleAddUser(group._id)}>Add User</button>
                             </div>
                         ))
@@ -99,7 +99,9 @@ const Group = () => {
                     <p>Loading groups...</p>
                 )}
             </div>
-            <Request/>
+            <div className="request-list">
+                <Request/>
+            </div>
         </div>
     );
 };

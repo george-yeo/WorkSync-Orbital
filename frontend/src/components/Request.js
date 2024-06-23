@@ -85,10 +85,10 @@ const Request = () => {
             {joinRequests.length > 0 ? (
                 joinRequests.map(request => (
                     <div key={request._id} className="request-item">
-                        <p>Group: {request.name}</p>
-                        <p>Members: {request.members}</p>
-                        <button onClick={() => handleApproveRequest(request._id)}>Approve</button>
-                        <button onClick={() => handleRejectRequest(request._id)}>Reject</button>
+                        <p><b>Group:</b> {request.name}</p>
+                        <p><b>Members:</b> {request.members.join(", ")}</p>
+                        <button className="approve-btn" onClick={() => handleApproveRequest(request._id)}>Approve</button>
+                        <button className="reject-btn" onClick={() => handleRejectRequest(request._id)}>Reject</button>
                     </div>
                 ))
             ) : (
