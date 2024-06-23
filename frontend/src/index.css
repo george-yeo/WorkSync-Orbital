@@ -662,3 +662,50 @@ form.signup ul {
 .profile-pic:hover img {
   filter: grayscale(75%)
 }
+
+.groups {
+  padding: 20px;
+}
+
+.groups-list {
+  width: 70%;
+  float: left;
+  padding: 20px;
+}
+
+.request-list {
+  width: 20%;
+  float: right;
+  padding: 20px;
+}
+
+.groups-list button {
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.approve-btn {
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reject-btn {
+  background: var(--error);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 50px;
+}
