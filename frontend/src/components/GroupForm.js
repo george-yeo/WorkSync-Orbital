@@ -18,8 +18,8 @@ const GroupForm = ({ onGroupCreated  }) => {
 
         const group = { 
             name, 
-            createdBy: user.username,
-            createdByID: user._id
+            // createdBy: user.username,
+            // createdByID: user._id
         }
 
         console.log(user._id)

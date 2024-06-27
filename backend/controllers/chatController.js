@@ -39,7 +39,9 @@ const getRecentChannels = async (req, res) => {
     let channelInfo = []
     await Promise.all(await chatChannels.map(channel => {
         return new Promise(async (resolve, reject) => {
-            channelInfo.push(await channel.getChannelInfo(req.user._id))
+            if (channel.participants.includes(req.user._id)) {
+                channelInfo.push(await channel.getChannelInfo(req.user._id))
+            }
             resolve()
         })
     }))
@@ -169,10 +171,63 @@ const sendDirectMessage = async (req, res) => {
     }
 }
 
+// send group message
+const sendGroupMessage = async (req, res) => {
+    try {
+        const { id: channelID } = req.params
+        const { message } = req.body
+        const senderId = req.user._id
+
+        const chatChannel = await ChatChannel.findById(channelID)
+        
+        if (!chatChannel || !chatChannel.participants.includes(senderId)) return res.status(404).json({ error: "Channel not found" })
+
+        const newMessage = new ChatMessage({
+            senderId: senderId,
+            channelId: chatChannel._id,
+            message: message.trim()
+        })
+
+        if (newMessage) {
+            chatChannel.messages.push(newMessage._id)
+        }
+
+        // update recent chats
+        await Promise.all(await chatChannel.participants.map(async p => {
+            return new Promise(async (resolve, reject) => {
+                const user = await User.findById(p._id)
+                user.addRecentChatChannel(chatChannel._id)
+                resolve()
+            })
+        }))
+        
+        // save all in parallel
+        await Promise.all([chatChannel.save(), newMessage.save()])
+        
+        // update in realtime using socket
+        chatChannel.participants.forEach(async p => {
+            if (!p.equals(senderId)) {
+                const socketId = getSocketId(p._id)
+                if (socketId) {
+                    io.to(socketId).emit("newMessage", newMessage)
+                }
+            }
+        })
+        
+        res.status(200).json({
+            message: newMessage
+        })
+    } catch (error) {
+        console.log("Error in sendGroupMessage controller: ", error.message)
+        res.status(500).json({ error: "Internal server error" })
+    }
+}
+
 // export module
 module.exports = {
     getChannelMessages,
     sendDirectMessage,
+    sendGroupMessage,
     findChannelsByUsername,
     getRecentChannels,
 }

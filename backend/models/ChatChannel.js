@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const ChatMessage = require('./ChatMessage')
+const Group = require('./Group')
 
 const Schema = mongoose.Schema
 
@@ -24,13 +25,17 @@ const chatChannelSchema = new Schema({
         enum: ["group", "direct"],
         required: true
     },
-    pic: {
-        type: "String",
-        default: ''
-    },
-    name: {
-        type: "String",
-    },
+    // pic: {
+    //     type: "String",
+    //     default: ''
+    // },
+    // name: {
+    //     type: "String",
+    // },
+    // groupID: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Group",
+    // }
 }, { timestamps: true })
 
 // get safe channel info method, removing messages
@@ -50,6 +55,10 @@ chatChannelSchema.methods.getChannelInfo = async function(senderId) {
         const receiver = this.participants.find(p => !p.equals(senderId))
         info.pic = receiver.profilePic
         info.name = receiver.username
+    } else if (info.type == "group") {
+        const group = await Group.findOne({ chatChannelID: this._id })
+        info.pic = group.groupPic
+        info.name = group.name
     }
 
     return info
@@ -64,6 +73,21 @@ chatChannelSchema.statics.createDirectChannelInfo = function(sender, receiver) {
         name: receiver.username,
         isNew: true
     }
+}
+
+chatChannelSchema.methods.addParticipant = function(user) {
+    if (this.type == "direct") throw Error("Cannot add participant to dm")
+    
+    this.participants.push(user._id)
+    user.addRecentChatChannel(this._id)
+    this.save()
+}
+
+chatChannelSchema.methods.removeParticipant = function(user) {
+    if (this.type == "direct") throw Error("Cannot remove participant from dm")
+    
+    this.participants = this.participants.filter((user_id) => user_id !== user._id)
+    this.save()
 }
 
 const ChatChannel = mongoose.model('ChatChannel', chatChannelSchema)

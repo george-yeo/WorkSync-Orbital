@@ -15,6 +15,7 @@ const ChatBar = () => {
   const chatContext = useChatContext()
 
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [isFetching, setIsFetching] = useState(true)
   const [channel, setChannel] = useState(null)
   const [error, setError] = useState(null)
 
@@ -27,12 +28,16 @@ const ChatBar = () => {
           chatContext.dispatch({type: 'SET_DIRECT', payload: receiver._id})
         }
       }
+    } else {
+      chatContext.dispatch({type: 'SET_DIRECT', payload: null})
     }
     setChannel(newChannel)
     fetchSelectedChannel(newChannel._id)
   }
 
   const fetchSelectedChannel = async (channelId) => {
+    setIsFetching(true)
+
     const response = await fetch(`/api/chats/` + channelId, {
       headers: {'Authorization': `Bearer ${user.token}`},
     })
@@ -45,10 +50,14 @@ const ChatBar = () => {
     } else {
       setError(json.error)
     }
+
+    setIsFetching(false)
   }
 
   useEffect(() => {
     const fetchChannels = async () => {
+      setIsFetching(true)
+
       const response = await fetch(`/api/chats/recent`, {
         headers: {'Authorization': `Bearer ${user.token}`},
       })
@@ -61,6 +70,8 @@ const ChatBar = () => {
       } else {
         setError(json.error)
       }
+
+      setIsFetching(false)
     }
 
     if (user) {
@@ -88,11 +99,12 @@ const ChatBar = () => {
           </div>
           <div className='chat-chat'>
             {channel && <ChannelHeader channel={channel} />}
+            {isFetching && <img className="loading" src="./grey-loading-circle.gif"/>}
             {channel && <div className='messages'>
-              <Messages channel={channel} messages={chatContext.messages} />
+              {!isFetching && <Messages channel={channel} messages={chatContext.messages} />}
             </div>}
-            {channel && <MessageInput />}
-            {!channel && <NoChatSelected />}
+            {channel && <MessageInput channel={channel} />}
+            {!isFetching && !channel && <NoChatSelected />}
           </div>
         </div>}
     </div>

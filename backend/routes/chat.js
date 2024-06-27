@@ -3,6 +3,7 @@ const {
     getRecentChannels,
     getChannelMessages,
     sendDirectMessage,
+    sendGroupMessage,
     findChannelsByUsername
 } = require('../controllers/chatController.js')
 const requireAuth = require('../middleware/requireAuth')
@@ -21,7 +22,10 @@ router.get('/:id', getChannelMessages)
 // GET channels by username
 router.get('/search-user/:user', findChannelsByUsername)
 
-// POST message
+// POST direct message
 router.post('/dm/:id', sendDirectMessage)
+
+// POST group message
+router.post('/gm/:id', sendGroupMessage)
 
 module.exports = router
