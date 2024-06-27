@@ -2,11 +2,12 @@ import { useState } from "react"
 import { useAuthContext } from '../../hooks/useAuthContext'
 import { useChatContext } from '../../hooks/useChatContext'
 
-const MessageInput = () => {
+const MessageInput = ({ channel }) => {
   const { user } = useAuthContext()
   const chatContext = useChatContext()
   const [message, setMessage] = useState('')
   const [error, setError] = useState(null)
+  const [isSending, setIsSending] = useState(false)
   
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -21,8 +22,16 @@ const MessageInput = () => {
     }
 
     setMessage('')
+    setIsSending(true)
+
+    let url
+    if (chatContext.directTarget == null) {
+      url = '/api/chats/gm/' + channel._id
+    } else {
+      url = '/api/chats/dm/' + chatContext.directTarget
+    }
     
-    const response = await fetch('/api/chats/dm/' + chatContext.directTarget, {
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify({ message }),
       headers: {
@@ -43,6 +52,8 @@ const MessageInput = () => {
       }
       chatContext.dispatch({type: 'UPDATE_MESSAGES', payload: json.message})
     }
+
+    setIsSending(false)
   }
   
   return (
@@ -54,7 +65,11 @@ const MessageInput = () => {
         value={message}
         className="chat-message-input"
         />
-        <button className="material-symbols-outlined send">send</button>
+        <button className="material-symbols-outlined send">
+          {!isSending ? "send" :
+            <img src="./loading-circle.gif"/>
+          }
+        </button>
       </form>
     </div>
   )

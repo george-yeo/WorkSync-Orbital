@@ -10,9 +10,9 @@ const Messages = ({ channel, messages }) => {
   const chatContext = useChatContext()
   useListenMessages(channel._id)
   
-  const messagesEndRef  = useRef(null)
+  const messagesEndRef = useRef(null)
   
-  const scrollToBottom = () => {
+  const scrollToBottom = async () => {
     messagesEndRef.current?.scrollIntoView({ behavior: chatContext.newMessageUpdate ? "smooth" : "instant" })
   }
   

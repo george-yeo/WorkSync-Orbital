@@ -5,11 +5,17 @@ import { useSocketContext } from '../../hooks/useSocketContext'
 const ChannelHeader = ({ channel }) => {
     const { user } = useAuthContext()
     const { onlineUsers } = useSocketContext()
-
-    let isOnline
+    
+    let underText = ""
 
     if (channel.type === "direct") {
-      isOnline = onlineUsers.includes(channel.participants.find(p => p._id != user._id)._id)
+      if (onlineUsers.includes(channel.participants.find(p => p._id != user._id)._id)) {
+        underText = "Online"
+      } else {
+        underText = "Offline"
+      }
+    } else if (channel.type == "group") {
+      underText = "Group chat"
     }
 
     const handleClick = async () => {
@@ -39,7 +45,7 @@ const ChannelHeader = ({ channel }) => {
         </span>
         <span className="content">
             <h4>{channel.name}</h4>
-            <div>{isOnline ? "Online" : "Offline"}</div>
+            <div>{underText}</div>
         </span>
       </div>
     )

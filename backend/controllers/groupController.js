@@ -1,13 +1,19 @@
 const Group = require('../models/Group')
+const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 
 //create new group
 const createGroup = async (req, res) => {
-    const {name, createdBy, createdByID} = req.body
+    const { name } = req.body
+    const createdByID = req.user._id
+
+    const user = await User.findById(createdByID)
+    if (!user) return res.status(404).json({ error: "User not found" })
+
     try {      
-        const group = await Group.createGroup(name, createdBy, createdByID)
-        res.status(200).json(group)
+        const group = await Group.createGroup(name, user)
+        res.status(200).json(await group.populate("members"))
     } catch(error) {
         res.status(400).json({error: error.message})
     }
@@ -87,6 +93,9 @@ const acceptGroup = async (req, res) => {
             { _id: id},
             { $push: { members: username}}
         )
+
+
+
         res.status(200).json(await Group.find({_id: id }))
     } catch (error) {
         res.status(400).json({error: error.message})
