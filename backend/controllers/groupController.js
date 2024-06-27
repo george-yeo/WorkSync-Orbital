@@ -116,8 +116,7 @@ const rejectGroup = async (req, res) => {
     try {
         await Group.updateOne(
             { _id: id},
-            { $pull: { pendingID: user_id}},
-            { $pull: { pending: username}}
+            { $pull: { pendingID: user_id}}
         )
         await Group.updateOne(
             { _id: id},
@@ -145,4 +144,52 @@ const getRequest = async (req, res) => {
     res.status(200).json(groups)
 }
 
-module.exports = {createGroup, addUser, acceptGroup, getAllGroups, getRequest, rejectGroup}
+//remove member
+const removeMember = async (req, res) => {
+    const { id } = req.params
+    const { username, user_id } = req.body
+
+    const group = await Group.findById(id)
+    if (!group) {
+        return res.status(404).json({ error: "Group not found." });
+    }
+
+    const isUserMember = group.membersID.some(member => member.equals(user_id))
+    if (!isUserMember) {
+        return res.status(400).json({ error: "User is not a member." });
+    }
+
+    const isUserLeader = group.createdByID.equals(user_id)
+    if (isUserLeader) {
+        return res.status(400).json({ error: "User is the leader." });
+    }
+
+    try {
+        await Group.updateOne(
+            { _id: id},
+            { $pull: { membersID: user_id}}
+        )
+        await Group.updateOne(
+            { _id: id},
+            { $pull: { members: username}}
+        )
+        res.status(200).json(await Group.find({_id: id }))
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+// delete a group
+const deleteGroup = async (req, res) => {
+    const { id } = req.params
+
+    const group = await Group.findOneAndDelete({_id: id})
+
+    if (!group) {
+        return res.status(404).json({ error: "Group not found." });
+    }
+
+    res.status(200).json(group)
+}
+
+module.exports = {createGroup, addUser, acceptGroup, getAllGroups, getRequest, rejectGroup, removeMember, deleteGroup}

@@ -52,6 +52,8 @@ const Request = () => {
         } catch (error) {
             console.error("Error approving request:", error);
             setActionStatus({ success: false, message: `Failed to approve request: ${error.message}` });
+        } finally {
+            window.location.reload()
         }
     }
 
@@ -74,6 +76,9 @@ const Request = () => {
         } catch (error) {
             console.error("Error approving request:", error);
             setActionStatus({ success: false, message: `Failed to approve request: ${error.message}` });
+        }
+        finally {
+            window.location.reload()
         }
     }
 
