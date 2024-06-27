@@ -9,6 +9,7 @@ const Channel = () => {
   const [error, setError] = useState(null)
 
   const handleSubmit = async (e) => {
+    console.log(e)
     e.preventDefault()
 
     if (!user) {
@@ -38,7 +39,7 @@ const Channel = () => {
 
   return (
     <div className="chat-search">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} onBlur={handleSubmit}>
         <input
             type="text"
             onChange={(e) => setKeyword(e.target.value)}

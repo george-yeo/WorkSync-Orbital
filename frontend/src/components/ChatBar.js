@@ -14,6 +14,7 @@ const ChatBar = () => {
   const { user } = useAuthContext()
   const chatContext = useChatContext()
 
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const [channel, setChannel] = useState(null)
   const [error, setError] = useState(null)
 
@@ -67,12 +68,20 @@ const ChatBar = () => {
     }
   }, [user])
 
+  if (!user) {
+    return (<div></div>)
+  }
+
+  const toggleChat = () => {
+    setIsChatOpen(!isChatOpen)
+  }
+
   return (
-    <div className="container chat">
-        <div className='chat-header'>
+    <div className={"container " + (isChatOpen ? "chat" : "chat-closed")}>
+        <div className='chat-header' onClick={toggleChat}>
           <h4>Chat</h4>
         </div>
-        <div className="chat-contents">
+        {isChatOpen && <div className="chat-contents">
           <div className='chat-channels'>
             <Search />
             <Channels channels={chatContext.channels} selectChannel={selectChannel}/>
@@ -85,7 +94,7 @@ const ChatBar = () => {
             {channel && <MessageInput />}
             {!channel && <NoChatSelected />}
           </div>
-        </div>
+        </div>}
     </div>
   )
 }

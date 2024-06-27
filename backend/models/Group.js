@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
+const ChatChannel = require('./ChatChannel')
 
 const Schema = mongoose.Schema
 
@@ -24,7 +25,11 @@ const groupSchema = new Schema ({
     },
     members:{
         type: [String]
-    }
+    },
+    chatChannelID: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
 })
 
 groupSchema.statics.createGroup = async function (name, createdBy, createdByID) {
@@ -40,9 +45,19 @@ groupSchema.statics.createGroup = async function (name, createdBy, createdByID) 
         throw Error('Group name already in use')
     }
 
-    const group = await this.create({name, createdByID, membersID: createdByID, members: createdBy})
+    const chatChannel = await ChatChannel.create({
+        participants: [createdByID],
+        type: "group",
+    })
+    console.log(chatChannel)
+    const group = await this.create({name, createdByID, membersID: createdByID, members: createdBy, chatChannelID: chatChannel._id})
     
     return group
 }
+
+// static find similar group names method
+groupSchema.statics.findGroupByName = async function(name) {
+    return this.find({ name: {"$regex": "^"+name, "$options": "i"} }).limit(8).exec()
+  }
 
 module.exports = mongoose.model('Group', groupSchema)
