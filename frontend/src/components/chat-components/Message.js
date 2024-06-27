@@ -24,7 +24,7 @@ const Message = ({ channel, message }) => {
       </span>
       <span className={"content " + (isSender ? "left" : "right")}>
           <div>{message.message}</div>
-          <h5>{date.charAt(0).toUpperCase() + date.slice(1)}</h5>
+          <div className="timestamp">{date.charAt(0).toUpperCase() + date.slice(1)}</div>
       </span>
     </li>
   )

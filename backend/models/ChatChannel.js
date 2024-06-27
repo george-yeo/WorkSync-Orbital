@@ -30,7 +30,7 @@ const chatChannelSchema = new Schema({
     },
     name: {
         type: "String",
-    }
+    },
 }, { timestamps: true })
 
 // get safe channel info method, removing messages

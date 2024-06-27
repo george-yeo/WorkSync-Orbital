@@ -1,6 +1,7 @@
 const ChatChannel = require('../models/ChatChannel.js')
 const ChatMessage = require('../models/ChatMessage.js')
 const User = require('../models/User.js')
+const Group = require('../models/Group.js')
 const mongoose = require('mongoose')
 const { io, getSocketId } = require('../socket/socket.js')
 
@@ -53,12 +54,28 @@ const findChannelsByUsername = async (req, res) => {
 
     const user = await User.findById(senderId)
     if (!user) return res.status(404).json({ error: "User not found" })
-    const receivers = await User.findUserByUsername(username.trim())
+    const dmReceivers = await User.findUserByUsername(username.trim())
+    const groupReceivers = await Group.findGroupByName(username.trim())
 
     let chatChannels = []
-    for (i in receivers) {
-        const receiver = receivers[i]
+    for (i in dmReceivers) {
+        const receiver = dmReceivers[i]
         if (receiver._id.equals(senderId)) continue
+
+        let channel = await ChatChannel.findOne({
+            participants: { $all: [senderId, receiver._id] },
+            type: "direct"
+        })
+        if (!channel) {
+            channel = ChatChannel.createDirectChannelInfo(user, receiver)
+        } else {
+            channel = await channel.getChannelInfo(senderId)
+        }
+        chatChannels.push(channel)
+    }
+
+    for (i in groupReceivers) {
+        const receiver = groupReceivers[i]
 
         let channel = await ChatChannel.findOne({
             participants: { $all: [senderId, receiver._id] },

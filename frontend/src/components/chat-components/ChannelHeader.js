@@ -5,6 +5,7 @@ import { useSocketContext } from '../../hooks/useSocketContext'
 const ChannelHeader = ({ channel }) => {
     const { user } = useAuthContext()
     const { onlineUsers } = useSocketContext()
+
     let isOnline
 
     if (channel.type === "direct") {
