@@ -6,7 +6,9 @@ const {
     acceptGroup,
     getAllGroups,
     getRequest,
-    rejectGroup
+    rejectGroup,
+    removeMember,
+    deleteGroup
 } = require('../controllers/groupController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -31,5 +33,11 @@ router.get('/',getAllGroups)
 
 //get request
 router.get('/request', getRequest)
+
+//remove member
+router.patch('/remove/:id', removeMember)
+
+//delete group
+router.delete('/delete/:id', deleteGroup)
 
 module.exports = router

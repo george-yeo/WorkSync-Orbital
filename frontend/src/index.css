@@ -679,7 +679,7 @@ form.signup ul {
   padding: 20px;
 }
 
-.groups-list button {
+.add-btn {
   background: var(--primary);
   border: 0;
   color: #fff;
@@ -687,6 +687,17 @@ form.signup ul {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
+}
+
+.delete-btn {
+  background: var(--error);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 50px;
 }
 
 .approve-btn {
@@ -708,4 +719,80 @@ form.signup ul {
   border-radius: 4px;
   cursor: pointer;
   margin-left: 50px;
+}
+
+.addUser-popup-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px; /* Set the width of the modal */
+  padding: 20px; /* Add some padding for better appearance */
+  background: white;
+  border: 1px solid #ccc; /* Optional: border style */
+  border-radius: 10px; /* Optional: rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: shadow for better appearance */
+}
+
+.addUser-popup-form button{
+  margin-left: 50px;
+}
+
+.removeUser-popup-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px; /* Set the width of the modal */
+  padding: 20px; /* Add some padding for better appearance */
+  background: white;
+  border: 1px solid #ccc; /* Optional: border style */
+  border-radius: 10px; /* Optional: rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: shadow for better appearance */
+}
+
+.removeUser-popup-form button{
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 60px;
+}
+
+.remove-btn {
+  background: var(--error);
+  border: 0;
+  color: #fff;
+  padding: 5px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.deleteGroup-popup-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px; /* Set the width of the modal */
+  padding: 20px; /* Add some padding for better appearance */
+  background: white;
+  border: 1px solid #ccc; /* Optional: border style */
+  border-radius: 10px; /* Optional: rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: shadow for better appearance */
+}
+
+.deleteGroup-popup-form button{
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 60px;
 }

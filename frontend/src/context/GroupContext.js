@@ -12,6 +12,10 @@ export const groupReducer = (state, action) => {
             return {
                 groups: [action.payload, ...state.groups]
             }
+        case 'DELETE_TASK':
+            return {
+                tasks: state.tasks.filter((task) => task._id !== action.payload._id)
+            }
         default:
             return state
     }
