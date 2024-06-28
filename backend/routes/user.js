@@ -25,7 +25,7 @@ router.post('/signup', signupUser)
 router.patch('/update/:id', requireAuth, updateUser)
 
 //change password
-router.patch('/changePassword/:id',requireAuth, changePassword)
+router.patch('/changePassword/:id', requireAuth, changePassword)
 
 // search username, needs auth
 router.get('/search/:user', searchUsername)
