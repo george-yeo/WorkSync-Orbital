@@ -9,7 +9,6 @@ const Channel = () => {
   const [error, setError] = useState(null)
 
   const handleSubmit = async (e) => {
-    console.log(e)
     e.preventDefault()
 
     if (!user) {

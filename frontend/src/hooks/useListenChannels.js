@@ -2,18 +2,18 @@ import { useState, useEffect } from 'react'
 import { useSocketContext } from './useSocketContext'
 import { useChatContext } from './useChatContext'
 
-export const useListenMessages = ( channelId ) => {
+export const useListenChannels = () => {
   const { socket } = useSocketContext()
   const chatContext = useChatContext()
 
   useEffect(() =>{
-    socket?.on("newMessage", (newMessage) => {
-      console.log(newMessage.channelId, channelId)
-      if (newMessage.channelId === channelId) chatContext.dispatch({type: 'UPDATE_MESSAGES', payload: newMessage})
+    socket?.on("newChannel", (newChannel) => {
+      console.log(newChannel)
+      chatContext.dispatch({type: 'UPDATE_CHANNEL', payload: newChannel})
     })
 
     return () => {
-      socket?.off("newMessage")
+      socket?.off("newChannel")
     }
   }, [socket, chatContext])
 }

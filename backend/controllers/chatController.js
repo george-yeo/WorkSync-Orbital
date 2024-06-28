@@ -38,6 +38,7 @@ const getRecentChannels = async (req, res) => {
 
     let channelInfo = []
     await Promise.all(await chatChannels.map(channel => {
+        console.log(channel)
         return new Promise(async (resolve, reject) => {
             if (channel.participants.includes(req.user._id)) {
                 channelInfo.push(await channel.getChannelInfo(req.user._id))
@@ -133,7 +134,7 @@ const sendDirectMessage = async (req, res) => {
         await Promise.all(await chatChannel.participants.map(async p => {
             return new Promise(async (resolve, reject) => {
                 const user = await User.findById(p._id)
-                user.addRecentChatChannel(chatChannel._id)
+                user.addRecentChatChannel(chatChannel)
                 resolve()
             })
         }))
@@ -146,9 +147,6 @@ const sendDirectMessage = async (req, res) => {
             if (!p.equals(senderId)) {
                 const socketId = getSocketId(p._id)
                 if (socketId) {
-                    if (isNewChannel) {
-                        io.to(socketId).emit("newChannel", await chatChannel.getChannelInfo(p._id))
-                    }
                     io.to(socketId).emit("newMessage", newMessage)
                 }
             }
@@ -196,7 +194,7 @@ const sendGroupMessage = async (req, res) => {
         await Promise.all(await chatChannel.participants.map(async p => {
             return new Promise(async (resolve, reject) => {
                 const user = await User.findById(p._id)
-                user.addRecentChatChannel(chatChannel._id)
+                user.addRecentChatChannel(chatChannel)
                 resolve()
             })
         }))

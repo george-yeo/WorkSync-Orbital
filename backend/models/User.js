@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
+const { io, getSocketId } = require('../socket/socket.js')
 
 const Schema = mongoose.Schema
 
@@ -119,13 +120,19 @@ userSchema.methods.getSafeData = function() {
 }
 
 // add recent channel method
-userSchema.methods.addRecentChatChannel = function(channelId) {
-  const index = this.recentChatChannels.indexOf(channelId);
+userSchema.methods.addRecentChatChannel = function(channel) {
+  const index = this.recentChatChannels.indexOf(channel._id);
   if (index > -1) {
     this.recentChatChannels.splice(index, 1)
   }
-  this.recentChatChannels.push(channelId)
+  this.recentChatChannels.push(channel._id)
   this.save()
+
+  const socketId = getSocketId(this._id)
+  if (socketId) {
+    const f = async () => io.to(socketId).emit("newChannel", await channel.getChannelInfo(this._id))
+    f()
+  }
 }
 
 module.exports = mongoose.model('User', userSchema)

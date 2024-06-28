@@ -191,11 +191,17 @@ const removeMember = async (req, res) => {
 // delete a group
 const deleteGroup = async (req, res) => {
     const { id } = req.params
+    const user_id = req.user._id
 
-    const group = await Group.findOneAndDelete({_id: id})
+    const group = await Group.findOneAndDelete({
+        _id: id,
+        createdByID: user_id,
+    })
 
     if (!group) {
         return res.status(404).json({ error: "Group not found." });
+    } else {
+        await Group.model('ChatChannel').findOneAndDelete({ _id: group.chatChannelID })
     }
 
     res.status(200).json(group)
