@@ -79,7 +79,7 @@ chatChannelSchema.methods.addParticipant = function(user) {
     if (this.type == "direct") throw Error("Cannot add participant to dm")
     
     this.participants.push(user._id)
-    user.addRecentChatChannel(this._id)
+    user.addRecentChatChannel(this)
     this.save()
 }
 

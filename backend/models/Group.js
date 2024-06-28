@@ -42,11 +42,6 @@ const groupSchema = new Schema ({
       }
 })
 
-// delete chat when group deleted middleware
-groupSchema.pre('deleteMany', function(next) {
-    this.model('ChatChannel').deleteOne({ _id: this.chatChannelID }, next);
-});
-
 groupSchema.statics.createGroup = async function (name, user) {
     if (!validator.isAlphanumeric(name)) {
         throw Error('Group name can only contain contains only letters and numbers (a-z A-Z 0-9)')

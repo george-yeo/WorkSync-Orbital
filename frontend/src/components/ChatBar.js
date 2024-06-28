@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useChatContext } from '../hooks/useChatContext'
+import { useListenChannels } from "../hooks/useListenChannels";
 
 // components
 import Search from './chat-components/Search';
@@ -11,6 +12,8 @@ import MessageInput from './chat-components/MessageInput'
 import NoChatSelected from './chat-components/NoChatSelected'
 
 const ChatBar = () => {
+  useListenChannels()
+  
   const { user } = useAuthContext()
   const chatContext = useChatContext()
 
