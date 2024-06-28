@@ -8,7 +8,6 @@ export const useListenMessages = ( channelId ) => {
 
   useEffect(() =>{
     socket?.on("newMessage", (newMessage) => {
-      console.log(newMessage.channelId, channelId)
       if (newMessage.channelId === channelId) chatContext.dispatch({type: 'UPDATE_MESSAGES', payload: newMessage})
     })
 

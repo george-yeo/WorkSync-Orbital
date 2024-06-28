@@ -64,6 +64,13 @@ chatChannelSchema.methods.getChannelInfo = async function(senderId) {
     return info
 }
 
+// get other user for dm
+chatChannelSchema.methods.getOtherUser = async function(userId) {
+    if (this.type != "direct") return null
+    
+    return this.participants.find(p => !p.equals(userId))
+}
+
 // create safe direct channel info if channel does not exist, removing messages
 chatChannelSchema.statics.createDirectChannelInfo = function(sender, receiver) {
     return {

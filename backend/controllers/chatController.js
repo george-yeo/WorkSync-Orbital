@@ -38,7 +38,6 @@ const getRecentChannels = async (req, res) => {
 
     let channelInfo = []
     await Promise.all(await chatChannels.map(channel => {
-        console.log(channel)
         return new Promise(async (resolve, reject) => {
             if (channel.participants.includes(req.user._id)) {
                 channelInfo.push(await channel.getChannelInfo(req.user._id))
@@ -129,18 +128,18 @@ const sendDirectMessage = async (req, res) => {
         if (newMessage) {
             chatChannel.messages.push(newMessage._id)
         }
+        
+        // save all in parallel
+        await Promise.all([chatChannel.save(), newMessage.save()])
 
-        // update recent chats
-        await Promise.all(await chatChannel.participants.map(async p => {
+         // update recent chats
+         await Promise.all(await chatChannel.participants.map(async p => {
             return new Promise(async (resolve, reject) => {
                 const user = await User.findById(p._id)
                 user.addRecentChatChannel(chatChannel)
                 resolve()
             })
         }))
-        
-        // save all in parallel
-        await Promise.all([chatChannel.save(), newMessage.save()])
         
         // update in realtime using socket
         chatChannel.participants.forEach(async p => {
@@ -189,6 +188,9 @@ const sendGroupMessage = async (req, res) => {
         if (newMessage) {
             chatChannel.messages.push(newMessage._id)
         }
+        
+        // save all in parallel
+        await Promise.all([chatChannel.save(), newMessage.save()])
 
         // update recent chats
         await Promise.all(await chatChannel.participants.map(async p => {
@@ -198,9 +200,6 @@ const sendGroupMessage = async (req, res) => {
                 resolve()
             })
         }))
-        
-        // save all in parallel
-        await Promise.all([chatChannel.save(), newMessage.save()])
         
         // update in realtime using socket
         chatChannel.participants.forEach(async p => {

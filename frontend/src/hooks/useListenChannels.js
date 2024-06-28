@@ -8,7 +8,6 @@ export const useListenChannels = () => {
 
   useEffect(() =>{
     socket?.on("newChannel", (newChannel) => {
-      console.log(newChannel)
       chatContext.dispatch({type: 'UPDATE_CHANNEL', payload: newChannel})
     })
 
