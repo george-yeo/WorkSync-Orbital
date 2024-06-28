@@ -17,9 +17,21 @@ export const chatReducer = (state, action) => {
             }
         case 'UPDATE_CHANNEL':
             var updated = [...state.channels]
-            let index = state.channels.findIndex((channel) => channel._id === action.payload._id);
+            let index = state.channels.findIndex((channel) => channel._id == action.payload._id);
             if (index == -1 && action.payload.type == "direct") {
-                index = state.channels.findIndex((channel) => channel.name === action.payload.name);
+                index = state.channels.findIndex(
+                    (channel) => {
+                        let found = 0
+                        channel.participants.forEach(p1 => {
+                            action.payload.participants.forEach(p2 => {
+                                if (p1._id == p2._id) {
+                                    found += 1
+                                }
+                            })
+                        })
+                        return found == 2
+                    }
+                );
             }
             if (index > -1) {
                 updated[index] = action.payload
@@ -37,12 +49,12 @@ export const chatReducer = (state, action) => {
                 newMessageUpdate: false,
             }
         case 'UPDATE_MESSAGES':
-            var updated = [...state.channels]
-            const i = state.channels.findIndex((channel) => channel._id === action.payload.channelId);
-            updated[i].lastMessage = action.payload.message
+            //var updated = [...state.channels]
+            //const i = state.channels.findIndex((channel) => channel._id === action.payload.channelId);
+            //updated[i].lastMessage = action.payload.message
             return {
                 ...state,
-                channels: updated,
+                //channels: updated,
                 messages: [...state.messages, action.payload],
                 newMessageUpdate: true,
             }

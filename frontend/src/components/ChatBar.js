@@ -13,7 +13,7 @@ import NoChatSelected from './chat-components/NoChatSelected'
 
 const ChatBar = () => {
   useListenChannels()
-  
+
   const { user } = useAuthContext()
   const chatContext = useChatContext()
 
@@ -106,7 +106,7 @@ const ChatBar = () => {
             {channel && <div className='messages'>
               {!isFetching && <Messages channel={channel} messages={chatContext.messages} />}
             </div>}
-            {channel && <MessageInput channel={channel} />}
+            {channel && <MessageInput channel={channel} setChannel={setChannel}/>}
             {!isFetching && !channel && <NoChatSelected />}
           </div>
         </div>}

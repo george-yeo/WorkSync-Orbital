@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useAuthContext } from '../../hooks/useAuthContext'
 import { useChatContext } from '../../hooks/useChatContext'
 
-const MessageInput = ({ channel }) => {
+const MessageInput = ({ channel, setChannel }) => {
   const { user } = useAuthContext()
   const chatContext = useChatContext()
   const [message, setMessage] = useState('')
@@ -49,6 +49,7 @@ const MessageInput = ({ channel }) => {
       setError(null)
       if (json.channel) {
         chatContext.dispatch({type: 'UPDATE_CHANNEL', payload: json.channel})
+        setChannel(json.channel)
       }
       chatContext.dispatch({type: 'UPDATE_MESSAGES', payload: json.message})
     }
