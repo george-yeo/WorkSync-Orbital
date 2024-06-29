@@ -29,6 +29,8 @@ const Group = () => {
 
                 const json = await response.json();
 
+                console.log(json)
+
                 if (response.ok) {
                     dispatch({ type: 'SET_GROUPS', payload: json });
                 } else {
@@ -48,6 +50,7 @@ const Group = () => {
     const handleAddUserClick = (groupId) => {
         setSelectedGroupId(groupId);
         setIsAddUserModalOpen(true);
+        setAddUserStatus(null);
     };
 
     // Handle Add User Form Submit
@@ -56,30 +59,34 @@ const Group = () => {
         if (!user || !usernameToAdd) return;
 
         try {
+            // Fetch the user ID based on the username to add
             const response = await fetch(`/api/user/search/` + usernameToAdd, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
             });
 
             const json = await response.json();
-            if (!response.ok) {
-                throw new Error("Error finding user: " + json.message);
+            if (json.length === 0) {
+                throw new Error("User not found");
             }
 
             const userIDToAdd = json[0]._id;
 
-            const responseAdd = await fetch(`api/group/add/` + selectedGroupId, {
+            // Add the user to the group
+            const responseAdd = await fetch(`/api/group/add/` + selectedGroupId, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
-                body: JSON.stringify({ username: usernameToAdd, user_id: userIDToAdd })
+                body: JSON.stringify({ user_id: userIDToAdd })
             });
 
             const updatedGroup = await responseAdd.json();
+            
             if (responseAdd.ok) {
-                dispatch({ type: 'SET_GROUPS', payload: groups.map(group => group._id === selectedGroupId ? updatedGroup : group) });
-                setAddUserStatus({ success: true, message: "User added successfully!" });
+                // Dispatch the updated group which should include both membersID and pendingID
+                dispatch({ type: 'UPDATE_GROUP', payload: updatedGroup });
+                setIsAddUserModalOpen(false);
             } else {
                 console.error("Error adding user to group:", updatedGroup.error);
                 setAddUserStatus({ success: false, message: updatedGroup.error });
@@ -87,11 +94,11 @@ const Group = () => {
         } catch (error) {
             console.error("Failed to add user to group:", error);
             setAddUserStatus({ success: false, message: error.message });
-        } finally {
-            setIsAddUserModalOpen(false);
+        } finally {          
             setUsernameToAdd('');
         }
     };
+
 
     // Handle Remove User Button Click
     const handleRemoveUserClick = (groupId, username) => {
@@ -117,8 +124,6 @@ const Group = () => {
 
             const userIDToRemove = json[0]._id;
 
-            console.log(userIDToRemove)
-
             // Remove the user from the group
             const responseRemove = await fetch(`api/group/remove/` + selectedGroupId, {
                 method: 'PATCH',
@@ -126,13 +131,15 @@ const Group = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
-                body: JSON.stringify({ username: usernameToRemove, user_id: userIDToRemove })
+                body: JSON.stringify({ user_id: userIDToRemove })
             });
 
             const updatedGroup = await responseRemove.json();
             if (responseRemove.ok) {
                 dispatch({ type: 'SET_GROUPS', payload: updatedGroup });
-                window.location.reload()
+                if (user._id === userIDToRemove){
+                    window.location.reload()
+                } 
             } else {
                 console.error("Error removing user from group:", updatedGroup.error);
             }
@@ -182,16 +189,24 @@ const Group = () => {
                         groups.map((group) => (
                             <div className="group-item" key={group._id}>
                                 <h2>{group.name}</h2>
-                                <p><b>Members:</b> {group.members.map((member) => (
+                                <p><b>Owner:</b> {group.createdByID.username}</p>
+                                <div><b>Member:</b> {group.membersID.map((member) => (
                                     <p><span key={member}>
-                                        {member} 
-                                        <button className="remove-btn" onClick={() => handleRemoveUserClick(group._id, member)}>Remove</button>
+                                        {member.username}
+                                        <button className="remove-btn" onClick={() => handleRemoveUserClick(group._id, member.username)}>Remove</button>
                                     </span></p>
                                 ))}
+                                </div>
+                                <p>
+                                    <b>Pending: </b> 
+                                    {group.pendingID.map(member => member.username).join(', ')}
+                                    {group.requestID.length > 0 && group.pendingID.length > 0 && ', '}
+                                    {group.requestID.map(member => member.username).join(', ')}
                                 </p>
-                                <p><b>Pending:</b> {group.pending.join(", ")}</p>
                                 <button className="add-btn" onClick={() => handleAddUserClick(group._id)}>Add User</button>
-                                <button className="delete-btn" onClick={() => handleDeleteGroupClick(group._id)}>Delete Group</button>
+                                {group.createdByID._id === user._id && (
+                                    <button className="delete-btn" onClick={() => handleDeleteGroupClick(group._id)}>Delete Group</button>
+                                )}
                             </div>
                         ))
                     ) : (
@@ -215,6 +230,7 @@ const Group = () => {
                 ariaHideApp={false}
             >
                 <h2>Add User to Group</h2>
+                <span className="close-btn" onClick={() => setIsAddUserModalOpen(false)}>&times;</span>
                 <form onSubmit={handleAddUserSubmit}>
                     <label>
                         Username:
@@ -227,9 +243,13 @@ const Group = () => {
                     </label>
                     <div className="modal-buttons">
                         <button type="submit">Add User</button>
-                        <button type="button" onClick={() => setIsAddUserModalOpen(false)}>Cancel</button>
                     </div>
                 </form>
+                {addUserStatus && (
+                    <div className={`status-message ${addUserStatus.success ? 'success' : 'error'}`}>
+                        {addUserStatus.message}
+                    </div>
+                )}
             </Modal>
 
             {/* Remove User Confirmation Modal */}
@@ -241,10 +261,10 @@ const Group = () => {
                 ariaHideApp={false}
             >
                 <h2>Confirm Remove Member</h2>
+                <span className="close-btn" onClick={() => setIsRemoveUserModalOpen(false)}>&times;</span>
                 <p>Are you sure you want to remove <strong>{usernameToRemove}</strong> from the group?</p>
                 <div className="modal-buttons">
                     <button onClick={handleRemoveUserSubmit}>Yes, Remove</button>
-                    <button onClick={() => setIsRemoveUserModalOpen(false)}>Cancel</button>
                 </div>
             </Modal>
 
@@ -257,10 +277,10 @@ const Group = () => {
                 ariaHideApp={false}
             >
                 <h2>Confirm Delete Group</h2>
+                <span className="close-btn" onClick={() => setIsDeleteGroupModalOpen(false)}>&times;</span>
                 <p>Are you sure you want to delete this group?</p>
                 <div className="modal-buttons">
                     <button onClick={handleDeleteGroupSubmit}>Yes, Delete</button>
-                    <button onClick={() => setIsDeleteGroupModalOpen(false)}>Cancel</button>
                 </div>
             </Modal>
         </div>

@@ -13,7 +13,7 @@ const createGroup = async (req, res) => {
 
     try {      
         const group = await Group.createGroup(name, user)
-        res.status(200).json(await group.populate("members"))
+        res.status(200).json(await group.populate('createdByID'))
     } catch(error) {
         res.status(400).json({error: error.message})
     }
@@ -22,7 +22,7 @@ const createGroup = async (req, res) => {
 //add user
 const addUser = async (req, res) => {
     const { id } = req.params
-    const { username, user_id } = req.body
+    const { user_id } = req.body
 
     const group = await Group.findById(id)
     if (!group) {
@@ -31,6 +31,11 @@ const addUser = async (req, res) => {
 
     const isUserPending = group.pendingID.some(pendingUser => pendingUser.equals(user_id));
     if (isUserPending) {
+        return res.status(400).json({ error: "User is already in the pending list." });
+    }
+
+    const isUserRequest = group.requestID.some(requestUser => requestUser.equals(user_id));
+    if (isUserRequest) {
         return res.status(400).json({ error: "User is already in the pending list." });
     }
 
@@ -44,11 +49,7 @@ const addUser = async (req, res) => {
             { _id: id},
             {$push: { pendingID: user_id}}
         )
-        await Group.updateOne(
-            { _id: id},
-            {$push: { pending: username}}
-        )
-        res.status(200).json(await Group.findById(id))
+        res.status(200).json(await Group.findById(id).populate('createdByID').populate('pendingID').populate('membersID').populate('requestID'))
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -57,55 +58,7 @@ const addUser = async (req, res) => {
 //accept invite
 const acceptGroup = async (req, res) => {
     const { id } = req.params
-    const { username, user_id } = req.body
-
-    const group = await Group.findById(id)
-    if (!group) {
-        return res.status(404).json({ error: "Group not found." });
-    }
-
-    const isUserPending = group.pendingID.some(pendingUser => pendingUser.equals(user_id));
-    if (!isUserPending) {
-        return res.status(400).json({ error: "User is not in the pending list." });
-    }
-
-    const isUserMember = group.membersID.some(member => member.equals(user_id))
-    if (isUserMember) {
-        return res.status(400).json({ error: "User is already a member." });
-    }
-
-    try {
-        await Group.updateOne(
-            { _id: id},
-            { $pull: { pendingID: user_id}},
-            { $pull: { pending: username}}
-        )
-        await Group.updateOne(
-            { _id: id},
-            { $pull: { pending: username}}
-        )
-        await Group.updateOne(
-            { _id: id},
-            { $push: { membersID: user_id}},
-            { $push: { members: username}}
-        )
-        await Group.updateOne(
-            { _id: id},
-            { $push: { members: username}}
-        )
-
-
-
-        res.status(200).json(await Group.find({_id: id }))
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
-}
-
-//reject group
-const rejectGroup = async (req, res) => {
-    const { id } = req.params
-    const { username, user_id } = req.body
+    const { user_id } = req.body
 
     const group = await Group.findById(id)
     if (!group) {
@@ -129,7 +82,41 @@ const rejectGroup = async (req, res) => {
         )
         await Group.updateOne(
             { _id: id},
-            { $pull: { pending: username}}
+            { $push: { membersID: user_id}}
+        )
+
+
+
+        res.status(200).json(await Group.find({_id: id }))
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+//reject group
+const rejectGroup = async (req, res) => {
+    const { id } = req.params
+    const { user_id } = req.body
+
+    const group = await Group.findById(id)
+    if (!group) {
+        return res.status(404).json({ error: "Group not found." });
+    }
+
+    const isUserPending = group.pendingID.some(pendingUser => pendingUser.equals(user_id));
+    if (!isUserPending) {
+        return res.status(400).json({ error: "User is not in the pending list." });
+    }
+
+    const isUserMember = group.membersID.some(member => member.equals(user_id))
+    if (isUserMember) {
+        return res.status(400).json({ error: "User is already a member." });
+    }
+
+    try {
+        await Group.updateOne(
+            { _id: id},
+            { $pull: { pendingID: user_id}}
         )
         res.status(200).json(await Group.find({_id: id }))
     } catch (error) {
@@ -141,22 +128,32 @@ const rejectGroup = async (req, res) => {
 const getAllGroups = async (req, res) => {
     const user_id = req.user._id
 
-    const groups = await Group.find({ membersID: {$all: user_id} }).sort({"createdAt": 1})
+    const groups = await Group.find({
+        $or: [
+          { membersID: { $all: [user_id] } },
+          { createdByID: user_id }
+        ]
+      })
+      .sort({ "createdAt": 1 })
+      .populate('createdByID')
+      .populate('pendingID')
+      .populate('membersID')
+      .populate('requestID')
 
     res.status(200).json(groups)
 }
 
-//get request
-const getRequest = async (req, res) => {
+//get invite
+const getInvite = async (req, res) => {
     const user_id = req.user._id
-    const groups = await Group.find({ pendingID: {$all: user_id} }).sort({"createdAt": 1})
+    const groups = await Group.find({ pendingID: {$all: user_id} }).sort({"createdAt": 1}).populate('createdByID').populate('pendingID').populate('membersID').populate('requestID')
     res.status(200).json(groups)
 }
 
 //remove member
 const removeMember = async (req, res) => {
     const { id } = req.params
-    const { username, user_id } = req.body
+    const { user_id } = req.body
 
     const group = await Group.findById(id)
     if (!group) {
@@ -168,9 +165,9 @@ const removeMember = async (req, res) => {
         return res.status(400).json({ error: "User is not a member." });
     }
 
-    const isUserLeader = group.createdByID.equals(user_id)
-    if (isUserLeader) {
-        return res.status(400).json({ error: "User is the leader." });
+    const isUserOwner = group.createdByID.equals(user_id)
+    if (isUserOwner) {
+        return res.status(400).json({ error: "User is the owner." });
     }
 
     try {
@@ -178,11 +175,7 @@ const removeMember = async (req, res) => {
             { _id: id},
             { $pull: { membersID: user_id}}
         )
-        await Group.updateOne(
-            { _id: id},
-            { $pull: { members: username}}
-        )
-        res.status(200).json(await Group.find({_id: id }))
+        res.status(200).json(await Group.find({_id: id }).populate('createdByID').populate('pendingID').populate('membersID').populate('requestID'))
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -207,4 +200,138 @@ const deleteGroup = async (req, res) => {
     res.status(200).json(group)
 }
 
-module.exports = {createGroup, addUser, acceptGroup, getAllGroups, getRequest, rejectGroup, removeMember, deleteGroup}
+//search group
+const searchGroup = async (req, res) => {
+    try {
+        const { group: name } = req.params
+
+        const group = await Group.findGroupByName(name)
+
+        res.status(200).json(group)
+    } catch (error) {
+        console.log("searchGroup error: ", error.message)
+        res.status(500).json({error: error.message})
+    }
+}
+
+const joinGroup = async (req, res) => {
+    const { id } = req.params
+    const { user_id } = req.body
+
+    const group = await Group.findById(id)
+    if (!group) {
+        return res.status(404).json({ error: "Group not found." });
+    }
+
+    const isUserPending = group.pendingID.some(pendingUser => pendingUser.equals(user_id));
+    if (isUserPending) {
+        return res.status(400).json({ error: "User is already in the pending list." });
+    }
+
+    const isUserRequest = group.requestID.some(requestUser => requestUser.equals(user_id));
+    if (isUserRequest) {
+        return res.status(400).json({ error: "User is already in the pending list." });
+    }
+
+    const isUserMember = group.membersID.some(member => member.equals(user_id))
+    if (isUserMember) {
+        return res.status(400).json({ error: "User is already a member." });
+    }
+
+    const isUserOwner = group.createdByID.equals(user_id)
+    if (isUserOwner) {
+        return res.status(400).json({ error: "User is the owner." });
+    }
+
+    try {
+        await Group.updateOne(
+            { _id: id},
+            {$push: { requestID: user_id}}
+        )
+        res.status(200).json(await Group.findById(id).populate('createdByID').populate('pendingID').populate('membersID').populate('requestID'))
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+const getRequest = async (req, res) => {
+    const user_id = req.user._id
+    const groups= await Group.find({
+        $and: [
+          { requestID: { $ne: [] } },
+          { createdByID: user_id }
+        ]
+      })
+      .sort({ "createdAt": 1 })
+      .populate('createdByID')
+      .populate('pendingID')
+      .populate('membersID')
+      .populate('requestID')
+    res.status(200).json(groups)
+}
+
+const acceptUser = async (req, res) => {
+    const { id } = req.params
+    const { user_id } = req.body
+
+    const group = await Group.findById(id)
+    if (!group) {
+        return res.status(404).json({ error: "Group not found." });
+    }
+
+    const isUserPending = group.requestID.some(pendingUser => pendingUser.equals(user_id));
+    if (!isUserPending) {
+        return res.status(400).json({ error: "User is not in the pending list." });
+    }
+
+    const isUserMember = group.membersID.some(member => member.equals(user_id))
+    if (isUserMember) {
+        return res.status(400).json({ error: "User is already a member." });
+    }
+
+    try {
+        await Group.updateOne(
+            { _id: id},
+            { $pull: { requestID: user_id}}
+        )
+        await Group.updateOne(
+            { _id: id},
+            { $push: { membersID: user_id}}
+        )
+        res.status(200).json(await Group.find({_id: id }))
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+const rejectUser = async (req, res) => {
+    const { id } = req.params
+    const { user_id } = req.body
+
+    const group = await Group.findById(id)
+    if (!group) {
+        return res.status(404).json({ error: "Group not found." });
+    }
+
+    const isUserPending = group.requestID.some(pendingUser => pendingUser.equals(user_id));
+    if (!isUserPending) {
+        return res.status(400).json({ error: "User is not in the pending list." });
+    }
+
+    const isUserMember = group.membersID.some(member => member.equals(user_id))
+    if (isUserMember) {
+        return res.status(400).json({ error: "User is already a member." });
+    }
+
+    try {
+        await Group.updateOne(
+            { _id: id},
+            { $pull: { requestID: user_id}}
+        )
+        res.status(200).json(await Group.find({_id: id }))
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+module.exports = {createGroup, addUser, acceptGroup, getAllGroups, getInvite, rejectGroup, removeMember, deleteGroup, searchGroup, joinGroup, getRequest, acceptUser, rejectUser}

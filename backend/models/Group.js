@@ -11,20 +11,21 @@ const groupSchema = new Schema ({
     },
     createdByID: {
         type: Schema.Types.ObjectId,
+        ref:'User',
         required: true
     },
-    pendingID: {
-        type: [Schema.Types.ObjectId]
-    },
-    pending:{
-        type: [String]
-    },
-    membersID: {
-        type: [Schema.Types.ObjectId]
-    },
-    members:{
-        type: [String]
-    },
+    pendingID: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    requestID: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    membersID: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     chatChannelID: {
         type: Schema.Types.ObjectId,
         required: true
@@ -64,9 +65,6 @@ groupSchema.statics.createGroup = async function (name, user) {
     const group = await this.create({
         name,
         createdByID: user._id,
-        createdBy: user.username,
-        membersID: user._id,
-        members: user.username,
         chatChannelID: chatChannel._id
     })
 

@@ -698,15 +698,13 @@ form.signup ul {
 }
 
 .groups-list {
-  width: 70%;
+  width: 60%;
   float: left;
-  padding: 20px;
 }
 
 .request-list {
-  width: 20%;
+  width: 35%;
   float: right;
-  padding: 20px;
 }
 
 .add-btn {
@@ -764,10 +762,6 @@ form.signup ul {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: shadow for better appearance */
 }
 
-.addUser-popup-form button{
-  margin-left: 50px;
-}
-
 .removeUser-popup-form {
   position: absolute;
   top: 50%;
@@ -782,14 +776,13 @@ form.signup ul {
 }
 
 .removeUser-popup-form button{
-  background: var(--primary);
+  background: var(--error);
   border: 0;
   color: #fff;
   padding: 10px;
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
-  margin-left: 60px;
 }
 
 .remove-btn {
@@ -817,6 +810,41 @@ form.signup ul {
 }
 
 .deleteGroup-popup-form button{
+  background: var(--error);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.searchGroup-popup-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px; /* Set the width of the modal */
+  padding: 20px; /* Add some padding for better appearance */
+  background: white;
+  border: 1px solid #ccc; /* Optional: border style */
+  border-radius: 10px; /* Optional: rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: shadow for better appearance */
+}
+
+.join-group-btn {
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 2px;
+  font-family: "Poppins";
+  font-size: 12px;
+  border-radius: 0px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.search-group-btn {
   background: var(--primary);
   border: 0;
   color: #fff;
@@ -824,5 +852,4 @@ form.signup ul {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
-  margin-left: 60px;
 }

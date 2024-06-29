@@ -5,10 +5,15 @@ const {
     addUser,
     acceptGroup,
     getAllGroups,
-    getRequest,
+    getInvite,
     rejectGroup,
     removeMember,
-    deleteGroup
+    deleteGroup,
+    searchGroup,
+    getRequest,
+    joinGroup,
+    acceptUser,
+    rejectUser
 } = require('../controllers/groupController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -31,13 +36,28 @@ router.patch('/reject/:id', rejectGroup)
 //get groups
 router.get('/',getAllGroups)
 
-//get request
-router.get('/request', getRequest)
+//get invite
+router.get('/invite', getInvite)
 
 //remove member
 router.patch('/remove/:id', removeMember)
 
 //delete group
 router.delete('/delete/:id', deleteGroup)
+
+//search group
+router.get('/search/:group', searchGroup)
+
+//join group
+router.patch('/join/:id', joinGroup)
+
+//get request
+router.get('/request', getRequest)
+
+//accept user
+router.patch('/acceptUser/:id', acceptUser)
+
+//reject user
+router.patch('/rejectUser/:id', rejectUser)
 
 module.exports = router
