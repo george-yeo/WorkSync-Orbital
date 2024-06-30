@@ -103,6 +103,11 @@ const rejectGroup = async (req, res) => {
         return res.status(400).json({ error: "User is already a member." });
     }
 
+    const isUserOwner = group.createdByID.equals(user_id)
+    if (isUserOwner) {
+        return res.status(400).json({ error: "User is already a member." });
+    }
+
     try {
         await Group.updateOne(
             { _id: id},

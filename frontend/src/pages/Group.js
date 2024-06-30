@@ -17,6 +17,7 @@ const Group = () => {
     const [usernameToRemove, setUsernameToRemove] = useState('');
     const [selectedGroupId, setSelectedGroupId] = useState(null);
     const [groupToDelete, setGroupToDelete] = useState(null);
+    const [searchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
         const fetchGroups = async () => {
@@ -51,11 +52,11 @@ const Group = () => {
         setSelectedGroupId(groupId);
         setIsAddUserModalOpen(true);
         setAddUserStatus(null);
+        setSearchResults([])
     };
 
     // Handle Add User Form Submit
     const handleAddUserSubmit = async (e) => {
-        e.preventDefault();
         if (!user || !usernameToAdd) return;
 
         try {
@@ -180,6 +181,27 @@ const Group = () => {
         }
     };
 
+    const handleSearchSubmit = async (e) => {
+        e.preventDefault();
+        if (!user || !usernameToAdd) return;
+
+        try {
+            const response = await fetch(`/api/user/search/${usernameToAdd}`, {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+
+            const json = await response.json();
+
+            if (response.ok) {
+                setSearchResults(json);
+            } else {
+                console.error("Error searching user:", json.message);
+            }
+        } catch (error) {
+            console.error("Failed to search user:", error);
+        }
+    };
+
     return (
         <div className="groups">   
             <div className="groups-list">
@@ -231,7 +253,7 @@ const Group = () => {
             >
                 <h2>Add User to Group</h2>
                 <span className="close-btn" onClick={() => setIsAddUserModalOpen(false)}>&times;</span>
-                <form onSubmit={handleAddUserSubmit}>
+                <form onSubmit={handleSearchSubmit}>
                     <label>
                         Username:
                         <input
@@ -242,9 +264,24 @@ const Group = () => {
                         />
                     </label>
                     <div className="modal-buttons">
-                        <button type="submit">Add User</button>
+                        <button type="submit">Search</button>
                     </div>
                 </form>
+
+                {/* Display search results */}
+                {searchResults.length > 0 && (
+                    <div className="search-results">
+                        <h3>Search Results:</h3>
+                        <div>
+                            {searchResults.map(user => (
+                                <p key={user._id}>
+                                    {user.username}
+                                    <button className="join-group-btn" onClick={() => handleAddUserSubmit(user.username)}>Add</button>
+                                </p>
+                            ))}
+                        </div>
+                    </div>
+                )}
                 {addUserStatus && (
                     <div className={`status-message ${addUserStatus.success ? 'success' : 'error'}`}>
                         {addUserStatus.message}
