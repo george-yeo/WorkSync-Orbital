@@ -38,13 +38,23 @@ const chatChannelSchema = new Schema({
     // }
 }, { timestamps: true })
 
-// get safe channel info method, removing messages
+// check if id is a participant
+chatChannelSchema.methods.isParticipant = function(userId) {
+    return this.participants.includes(userId)
+}
+
+// get safe channel info method, removing information when necessary
 chatChannelSchema.methods.getChannelInfo = async function(senderId) {
+    const isParticipant = this.isParticipant(senderId)
     let info = (({ messages, ...object }) => object)((await ChatChannel.populate(this, {path: "participants"}))._doc)
     
-    info.participants = info.participants.map(user => user.getSafeData())
+    if (info.type === "direct" || (info.type == "group" && isParticipant)) {
+        info.participants = info.participants.map(user => user.getSafeData())
+    } else {
+        info.particpants = null
+    }
     
-    if (this.messages[0]) {
+    if (isParticipant && this.messages[0]) {
         info.lastMessage = (await ChatMessage.findById(this.messages[this.messages.length-1])).message
      } else {
         info.lastMessage = ''
@@ -59,6 +69,14 @@ chatChannelSchema.methods.getChannelInfo = async function(senderId) {
         const group = await Group.findOne({ chatChannelID: this._id })
         info.pic = group.groupPic
         info.name = group.name
+        info.groupID = group._id
+
+        if (!isParticipant) {
+            info.accessLocked = true
+            if (group.isRequesting(senderId)) {
+                info.isRequesting = true
+            }
+        }
     }
 
     return info
@@ -84,16 +102,18 @@ chatChannelSchema.statics.createDirectChannelInfo = function(sender, receiver) {
 
 chatChannelSchema.methods.addParticipant = function(user) {
     if (this.type == "direct") throw Error("Cannot add participant to dm")
+
+    if (this.participants.includes(user._id)) return
     
     this.participants.push(user._id)
     user.addRecentChatChannel(this)
     this.save()
 }
 
-chatChannelSchema.methods.removeParticipant = function(user) {
+chatChannelSchema.methods.removeParticipant = function(userId) {
     if (this.type == "direct") throw Error("Cannot remove participant from dm")
     
-    this.participants = this.participants.filter((user_id) => user_id !== user._id)
+    this.participants = this.participants.filter((user_id) => user_id != userId)
     this.save()
 }
 

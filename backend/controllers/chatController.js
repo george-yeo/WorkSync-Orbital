@@ -17,7 +17,7 @@ const getChannelMessages = async (req, res) => {
             _id: channelId,
             participants: { $all: [ senderId ] }
         })
-
+        
         if (!chatChannel) return res.status(404).json({error: "Chat channel not found"})
 
         res.status(200).json((await chatChannel.populate("messages")).messages)
@@ -78,16 +78,8 @@ const findChannelsByUsername = async (req, res) => {
 
     for (i in groupReceivers) {
         const receiver = groupReceivers[i]
-
-        let channel = await ChatChannel.findOne({
-            participants: { $all: [senderId, receiver._id] },
-            type: "direct"
-        })
-        if (!channel) {
-            channel = ChatChannel.createDirectChannelInfo(user, receiver)
-        } else {
-            channel = await channel.getChannelInfo(senderId)
-        }
+        let channel = await ChatChannel.findById(receiver.chatChannelID)
+        channel = await channel.getChannelInfo(senderId)
         chatChannels.push(channel)
     }
     

@@ -73,14 +73,55 @@ groupSchema.statics.createGroup = async function (name, user) {
 
 // add a user to group chat
 groupSchema.methods.addToChat = async function(user) {
-    const chatChannel = await this.model("ChatChannel").findOne({chatChannelID: this.chatChannelID})
+    const chatChannel = await this.model("ChatChannel").findById(this.chatChannelID)
     chatChannel.addParticipant(user)
 }
 
 // remove a user from group chat
-groupSchema.methods.removeFromChat = async function(user) {
-    const chatChannel = await this.model("ChatChannel").findOne({chatChannelID: this.chatChannelID})
-    chatChannel.removeParticipant(user)
+groupSchema.methods.removeFromChat = async function(userId) {
+    const chatChannel = await this.model("ChatChannel").findById(this.chatChannelID)
+    chatChannel.removeParticipant(userId)
+}
+
+// checks if user is pending to be added to group
+groupSchema.methods.isPending = function(userId) {
+    return this.pendingID.includes(userId)
+}
+
+// checks if user is pending request to join the group
+groupSchema.methods.isRequesting = function(userId) {
+    return this.requestID.includes(userId)
+}
+
+// add user into group
+groupSchema.methods.addMember = async function(userId) {
+    await Promise.all([
+        this.model("Group").updateOne(
+            { _id: this._id},
+            { $pull: { pendingID: userId }},
+        ),
+        this.model("Group").updateOne(
+            { _id: this._id},
+            { $pull: { requestID: userId }},
+        ),
+        this.model("Group").updateOne(
+            { _id: this._id},
+            { $push: { membersID: userId }}
+        ),
+        this.addToChat(await this.model("User").findById(userId))
+    ])
+}
+
+// remove user from group
+groupSchema.methods.removeMember = async function(userId) {
+    console.log(userId)
+    await Promise.all([
+        this.model("Group").updateOne(
+            { _id: this._id},
+            { $pull: { membersID: userId }}
+        ),
+        this.removeFromChat(userId)
+    ])
 }
 
 // static find similar group names method

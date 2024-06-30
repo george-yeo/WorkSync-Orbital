@@ -4,6 +4,14 @@ export const ChatContext = createContext()
 
 export const chatReducer = (state, action) => {
     switch (action.type) {
+        case 'RESET':
+            return {
+                directTarget: '',
+                newMessageUpdate: false,
+                isRecent: true,
+                channels: [],
+                messages: [],
+            }
         case 'SET_DIRECT':
             return {
                 ...state,
