@@ -40,7 +40,7 @@ const ChatBar = () => {
 
   const fetchSelectedChannel = async (channelId) => {
     setIsFetching(true)
-
+    
     const response = await fetch(`/api/chats/` + channelId, {
       headers: {'Authorization': `Bearer ${user.token}`},
     })
@@ -79,6 +79,9 @@ const ChatBar = () => {
 
     if (user) {
       fetchChannels()
+    } else {
+      setChannel(null)
+      chatContext.dispatch({type: 'RESET'})
     }
   }, [user])
 
@@ -106,7 +109,7 @@ const ChatBar = () => {
             {channel && <div className='messages'>
               {!isFetching && <Messages channel={channel} messages={chatContext.messages} />}
             </div>}
-            {channel && <MessageInput channel={channel} setChannel={setChannel}/>}
+            {channel && !channel.accessLocked && <MessageInput channel={channel} setChannel={setChannel}/>}
             {!isFetching && !channel && <NoChatSelected />}
           </div>
         </div>}

@@ -65,6 +65,7 @@ const MessageInput = ({ channel, setChannel }) => {
         onChange={(e) => setMessage(e.target.value)}
         value={message}
         className="chat-message-input"
+        placeholder="Enter your message here..."
         />
         <button className="material-symbols-outlined send">
           {!isSending ? "send" :

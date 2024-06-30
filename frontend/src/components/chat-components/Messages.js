@@ -1,12 +1,15 @@
 import { useState, useRef, useEffect } from "react"
+import { useAuthContext } from '../../hooks/useAuthContext'
 import { useChatContext } from '../../hooks/useChatContext'
 
 // components
 import Message from './Message';
 import FirstTimeMessage from "./FirstTimeMessage";
+import RequestGroup from "./RequestGroup";
 import { useListenMessages } from "../../hooks/useListenMessages";
 
 const Messages = ({ channel, messages }) => {
+  const { user } = useAuthContext()
   const chatContext = useChatContext()
   useListenMessages(channel._id)
   
@@ -20,6 +23,16 @@ const Messages = ({ channel, messages }) => {
     scrollToBottom()
   }, [messages]);
   
+  if (channel.accessLocked) {
+    if (channel.type == "group") {
+      return (
+        <ul>
+        <RequestGroup channel={channel}/>
+        </ul>
+      )
+    }
+  }
+
   if (messages.length === 0) {
     return (
       <ul>

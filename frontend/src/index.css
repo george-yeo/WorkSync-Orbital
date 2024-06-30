@@ -473,6 +473,16 @@ form.signup ul {
   object-fit: contain;
 }
 
+.chat-request-group-btn {
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 /* Styles for the popup form */
 .popup-form {
   display: flex;

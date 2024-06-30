@@ -76,17 +76,7 @@ const acceptGroup = async (req, res) => {
     }
 
     try {
-        await Group.updateOne(
-            { _id: id},
-            { $pull: { pendingID: user_id}}
-        )
-        await Group.updateOne(
-            { _id: id},
-            { $push: { membersID: user_id}}
-        )
-
-
-
+        group.addMember(user_id)
         res.status(200).json(await Group.find({_id: id }))
     } catch (error) {
         res.status(400).json({error: error.message})
@@ -171,10 +161,7 @@ const removeMember = async (req, res) => {
     }
 
     try {
-        await Group.updateOne(
-            { _id: id},
-            { $pull: { membersID: user_id}}
-        )
+        group.removeMember(user_id)
         res.status(200).json(await Group.find({_id: id }).populate('createdByID').populate('pendingID').populate('membersID').populate('requestID'))
     } catch (error) {
         res.status(400).json({error: error.message})
@@ -290,14 +277,7 @@ const acceptUser = async (req, res) => {
     }
 
     try {
-        await Group.updateOne(
-            { _id: id},
-            { $pull: { requestID: user_id}}
-        )
-        await Group.updateOne(
-            { _id: id},
-            { $push: { membersID: user_id}}
-        )
+        group.addMember(user_id)
         res.status(200).json(await Group.find({_id: id }))
     } catch (error) {
         res.status(400).json({error: error.message})
