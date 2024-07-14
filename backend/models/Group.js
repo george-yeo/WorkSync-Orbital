@@ -40,10 +40,15 @@ const groupSchema = new Schema ({
           },
           message: 'Invalid group picture. Ensure it is a base64 encoded string and not too large.'
         }
-      }
+    },
+    sectionID: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'Section'
+    }
 })
 
-groupSchema.statics.createGroup = async function (name, user) {
+groupSchema.statics.createGroup = async function (name, user, sectionID) {
     if (!validator.isAlphanumeric(name)) {
         throw Error('Group name can only contain contains only letters and numbers (a-z A-Z 0-9)')
     }
@@ -65,7 +70,8 @@ groupSchema.statics.createGroup = async function (name, user) {
     const group = await this.create({
         name,
         createdByID: user._id,
-        chatChannelID: chatChannel._id
+        chatChannelID: chatChannel._id,
+        sectionID
     })
 
     return group

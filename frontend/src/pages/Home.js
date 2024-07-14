@@ -15,6 +15,7 @@ const Home = () => {
   const { user } = useAuthContext()
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [groupSections, setGroupSections] = useState([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -41,9 +42,46 @@ const Home = () => {
       }
     }
 
+    const fetchGroupSections = async () => {
+      const groupSectionsResponse = await fetch("/api/group/", {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      const groups = await groupSectionsResponse.json();
+
+      if (groupSectionsResponse.ok) {
+        const groupSectionsPromises = groups.map(async (group) => {
+          const sectionResponse = await fetch(`/api/sections/getGroupSection/${group.sectionID}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          });
+          const sections = await sectionResponse.json();
+
+          const sectionsWithTasks = await Promise.all(sections.map(async (section) => {
+            const tasksResponse = await fetch(`/api/tasks/getGroupTasks/${section._id}`, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${user.token}`,
+              },
+            });
+            const tasks = await tasksResponse.json();
+            console.log(tasks)
+            return { ...section, tasks };
+          }));
+
+          return { groupName: group.name, sections: sectionsWithTasks };
+        });
+
+        const resolvedGroupSections = await Promise.all(groupSectionsPromises);
+        setGroupSections(resolvedGroupSections);
+      }
+    };
+
     if (user) {
       fetchTasks()
       fetchSections()
+      fetchGroupSections()
     }
   }, [user, sortBy, sortOrder])
 
@@ -73,9 +111,18 @@ const Home = () => {
         <span className="material-symbols-outlined arrow" onClick={() => handleSortChange(sortBy)}>
           {sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward'}
         </span>
-      </div>
-        {sectionContext.sections && sectionContext.sections.map(section => (
+        </div>
+      {sectionContext.sections &&
+        sectionContext.sections.map((section) => (
           <Section section={section} tasks={taskContext.tasks} key={section._id} />
+        ))}
+      {groupSections.length > 0 &&
+        groupSections.map((groupSection) => (
+          <div key={groupSection.groupName}>
+            {groupSection.sections.map((section) => (
+              <Section section={section} tasks={section.tasks} key={section._id} />
+            ))}
+          </div>
         ))}
     </div>
   )

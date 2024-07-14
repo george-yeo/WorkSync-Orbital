@@ -45,7 +45,6 @@ const Request = () => {
                     headers: {'Authorization': `Bearer ${user.token}`},
                 })
                 const json = await response.json()
-                console.log(json)
                 if(!response.ok){
                     setRequestError(json.message)
                 } else {

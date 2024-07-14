@@ -18,7 +18,7 @@ const getAllTasks = async (req, res) => {
     const sortBy = req.query.sortBy || 'createdAt';
     const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
 
-    const tasks = await Task.find({ user_id }).sort({ [sortBy]: sortOrder })
+    const tasks = await Task.find({ user_id, isGroup: false }).sort({ [sortBy]: sortOrder });
 
     res.status(200).json(tasks)
 }
@@ -26,14 +26,12 @@ const getAllTasks = async (req, res) => {
 // get single task
 const getTask = async (req, res) => {
     const { id } = req.params
-    const user_id = req.user._id
 
     if (!checkValidId(id)) {
         return res.status(404).json({error: noTaskFound})
     }
 
     const task = await Task.find({
-        user_id: user_id,
         _id: id
     })
 
@@ -58,7 +56,7 @@ const createTask = async (req, res) => {
 
     try {
         const user_id = req.user._id
-        const task = await Task.create({title, description, deadline, isCompleted, sectionId, user_id})
+        const task = await Task.create({title, description, deadline, isCompleted, sectionId, user_id, isGroup: false})
         res.status(200).json(task)
     } catch (error) {
         res.status(400).json({error: error.message, emptyFields: emptyFields})
@@ -68,14 +66,12 @@ const createTask = async (req, res) => {
 // delete a task
 const deleteTask = async (req, res) => {
     const { id } = req.params
-    const user_id = req.user._id
 
     if (!checkValidId(id)) {
         return res.status(404).json({error: noTaskFound})
     }
 
     const task = await Task.findOneAndDelete({
-        user_id: user_id,
         _id: id
     })
 
@@ -89,7 +85,6 @@ const deleteTask = async (req, res) => {
 // update a task
 const updateTask = async (req, res) => {
     const { id } = req.params
-    const user_id = req.user._id
 
     if (!checkValidId(id)) {
         return res.status(404).json({error: noTaskFound})
@@ -104,7 +99,6 @@ const updateTask = async (req, res) => {
     }
 
     const task = await Task.findOneAndUpdate({
-        user_id: user_id,
         _id: id
     }, {
         ...req.body
@@ -117,6 +111,41 @@ const updateTask = async (req, res) => {
     res.status(200).json(await Task.findById(id))
 }
 
+// create new task
+const createGroupTask = async (req, res) => {
+    const {title, description, deadline, isCompleted, user_id, sectionId} = req.body
+
+    let emptyFields = []
+
+    populateEmptyFields(req.body, emptyFields)
+
+    if (emptyFields.length > 0) {
+        return res.status(400).json({error: 'Please fill in required fields', emptyFields})
+    }
+
+    try {
+        const task = await Task.create({title, description, deadline, isCompleted, sectionId, user_id, isGroup: true})
+        res.status(200).json(task)
+    } catch (error) {
+        res.status(400).json({error: error.message, emptyFields: emptyFields})
+    }
+}
+
+const getGroupTasks = async (req, res) => {
+    try {
+        const { sectionId } = req.params;
+        const sortBy = req.query.sortBy || 'createdAt';
+        const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
+
+        const tasks = await Task.find({ sectionId, isGroup: true }).sort({ [sortBy]: sortOrder });
+
+        res.status(200).json(tasks);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
 // export module
 module.exports = {
     getAllTasks,
@@ -124,4 +153,6 @@ module.exports = {
     createTask,
     deleteTask,
     updateTask,
+    getGroupTasks,
+    createGroupTask
 }

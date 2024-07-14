@@ -39,16 +39,28 @@ const TaskForm = ({ section, closePopup, editingTask }) => {
         }
       })
     } else {
-      task = { title, description, deadline, isCompleted: false, sectionId: section._id }
+      if (section.isGroup){
+        task = { title, description, deadline, isCompleted: false, sectionId: section._id, user_id: section.user_id }
+        response = await fetch('/api/tasks/createGroupTask', {
+          method: 'POST',
+          body: JSON.stringify(task),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`
+          }
+        });
+      } else {
+        task = { title, description, deadline, isCompleted: false, sectionId: section._id }
 
-      response = await fetch('/api/tasks', {
-        method: 'POST',
-        body: JSON.stringify(task),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
-        }
-      });
+        response = await fetch('/api/tasks', {
+          method: 'POST',
+          body: JSON.stringify(task),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`
+          }
+        });
+      }
     }
 
     const json = await response.json();
