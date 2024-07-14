@@ -5,6 +5,8 @@ const {
   createTask,
   deleteTask,
   updateTask,
+  getGroupTasks,
+  createGroupTask
 } = require('../controllers/taskController.js')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -27,5 +29,11 @@ router.delete('/:id', deleteTask)
   
 // UPDATE a task
 router.patch('/:id', updateTask)
+
+// POST a new group task
+router.post('/createGroupTask', createGroupTask)
+
+//get group tasks
+router.get('/getGroupTasks/:sectionId', getGroupTasks)
   
 module.exports = router

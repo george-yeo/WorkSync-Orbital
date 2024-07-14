@@ -10,6 +10,10 @@ const taskSectionSchema = new Schema({
     user_id: {
         type: String,
         required: true
+    },
+    isGroup: {
+        type: Boolean,
+        required: true
     }
 }, {})
 

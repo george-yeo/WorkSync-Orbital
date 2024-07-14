@@ -17,6 +17,7 @@ const Group = () => {
     const [usernameToRemove, setUsernameToRemove] = useState('');
     const [selectedGroupId, setSelectedGroupId] = useState(null);
     const [groupToDelete, setGroupToDelete] = useState(null);
+    const [sectionToDelete, setSectionToDelete] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
@@ -29,8 +30,6 @@ const Group = () => {
                 });
 
                 const json = await response.json();
-
-                console.log(json)
 
                 if (response.ok) {
                     dispatch({ type: 'SET_GROUPS', payload: json });
@@ -153,15 +152,25 @@ const Group = () => {
     };
 
     // Handle Delete Group Button Click
-    const handleDeleteGroupClick = (groupId) => {
+    const handleDeleteGroupClick = (groupId, sectionID) => {
         setGroupToDelete(groupId);
+        setSectionToDelete(sectionID)
         setIsDeleteGroupModalOpen(true);
     };
 
     const handleDeleteGroupSubmit = async () => {
-        if (!user || !groupToDelete) return;
+        if (!user || !groupToDelete || !sectionToDelete) return;
 
         try {
+            const responseDelete = await fetch(`/api/group/${sectionToDelete}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            })
+
+            if (!responseDelete.ok) {
+                console.error("Failed to delete group:", responseDelete.statusText);
+            }
+
             // Send DELETE request to API to delete the group
             const response = await fetch(`/api/group/delete/` + groupToDelete, {
                 method: 'DELETE',
@@ -227,7 +236,7 @@ const Group = () => {
                                 </p>
                                 <button className="add-btn" onClick={() => handleAddUserClick(group._id)}>Add User</button>
                                 {group.createdByID._id === user._id && (
-                                    <button className="delete-btn" onClick={() => handleDeleteGroupClick(group._id)}>Delete Group</button>
+                                    <button className="delete-btn" onClick={() => handleDeleteGroupClick(group._id, group.sectionID)}>Delete Group</button>
                                 )}
                             </div>
                         ))

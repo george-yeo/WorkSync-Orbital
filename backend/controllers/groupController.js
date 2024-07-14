@@ -5,14 +5,14 @@ const mongoose = require('mongoose')
 
 //create new group
 const createGroup = async (req, res) => {
-    const { name } = req.body
+    const { name, sectionID } = req.body
     const createdByID = req.user._id
 
     const user = await User.findById(createdByID)
     if (!user) return res.status(404).json({ error: "User not found" })
 
     try {      
-        const group = await Group.createGroup(name, user)
+        const group = await Group.createGroup(name, user, sectionID)
         res.status(200).json(await group.populate('createdByID'))
     } catch(error) {
         res.status(400).json({error: error.message})

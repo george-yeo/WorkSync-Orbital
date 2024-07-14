@@ -16,13 +16,27 @@ const GroupForm = ({ onGroupCreated  }) => {
             return
         }
 
-        const group = { 
-            name, 
-            // createdBy: user.username,
-            // createdByID: user._id
+        const title = name + " (Group)"
+
+        const responseSection = await fetch('/api/sections/createGroupSection', {
+            method: 'POST',
+            body: JSON.stringify({title: title}),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            }
+        })
+
+        const jsonSection = await responseSection.json()
+
+        if (!responseSection.ok) {
+            setError(jsonSection.error)
         }
 
-        console.log(user._id)
+        const group = { 
+            name, 
+            sectionID: jsonSection._id
+        }
 
         const response = await fetch('/api/group/create', {
             method: 'POST',
@@ -32,8 +46,6 @@ const GroupForm = ({ onGroupCreated  }) => {
                 'Authorization': `Bearer ${user.token}`
             }
         })
-
-        console.log(JSON.stringify(group))
 
         const json = await response.json()
 
