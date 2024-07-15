@@ -83,7 +83,7 @@ const Home = () => {
       fetchSections()
       fetchGroupSections()
     }
-  }, [user, sortBy, sortOrder])
+  }, [user, sortBy, sortOrder, groupSections])
 
   const handleSortChange = (field) => {
     if (sortBy === field) {
