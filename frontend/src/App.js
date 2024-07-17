@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
 import Group from './pages/Group'
+import GroupPage from './pages/GroupPage'
 
 function App() {
   const { user } = useAuthContext()
@@ -33,11 +34,15 @@ function App() {
             />
             <Route 
               path="/profile" 
-              element={user ? <Profile /> : <Navigate to="/profile" />} 
+              element={user ? <Profile /> : <Navigate to="/login" />} 
             />
             <Route 
               path="/group" 
-              element={user ? <Group /> : <Navigate to="/group" />} 
+              element={user ? <Group /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/group/:id" 
+              element={user ? <GroupPage /> : <Navigate to="/login" />} 
             />
           </Routes>
         </div>

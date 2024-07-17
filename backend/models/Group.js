@@ -45,7 +45,22 @@ const groupSchema = new Schema ({
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'Section'
-    }
+    },
+    isGrowingTree: {
+        type: Schema.Types.Boolean,
+        default: false,
+        required: true
+    },
+    treesGrown: {
+        type: Schema.Types.Number,
+        default: 0,
+        required: true
+    },
+    treeGrowthProgress: {
+        type: Schema.Types.Number,
+        default: 0,
+        required: true
+    },
 })
 
 groupSchema.statics.createGroup = async function (name, user, sectionID) {
@@ -133,6 +148,11 @@ groupSchema.methods.removeMember = async function(userId) {
 // static find similar group names method
 groupSchema.statics.findGroupByName = async function(name) {
     return this.find({ name: {"$regex": "^"+name, "$options": "i"} }).limit(8).exec()
-  }
+}
+
+// method check if member
+groupSchema.methods.isMember = async function(userId) {
+    return this.membersID.includes(userId) || this.createdByID.equals(userId)
+}
 
 module.exports = mongoose.model('Group', groupSchema)
