@@ -5,6 +5,7 @@ const {
     addUser,
     acceptGroup,
     getAllGroups,
+    getGroupData,
     getInvite,
     rejectGroup,
     removeMember,
@@ -13,7 +14,8 @@ const {
     getRequest,
     joinGroup,
     acceptUser,
-    rejectUser
+    rejectUser,
+    plantTree,
 } = require('../controllers/groupController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -59,5 +61,11 @@ router.patch('/acceptUser/:id', acceptUser)
 
 //reject user
 router.patch('/rejectUser/:id', rejectUser)
+
+//get group details
+router.get('/:id', getGroupData)
+
+//plant tree
+router.patch('/plant-tree/:id', plantTree)
 
 module.exports = router

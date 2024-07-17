@@ -15,6 +15,7 @@ body {
 }
 header {
   background: #fff;
+  border-bottom-width: 1px;
 }
 header .container {
   max-width: 1400px;
@@ -806,6 +807,10 @@ form.signup ul {
   margin-left: 20px;
 }
 
+.Group-form input {
+  background: #ffffff;
+}
+
 .deleteGroup-popup-form {
   position: absolute;
   top: 50%;
@@ -862,4 +867,49 @@ form.signup ul {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
+}
+
+/* group page */
+.group-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 20px;
+}
+
+.group-page .synctree {
+  width: 80%;
+  height: 800px;
+  position: relative;
+}
+
+.group-page .synctree img {
+  object-fit: contain;
+  transform: translate(-50%, 0);
+}
+
+.group-page .synctree h3 {
+  text-align: center;
+}
+
+.group-page .synctree .tree {
+  position: absolute;
+  left: 50%;
+  height: 30%;
+  bottom: 10%;
+}
+
+.group-page .synctree .soil {
+  position: absolute;
+  left: 50%;
+  height: 15%;
+  bottom: 0;
+}
+
+.group-page .group-actions {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  max-width: 400px;
 }

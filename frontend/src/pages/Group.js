@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useEffect, useState } from "react";
 import { useGroupContext } from "../hooks/useGroupContext";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -238,6 +239,7 @@ const Group = () => {
                                 {group.createdByID._id === user._id && (
                                     <button className="delete-btn" onClick={() => handleDeleteGroupClick(group._id, group.sectionID)}>Delete Group</button>
                                 )}
+                               <Link to={"/group/"+group._id}>View Group</Link>
                             </div>
                         ))
                     ) : (

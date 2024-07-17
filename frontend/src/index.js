@@ -8,6 +8,7 @@ import { ChatContextProvider } from './context/ChatContext'
 import { AuthContextProvider } from './context/AuthContext'
 import { SocketContextProvider } from './context/SocketContext';
 import { GroupContextProvider } from './context/GroupContext';
+import { GroupPageContextProvider } from './context/GroupPageContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,7 +19,9 @@ root.render(
           <SectionContextProvider>
             <TaskContextProvider>
               <GroupContextProvider>
-                <App />
+                <GroupPageContextProvider>
+                  <App />
+                </GroupPageContextProvider>
               </GroupContextProvider>
             </TaskContextProvider>
           </SectionContextProvider>

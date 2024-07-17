@@ -178,7 +178,7 @@ const deleteGroup = async (req, res) => {
     const { id } = req.params
     const user_id = req.user._id
 
-    const group = await Group.findOneAndDelete({
+    const group = await Group.findOne({
         _id: id,
         createdByID: user_id,
     })
@@ -186,6 +186,10 @@ const deleteGroup = async (req, res) => {
     if (!group) {
         return res.status(404).json({ error: "Group not found." });
     } else {
+       await Group.findOneAndDelete({
+            _id: id,
+            createdByID: user_id,
+        })
         await Group.model('ChatChannel').findOneAndDelete({ _id: group.chatChannelID })
     }
 
@@ -319,4 +323,71 @@ const rejectUser = async (req, res) => {
     }
 }
 
-module.exports = {createGroup, addUser, acceptGroup, getAllGroups, getInvite, rejectGroup, removeMember, deleteGroup, searchGroup, joinGroup, getRequest, acceptUser, rejectUser}
+const getGroupData = async (req, res) => {
+    const user_id = req.user._id
+    const { id } = req.params
+
+    try {
+        let group = await Group.findOne({
+            _id: id,
+            $or: [
+                { membersID: { $all: [user_id] } },
+                { createdByID: user_id }
+            ]
+        })
+          .populate('createdByID')
+          .populate('pendingID')
+          .populate('membersID')
+          .populate('requestID')
+          .exec()
+
+        if (group) {
+            group.createdByID = group.createdByID.getSafeData()
+            
+            return res.status(200).json(group)
+        } else {
+            return res.status(404).json("Group not found")
+        }
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+const plantTree = async (req, res) => {
+    const user_id = req.user._id
+    const { id } = req.params
+
+    try {
+        let group = await Group.findOne({
+            _id: id,
+        })
+        
+        if (group && await group.isMember(user_id) && group.isGrowingTree == false) {
+            group.isGrowingTree = true
+            await group.save()
+            return res.status(200).json(true)
+        } else {
+            return res.status(404).json("Group not found")
+        }
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+module.exports = {
+    createGroup,
+    addUser,
+    acceptGroup,
+    getAllGroups,
+    getInvite,
+    rejectGroup,
+    removeMember,
+    deleteGroup,
+    searchGroup,
+    joinGroup, 
+    getRequest,
+    acceptUser,
+    rejectUser,
+    getGroupData,
+    plantTree,
+}
