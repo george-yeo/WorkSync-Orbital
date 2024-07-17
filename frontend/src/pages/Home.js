@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react"
-import { useTaskContext } from "../hooks/useTaskContext"
-import { useSectionContext } from "../hooks/useSectionContext"
-import { useAuthContext } from "../hooks/useAuthContext"
-import { useSocketContext } from "../hooks/useSocketContext"
+import { useEffect, useState } from "react";
+import { useTaskContext } from "../hooks/useTaskContext";
+import { useSectionContext } from "../hooks/useSectionContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 // components
-import Section from "../components/Section"
-import SectionForm from "../components/SectionForm"
+import Section from "../components/Section";
+import SectionForm from "../components/SectionForm";
 
 const Home = () => {
-  const taskContext = useTaskContext()
-  const sectionContext = useSectionContext()
+  const taskContext = useTaskContext();
+  const sectionContext = useSectionContext();
 
-  const { user } = useAuthContext()
+  const { user } = useAuthContext();
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('asc');
   const [groupSections, setGroupSections] = useState([]);
@@ -20,34 +19,34 @@ const Home = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       const response = await fetch(`/api/tasks?sortBy=${sortBy}&sortOrder=${sortOrder}`, {
-        headers: {'Authorization': `Bearer ${user.token}`},
-      })
-      
-      const json = await response.json()
+        headers: { 'Authorization': `Bearer ${user.token}` },
+      });
+
+      const json = await response.json();
 
       if (response.ok) {
-        taskContext.dispatch({type: 'SET_TASKS', payload: json})
+        taskContext.dispatch({ type: 'SET_TASKS', payload: json });
       }
-    }
+    };
 
     const fetchSections = async () => {
       const response = await fetch('/api/sections', {
-        headers: {'Authorization': `Bearer ${user.token}`},
-      })
-      
-      const json = await response.json()
+        headers: { 'Authorization': `Bearer ${user.token}` },
+      });
+
+      const json = await response.json();
 
       if (response.ok) {
-        sectionContext.dispatch({type: 'SET_SECTIONS', payload: json})
+        sectionContext.dispatch({ type: 'SET_SECTIONS', payload: json });
       }
-    }
+    };
 
     const fetchGroupSections = async () => {
       const groupSectionsResponse = await fetch("/api/group/", {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const groups = await groupSectionsResponse.json();
-
+    
       if (groupSectionsResponse.ok) {
         const groupSectionsPromises = groups.map(async (group) => {
           const sectionResponse = await fetch(`/api/sections/getGroupSection/${group.sectionID}`, {
@@ -57,7 +56,7 @@ const Home = () => {
             },
           });
           const sections = await sectionResponse.json();
-
+    
           const sectionsWithTasks = await Promise.all(sections.map(async (section) => {
             const tasksResponse = await fetch(`/api/tasks/getGroupTasks/${section._id}`, {
               headers: {
@@ -66,24 +65,32 @@ const Home = () => {
               },
             });
             const tasks = await tasksResponse.json();
-            console.log(tasks)
+    
             return { ...section, tasks };
           }));
-
+    
           return { groupName: group.name, sections: sectionsWithTasks };
         });
-
+    
         const resolvedGroupSections = await Promise.all(groupSectionsPromises);
-        setGroupSections(resolvedGroupSections);
+    
+        resolvedGroupSections.forEach(({ sections }) => {
+          sections.forEach((section) => {
+            sectionContext.dispatch({ type: 'UPDATE_SECTION', payload: section });
+            section.tasks.forEach((task) => {
+              taskContext.dispatch({ type: 'UPDATE_TASK', payload: task });
+            });
+          });
+        });
       }
-    };
+    };    
 
     if (user) {
-      fetchTasks()
-      fetchSections()
-      fetchGroupSections()
+      fetchTasks();
+      fetchSections();
+      fetchGroupSections();
     }
-  }, [user, sortBy, sortOrder, groupSections])
+  }, [user, sortBy, sortOrder]);
 
   const handleSortChange = (field) => {
     if (sortBy === field) {
@@ -111,21 +118,13 @@ const Home = () => {
         <span className="material-symbols-outlined arrow" onClick={() => handleSortChange(sortBy)}>
           {sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward'}
         </span>
-        </div>
+      </div>
       {sectionContext.sections &&
         sectionContext.sections.map((section) => (
           <Section section={section} tasks={taskContext.tasks} key={section._id} />
         ))}
-      {groupSections.length > 0 &&
-        groupSections.map((groupSection) => (
-          <div key={groupSection.groupName}>
-            {groupSection.sections.map((section) => (
-              <Section section={section} tasks={section.tasks} key={section._id} />
-            ))}
-          </div>
-        ))}
     </div>
-  )
-}
-  
-export default Home
+  );  
+};
+
+export default Home;
