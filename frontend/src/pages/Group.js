@@ -33,6 +33,7 @@ const Group = () => {
                 const json = await response.json();
 
                 if (response.ok) {
+                    console.log(json)
                     dispatch({ type: 'SET_GROUPS', payload: json });
                 } else {
                     console.error("Error fetching groups:", json.message);
