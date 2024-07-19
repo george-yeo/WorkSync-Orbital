@@ -46,7 +46,7 @@ const Home = () => {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const groups = await groupSectionsResponse.json();
-    
+      
       if (groupSectionsResponse.ok) {
         const groupSectionsPromises = groups.map(async (group) => {
           const sectionResponse = await fetch(`/api/sections/getGroupSection/${group.sectionID}`, {

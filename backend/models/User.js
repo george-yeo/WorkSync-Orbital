@@ -80,7 +80,7 @@ userSchema.statics.signup = async function(email, password, confirmPassword, use
   const salt = await bcrypt.genSalt(10)
   const hash = await bcrypt.hash(password, salt)
 
-  const user = await this.create({ email, password: hash , username})
+  const user = await this.create({ email, password: hash , username, displayname: username})
 
   return user
 }
@@ -114,6 +114,7 @@ userSchema.statics.findUserByUsername = async function(username) {
 userSchema.methods.getSafeData = function() {
   return {
     username: this.username,
+    displayname: this.displayname == "" ? this.username : this.displayname,
     profilePic: this.profilePic,
     _id: this._id,
   }

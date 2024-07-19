@@ -726,6 +726,7 @@ form.signup ul {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
+  min-width: 50px;
 }
 
 .delete-btn {
@@ -800,11 +801,12 @@ form.signup ul {
   background: var(--error);
   border: 0;
   color: #fff;
-  padding: 5px;
+  padding: 10px;
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
   margin-left: 20px;
+  min-width: 50px;
 }
 
 .Group-form input {
@@ -877,6 +879,10 @@ form.signup ul {
   row-gap: 20px;
 }
 
+.group-page h2, h3 {
+  margin-bottom: 4px;
+}
+
 .group-page .synctree {
   width: 80%;
   height: 800px;
@@ -912,4 +918,77 @@ form.signup ul {
   flex-direction: row;
   justify-content: space-between;
   max-width: 400px;
+}
+
+.group-page .group-pic {
+  border-radius: 50%;
+  width: 20%;
+  object-fit: fill;
+}
+
+.group-members .title {
+  margin-top: 0;
+}
+
+.group-members ul {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style-type: none;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.group-members ul li {
+  position: relative;
+  background: #ffffff;
+  
+  transition-property: height;
+  transition-duration: 200ms;
+  overflow: hidden;
+
+  /* make the list items unselectable */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.group-members .member-details {
+  margin-bottom: 5px;
+  display: grid;
+  grid-template-columns: 30px 1fr .2fr;
+  column-gap: 10px;
+  align-items: center;
+}
+
+.group-members .kick-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+}
+
+.group-members .member-details .member-pic {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.group-members .search-user {
+  display: grid;
+  grid-template-columns: 1fr 80px;
+  column-gap: 10px;
+  align-items: center;
+}
+
+.group-members .search-user input {
+  margin: 0;
+}
+
+.group-members .search-result {
+  display: flex;
+  grid-template-columns: 1fr 80px;
+  column-gap: 10px;
+  justify-content: space-between;
+  align-items: center;
 }

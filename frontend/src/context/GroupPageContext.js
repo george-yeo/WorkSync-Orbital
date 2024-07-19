@@ -3,6 +3,7 @@ import { createContext, useReducer } from "react"
 export const GroupPageContext = createContext()
 
 export const groupPageReducer = (state, action) => {
+    let newGroup
     switch (action.type) {
         case 'SET_GROUP':
             return {
@@ -10,7 +11,7 @@ export const groupPageReducer = (state, action) => {
                 group: action.payload // Replaces the group data
             }
         case 'PLANT_TREE':
-            let newGroup = state.group
+            newGroup = state.group
             newGroup.isGrowingTree = true
             return {
                 ...state,

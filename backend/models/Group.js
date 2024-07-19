@@ -135,7 +135,6 @@ groupSchema.methods.addMember = async function(userId) {
 
 // remove user from group
 groupSchema.methods.removeMember = async function(userId) {
-    console.log(userId)
     await Promise.all([
         this.model("Group").updateOne(
             { _id: this._id},
@@ -153,6 +152,23 @@ groupSchema.statics.findGroupByName = async function(name) {
 // method check if member
 groupSchema.methods.isMember = async function(userId) {
     return this.membersID.includes(userId) || this.createdByID.equals(userId)
+}
+
+// method format all data for sending to client
+groupSchema.methods.getSafeData = async function() {
+    let data = (({ ...object }) => object)((await this.model("Group").find({ _id: this._id })
+        .populate('createdByID')
+        .populate('pendingID')
+        .populate('membersID')
+        .populate('requestID')
+        .exec())[0]._doc)
+    
+    data.createdByID = data.createdByID.getSafeData()
+    data.pendingID = data.pendingID.map((user) => user.getSafeData())
+    data.membersID = data.membersID.map((user) => user.getSafeData())
+    data.requestID = data.requestID.map((user) => user.getSafeData())
+    
+    return data
 }
 
 module.exports = mongoose.model('Group', groupSchema)

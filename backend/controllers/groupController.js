@@ -49,7 +49,7 @@ const addUser = async (req, res) => {
             { _id: id},
             {$push: { pendingID: user_id}}
         )
-        res.status(200).json(await Group.findById(id).populate('createdByID').populate('pendingID').populate('membersID').populate('requestID'))
+        res.status(200).json(await (await Group.findById(id)).getSafeData())
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -130,26 +130,40 @@ const getAllGroups = async (req, res) => {
         ]
       })
       .sort({ "createdAt": 1 })
-      .populate('createdByID')
-      .populate('pendingID')
-      .populate('membersID')
-      .populate('requestID')
-
-    res.status(200).json(groups)
+      .exec()
+    
+    let groupsData = []
+    await Promise.all(await groups.map(group => {
+        return new Promise(async (resolve, reject) => {
+            groupsData.push(await group.getSafeData())
+            resolve()
+        })
+    }))
+    
+    res.status(200).json(groupsData)
 }
 
 //get invite
 const getInvite = async (req, res) => {
     const user_id = req.user._id
-    const groups = await Group.find({ pendingID: {$all: user_id} }).sort({"createdAt": 1}).populate('createdByID').populate('pendingID').populate('membersID').populate('requestID')
-    res.status(200).json(groups)
+    const groups = await Group.find({ pendingID: {$all: user_id} }).sort({"createdAt": 1})
+    
+    let groupsData = []
+    await Promise.all(await groups.map(group => {
+        return new Promise(async (resolve, reject) => {
+            groupsData.push(await group.getSafeData())
+            resolve()
+        })
+    }))
+    
+    res.status(200).json(groupsData)
 }
 
 //remove member
 const removeMember = async (req, res) => {
     const { id } = req.params
     const { user_id } = req.body
-
+    
     const group = await Group.findById(id)
     if (!group) {
         return res.status(404).json({ error: "Group not found." });
@@ -167,7 +181,7 @@ const removeMember = async (req, res) => {
 
     try {
         group.removeMember(user_id)
-        res.status(200).json(await Group.find({_id: id }).populate('createdByID').populate('pendingID').populate('membersID').populate('requestID'))
+        res.status(200).json(await (await Group.findById(id)).getSafeData())
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -244,7 +258,7 @@ const joinGroup = async (req, res) => {
             { _id: id},
             {$push: { requestID: user_id}}
         )
-        res.status(200).json(await Group.findById(id).populate('createdByID').populate('pendingID').populate('membersID').populate('requestID'))
+        res.status(200).json(await (await Group.findById(id)).getSafeData())
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -252,18 +266,23 @@ const joinGroup = async (req, res) => {
 
 const getRequest = async (req, res) => {
     const user_id = req.user._id
-    const groups= await Group.find({
+    const groups = await Group.find({
         $and: [
           { requestID: { $ne: [] } },
           { createdByID: user_id }
         ]
       })
       .sort({ "createdAt": 1 })
-      .populate('createdByID')
-      .populate('pendingID')
-      .populate('membersID')
-      .populate('requestID')
-    res.status(200).json(groups)
+    
+    let groupsData = []
+    await Promise.all(await groups.map(group => {
+        return new Promise(async (resolve, reject) => {
+            groupsData.push(await group.getSafeData())
+            resolve()
+        })
+    }))
+      
+    res.status(200).json(groupsData)
 }
 
 const acceptUser = async (req, res) => {
@@ -328,27 +347,21 @@ const getGroupData = async (req, res) => {
     const { id } = req.params
 
     try {
-        let group = await Group.findOne({
+        const group = await Group.findOne({
             _id: id,
             $or: [
                 { membersID: { $all: [user_id] } },
                 { createdByID: user_id }
             ]
         })
-          .populate('createdByID')
-          .populate('pendingID')
-          .populate('membersID')
-          .populate('requestID')
-          .exec()
 
         if (group) {
-            group.createdByID = group.createdByID.getSafeData()
-            
-            return res.status(200).json(group)
+            return res.status(200).json(await group.getSafeData())
         } else {
             return res.status(404).json("Group not found")
         }
     } catch (error) {
+        console.log(error.message)
         res.status(400).json({error: error.message})
     }
 }
