@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useAuthContext } from '../hooks/useAuthContext'
 
-const GroupForm = ({ isOpen, setIsOpen, onGroupCreated  }) => {
+const GroupForm = ({ isOpen, setIsOpen, onGroupCreated }) => {
     const { user } = useAuthContext()
 
     const [name, setName] = useState('')

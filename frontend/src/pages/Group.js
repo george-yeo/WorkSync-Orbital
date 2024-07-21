@@ -218,7 +218,9 @@ const Group = () => {
     let groupsList
     if (groups == null) {
         groupsList = (
-            <p>Loading groups...</p>
+            <div>
+                Loading groups...
+            </div>
         )
     } else if (groups && searchResults == null) {
         groupsList = groups.length > 0 ? (

@@ -783,6 +783,9 @@ form.signup ul {
   cursor: pointer;
   min-width: 50px;
 }
+.add-btn:hover {
+  background-color: #55b359; /* Darker green on hover */
+}
 
 .delete-btn {
   background: var(--error);
@@ -794,6 +797,9 @@ form.signup ul {
   cursor: pointer;
   margin-left: 50px;
 }
+.delete-btn:hover {
+  background-color: #f0467c; /* Darker green on hover */
+}
 
 .approve-btn {
   background: var(--primary);
@@ -803,6 +809,9 @@ form.signup ul {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
+}
+.approve-btn:hover {
+  background-color: #55b359; /* Darker green on hover */
 }
 
 .reject-btn {
@@ -814,6 +823,9 @@ form.signup ul {
   border-radius: 4px;
   cursor: pointer;
   margin-left: 50px;
+}
+.reject-btn:hover {
+  background-color: #f0467c; /* Darker green on hover */
 }
 
 .addUser-popup-form {
@@ -862,6 +874,9 @@ form.signup ul {
   cursor: pointer;
   margin-left: 20px;
   min-width: 50px;
+}
+.remove-btn:hover {
+  background-color: #f0467c; /* Darker green on hover */
 }
 
 .Group-form input {
@@ -920,6 +935,9 @@ form.signup ul {
   cursor: pointer;
   margin-left: 20px;
 }
+.join-group-btn:hover {
+  background-color: #55b359; /* Darker green on hover */
+}
 
 .search-group-btn {
   background: var(--primary);
@@ -929,6 +947,9 @@ form.signup ul {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
+}
+.search-group-btn:hover {
+  background-color: #55b359; /* Darker green on hover */
 }
 
 /* group item */
@@ -977,6 +998,7 @@ form.signup ul {
   grid-template-columns: 60% 1fr 1fr;
   vertical-align: top;
   column-gap: 12px;
+  margin-right: 5px;
 }
 
 .group-item .members {

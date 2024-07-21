@@ -24,6 +24,8 @@ const GroupItem = ({ group }) => {
 
             if (response.ok) {
                 dispatch({ type: 'UPDATE_GROUP', payload: updatedGroup });
+            } else {
+                console.error("Failed to send request to join group:", updatedGroup.error);
             }
         } catch (error) {
             console.error("Failed to send request to join group:", error);
@@ -32,7 +34,7 @@ const GroupItem = ({ group }) => {
 
     const isMember = group.createdByID._id == user._id || group.membersID.findIndex(u => u._id == user._id) >= 0
     const isRequested = group.requestID.findIndex(u => u._id == user._id) >= 0
-
+    console.log(group)
     return (
         <div className="group-item" key={group._id}>
             <div className="group-header">
