@@ -72,7 +72,6 @@ const MembersModal = ({ isOpen, setIsMembersOpen, canManage }) => {
                 
                 if (responseAdd.ok) {
                     // Dispatch the updated group which should include both membersID and pendingID
-                    console.log(updatedGroup)
                     dispatch({ type: 'UPDATE_GROUP', payload: updatedGroup });
                     groupPageContext.dispatch({ type: 'SET_GROUP', payload: updatedGroup });
                 } else {

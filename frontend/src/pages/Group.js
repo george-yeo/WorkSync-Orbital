@@ -1,17 +1,19 @@
-import { Link } from 'react-router-dom'
 import { useEffect, useState } from "react";
 import { useGroupContext } from "../hooks/useGroupContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import Modal from 'react-modal';
 
 import GroupForm from "../components/GroupForm";
+import GroupItem from "../components/GroupItem";
 import Request from "../components/Request";
+import JoinGroup from "../components/JoinGroup";
 
 const Group = () => {
-    const { groups, dispatch } = useGroupContext();
+    const { groups, searchResults, dispatch } = useGroupContext();
     const { user } = useAuthContext();
     const [addUserStatus, setAddUserStatus] = useState(null);
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+    const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
     const [isRemoveUserModalOpen, setIsRemoveUserModalOpen] = useState(false);
     const [isDeleteGroupModalOpen, setIsDeleteGroupModalOpen] = useState(false);
     const [usernameToAdd, setUsernameToAdd] = useState('');
@@ -19,7 +21,7 @@ const Group = () => {
     const [selectedGroupId, setSelectedGroupId] = useState(null);
     const [groupToDelete, setGroupToDelete] = useState(null);
     const [sectionToDelete, setSectionToDelete] = useState(null);
-    const [searchResults, setSearchResults] = useState([]);
+    //const [searchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
         const fetchGroups = async () => {
@@ -53,7 +55,7 @@ const Group = () => {
         setSelectedGroupId(groupId);
         setIsAddUserModalOpen(true);
         setAddUserStatus(null);
-        setSearchResults([])
+        //setSearchResults([])
     };
 
     // Handle Add User Form Submit
@@ -192,114 +194,73 @@ const Group = () => {
         }
     };
 
-    const handleSearchSubmit = async (e) => {
-        e.preventDefault();
-        if (!user || !usernameToAdd) return;
+    // const handleSearchSubmit = async (e) => {
+    //     e.preventDefault();
+    //     if (!user || !usernameToAdd) return;
 
-        try {
-            const response = await fetch(`/api/user/search/${usernameToAdd}`, {
-                headers: { 'Authorization': `Bearer ${user.token}` }
-            });
+    //     try {
+    //         const response = await fetch(`/api/user/search/${usernameToAdd}`, {
+    //             headers: { 'Authorization': `Bearer ${user.token}` }
+    //         });
 
-            const json = await response.json();
+    //         const json = await response.json();
 
-            if (response.ok) {
-                setSearchResults(json);
-            } else {
-                console.error("Error searching user:", json.message);
-            }
-        } catch (error) {
-            console.error("Failed to search user:", error);
-        }
-    };
+    //         if (response.ok) {
+    //             setSearchResults(json);
+    //         } else {
+    //             console.error("Error searching user:", json.message);
+    //         }
+    //     } catch (error) {
+    //         console.error("Failed to search user:", error);
+    //     }
+    // };
+
+    let groupsList
+    if (groups == null) {
+        groupsList = (
+            <p>Loading groups...</p>
+        )
+    } else if (groups && searchResults == null) {
+        groupsList = groups.length > 0 ? (
+            groups.map((group) => (
+                <GroupItem group={group}/>
+            ))
+        ) : (
+            <p>No groups to display</p>
+        )
+    } else if (searchResults) {
+        groupsList = searchResults.length > 0 ? (
+            searchResults.map((group) => (
+                <GroupItem group={group}/>
+            ))
+        ) : (
+            <p>No groups to display</p>
+        )
+    }
 
     return (
-        <div className="groups">   
+        <div className="groups">
+            <div className="groups-header">
+                {searchResults == null && <div className="top">
+                    <h1>My Groups</h1>
+                    <button className="create add-btn" onClick={()=>setIsAddGroupModalOpen(true)}>
+                        Create
+                        <span className="material-symbols-outlined">create</span>
+                    </button>
+                    <GroupForm isOpen={isAddGroupModalOpen} setIsOpen={setIsAddGroupModalOpen} onGroupCreated={(newGroup) => dispatch({ type: 'CREATE_GROUP', payload: newGroup })} />
+                </div>}
+                {searchResults != null && <div className="top">
+                    <h1>Search Results</h1>
+                </div>}
+                <JoinGroup/>
+            </div>
             <div className="groups-list">
-                <GroupForm onGroupCreated={(newGroup) => dispatch({ type: 'CREATE_GROUP', payload: newGroup })} />
-                {groups ? (
-                    groups.length > 0 ? (
-                        groups.map((group) => (
-                            <div className="group-item" key={group._id}>
-                                <h2>{group.name}</h2>
-                                <p><b>Owner:</b> {group.createdByID.username}</p>
-                                <div><b>Member:</b> {group.membersID.map((member) => (
-                                    <p><span key={member}>
-                                        {member.username}
-                                        <button className="remove-btn" onClick={() => handleRemoveUserClick(group._id, member.username)}>Remove</button>
-                                    </span></p>
-                                ))}
-                                </div>
-                                <p>
-                                    <b>Pending: </b> 
-                                    {group.pendingID.map(member => member.username).join(', ')}
-                                    {group.requestID.length > 0 && group.pendingID.length > 0 && ', '}
-                                    {group.requestID.map(member => member.username).join(', ')}
-                                </p>
-                                <button className="add-btn" onClick={() => handleAddUserClick(group._id)}>Add User</button>
-                                {group.createdByID._id === user._id && (
-                                    <button className="delete-btn" onClick={() => handleDeleteGroupClick(group._id, group.sectionID)}>Delete Group</button>
-                                )}
-                               <Link to={"/group/"+group._id}>View Group</Link>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No groups to display</p>
-                    )
-                ) : (
-                    <p>Loading groups...</p>
-                )}
+                {/* <GroupForm onGroupCreated={(newGroup) => dispatch({ type: 'CREATE_GROUP', payload: newGroup })} /> */}
+                {groupsList}
             </div>
             <div className="request-list">
                 <Request />
             </div>
-
-            {/* Add User Modal */}
-            <Modal
-                isOpen={isAddUserModalOpen}
-                onRequestClose={() => setIsAddUserModalOpen(false)}
-                contentLabel="Add User to Group"
-                className="addUser-popup-form"
-                overlayClassName="custom-modal-overlay"
-                ariaHideApp={false}
-            >
-                <h2>Add User to Group</h2>
-                <span className="close-btn" onClick={() => setIsAddUserModalOpen(false)}>&times;</span>
-                <form onSubmit={handleSearchSubmit}>
-                    <label>
-                        Username:
-                        <input
-                            type="text"
-                            value={usernameToAdd}
-                            onChange={(e) => setUsernameToAdd(e.target.value)}
-                            required
-                        />
-                    </label>
-                    <div className="modal-buttons">
-                        <button type="submit">Search</button>
-                    </div>
-                </form>
-
-                {/* Display search results */}
-                {searchResults.length > 0 && (
-                    <div className="search-results">
-                        <h3>Search Results:</h3>
-                        <div>
-                            {searchResults.map(user => (
-                                <p key={user._id}>
-                                    {user.username}
-                                    <button className="join-group-btn" onClick={() => handleAddUserSubmit(user.username)}>Add</button>
-                                </p>
-                            ))}
-                        </div>
-                    </div>
-                )}
-                {addUserStatus && (
-                    <div className={`status-message ${addUserStatus.success ? 'success' : 'error'}`}>
-                        {addUserStatus.message}
-                    </div>
-                )}
-            </Modal>
 
             {/* Remove User Confirmation Modal */}
             <Modal
@@ -337,3 +298,50 @@ const Group = () => {
 };
 
 export default Group;
+
+// {/* Add User Modal */}
+// <Modal
+// isOpen={isAddUserModalOpen}
+// onRequestClose={() => setIsAddUserModalOpen(false)}
+// contentLabel="Add User to Group"
+// className="addUser-popup-form"
+// overlayClassName="custom-modal-overlay"
+// ariaHideApp={false}
+// >
+// <h2>Add User to Group</h2>
+// <span className="close-btn" onClick={() => setIsAddUserModalOpen(false)}>&times;</span>
+// <form onSubmit={handleSearchSubmit}>
+//     <label>
+//         Username:
+//         <input
+//             type="text"
+//             value={usernameToAdd}
+//             onChange={(e) => setUsernameToAdd(e.target.value)}
+//             required
+//         />
+//     </label>
+//     <div className="modal-buttons">
+//         <button type="submit">Search</button>
+//     </div>
+// </form>
+
+// {/* Display search results */}
+// {searchResults.length > 0 && (
+//     <div className="search-results">
+//         <h3>Search Results:</h3>
+//         <div>
+//             {searchResults.map(user => (
+//                 <p key={user._id}>
+//                     {user.username}
+//                     <button className="join-group-btn" onClick={() => handleAddUserSubmit(user.username)}>Add</button>
+//                 </p>
+//             ))}
+//         </div>
+//     </div>
+// )}
+// {addUserStatus && (
+//     <div className={`status-message ${addUserStatus.success ? 'success' : 'error'}`}>
+//         {addUserStatus.message}
+//     </div>
+// )}
+// </Modal>

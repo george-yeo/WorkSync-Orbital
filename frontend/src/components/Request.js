@@ -157,52 +157,54 @@ const Request = () => {
 
     return (
         <div className="requests-column">
-            <JoinGroup/>
-            <div><h2>Invite Requests</h2>
-            {loadingInvite && <p>Loading invite requests...</p>}
-            {error && <p className="error-message">{error}</p>}
-            {inviteRequests.length > 0 ? (
-                inviteRequests.map(request => (
-                    <div key={request._id} className="request-item">
-                        <p><h3>{request.createdByID.username} invited you to join {request.name} </h3></p>
-                        <p><b>Members:</b> {request.membersID.map(member => member.username).join(', ')}</p>
-                        <button className="approve-btn" onClick={() => handleApproveInvite(request._id)}>Join</button>
-                        <button className="reject-btn" onClick={() => handleRejectInvite(request._id)}>Reject</button>
+            {/* <JoinGroup/> */}
+            <div>
+                <h2>Invite Requests</h2>
+                {loadingInvite && <p>Loading invite requests...</p>}
+                {error && <p className="error-message">{error}</p>}
+                {inviteRequests.length > 0 ? (
+                    inviteRequests.map(request => (
+                        <div key={request._id} className="request-item">
+                            <p><h3>{request.createdByID.username} invited you to join {request.name} </h3></p>
+                            <p><b>Members:</b> {request.membersID.map(member => member.username).join(', ')}</p>
+                            <button className="approve-btn" onClick={() => handleApproveInvite(request._id)}>Join</button>
+                            <button className="reject-btn" onClick={() => handleRejectInvite(request._id)}>Reject</button>
+                        </div>
+                    ))
+                ) : (
+                    !loadingInvite && <p>No invite requests</p>
+                )}
+                {actionStatus && (
+                    <div className={`status-message ${actionStatus.success ? 'success' : 'error'}`}>
+                        {actionStatus.message}
                     </div>
-                ))
-            ) : (
-                !loadingInvite && <p>No invite requests</p>
-            )}
-            {actionStatus && (
-                <div className={`status-message ${actionStatus.success ? 'success' : 'error'}`}>
-                    {actionStatus.message}
-                </div>
-            )}
+                )}
             </div>
-            <div><h2>Join Requests</h2>
-            {loadingRequests && <p>Loading invite requests...</p>}
-            {requestError && <p className="error-message">{error}</p>}
-            {joinRequests.length > 0 ? (
-                joinRequests.map(request => (
-                    <div key={request._id} className="group-request">
-                        <p><h3>Users requested to join {request.name} </h3></p>
-                        {request.requestID.length > 0 ? (
-                            request.requestID.map(requester => (
-                                <div key={requester._id} className="request-item">
-                                    <p><b>Requested By:</b> {requester.username}</p>
-                                    <button className="approve-btn" onClick={() => handleApproveRequest(request._id, requester._id)}>Approve</button>
-                                    <button className="reject-btn" onClick={() => handleRejectRequest(request._id, requester._id)}>Reject</button>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No requests</p>
-                        )}
-                    </div>
-                ))
-            ) : (
-                !loadingRequests && <p>No join requests</p>
-            )}
-            </div>
+            {/* <div>
+                <h2>Join Requests</h2>
+                {loadingRequests && <p>Loading invite requests...</p>}
+                {requestError && <p className="error-message">{error}</p>}
+                {joinRequests.length > 0 ? (
+                    joinRequests.map(request => (
+                        <div key={request._id} className="group-request">
+                            <p><h3>Users requested to join {request.name} </h3></p>
+                            {request.requestID.length > 0 ? (
+                                request.requestID.map(requester => (
+                                    <div key={requester._id} className="request-item">
+                                        <p><b>Requested By:</b> {requester.username}</p>
+                                        <button className="approve-btn" onClick={() => handleApproveRequest(request._id, requester._id)}>Approve</button>
+                                        <button className="reject-btn" onClick={() => handleRejectRequest(request._id, requester._id)}>Reject</button>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No requests</p>
+                            )}
+                        </div>
+                    ))
+                ) : (
+                    !loadingRequests && <p>No join requests</p>
+                )}
+            </div> */}
         </div>
     )
 }

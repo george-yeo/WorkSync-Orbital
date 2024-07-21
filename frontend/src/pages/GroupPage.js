@@ -67,7 +67,7 @@ const GroupPage = () => {
     let growthPic = "sprout"
     let canManage = false
     if (group) {
-        if (group.treeGrowthProgress > 50) {
+        if (group.treeGrowthProgress >= 50) {
             growthPic = "sapling"
         }
         canManage = group.createdByID._id == user._id

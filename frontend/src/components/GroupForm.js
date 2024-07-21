@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useAuthContext } from '../hooks/useAuthContext'
 
-const GroupForm = ({ onGroupCreated  }) => {
+const GroupForm = ({ isOpen, setIsOpen, onGroupCreated  }) => {
     const { user } = useAuthContext()
 
     const [name, setName] = useState('')
@@ -56,25 +56,29 @@ const GroupForm = ({ onGroupCreated  }) => {
             setError(null)
             setEmptyFields([])
             setName('')
+            setIsOpen(false)
             onGroupCreated(json);
         }
     }
 
     return (
-        <form className="create Group-form" onSubmit={handleSubmit}>
-            <h3>Add a new Group</h3>
-
-            <label>Group Name: </label>
-            <input
-                type="text"
-                onChange={(e) => setName(e.target.value)}
-                value={name}
-                className={emptyFields.includes('name') ? 'error' : ''}
-            />
-
-            <button>Add Group</button>
-            {error && <div className='error'>{error}</div>}
-        </form>
+        isOpen && <div className="popup-form">
+            <div className="popup-content group-members">
+                <form className="Group-form" onSubmit={handleSubmit}>
+                <h2 className="title">Start a Group!</h2>
+                <span className="close-btn" onClick={() => setIsOpen(false)}>&times;</span>
+                    <label>Group Name: </label>
+                    <input
+                        type="text"
+                        onChange={(e) => setName(e.target.value)}
+                        value={name}
+                        className={emptyFields.includes('name') ? 'error' : ''}
+                    />
+                    {error && <div className='error'>{error}</div>}
+                    <button>Create</button>
+                </form>
+            </div>
+        </div>
     )
 }
 
