@@ -215,9 +215,17 @@ const searchGroup = async (req, res) => {
     try {
         const { group: name } = req.params
 
-        const group = await Group.findGroupByName(name)
+        const groups = await Group.findGroupByName(name)
+        
+        let groupsData = []
+        await Promise.all(await groups.map(group => {
+            return new Promise(async (resolve, reject) => {
+                groupsData.push(await group.getSafeData())
+                resolve()
+            })
+        }))
 
-        res.status(200).json(group)
+        res.status(200).json(groupsData)
     } catch (error) {
         console.log("searchGroup error: ", error.message)
         res.status(500).json({error: error.message})

@@ -23,7 +23,7 @@ const JoinGroup = () => {
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
         if (!user) return;
-
+        
         if (!searchQuery || searchQuery == '') {
             dispatch({ type: 'SET_SEARCH_RESULTS', payload: null });
             return;
