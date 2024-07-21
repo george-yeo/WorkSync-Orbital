@@ -26,6 +26,11 @@ export const groupReducer = (state, action) => {
                 ...state,
                 groups: state.groups.filter(group => group._id !== action.payload) // Removes the specific group by ID
             }
+        case 'SET_SEARCH_RESULTS':
+            return {
+                ...state,
+                searchResults: action.payload
+            }
         default:
             return state
     }
@@ -33,7 +38,8 @@ export const groupReducer = (state, action) => {
 
 export const GroupContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(groupReducer, {
-        groups: null
+        groups: null,
+        searchResults: null
     })
 
     return (
