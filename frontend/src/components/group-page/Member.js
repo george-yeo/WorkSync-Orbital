@@ -5,7 +5,7 @@ import { useGroupPageContext } from "../../hooks/useGroupPageContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import Modal from 'react-modal';
 
-const Member = ({ group, member, role, canManage }) => {
+const Member = ({ group, member, role, canManage, isInvite, handleRevokeInviteSubmit, isRequest, handleApproveRequest, handleRejectRequest, isSearchInvite, handleAddUserSubmit }) => {
     const { user } = useAuthContext();
     const { groups, dispatch } = useGroupContext();
     const groupPageContext = useGroupPageContext();
@@ -41,6 +41,38 @@ const Member = ({ group, member, role, canManage }) => {
             console.error("Failed to remove user from group:", error);
         }
     };
+
+    let actionsContainer
+
+    if (isInvite) {
+        actionsContainer = (
+            <div className="kick-actions">
+                <button className="delete-btn" onClick={() => handleRevokeInviteSubmit(member._id)}>Revoke</button>
+            </div>
+        )
+    } else if (isRequest) {
+        actionsContainer = (
+            <div className="kick-actions">
+                <button className="add-btn" onClick={() => handleApproveRequest(member)}>Accept</button>
+                <button className="delete-btn" onClick={() => handleRejectRequest(member)}>Deny</button>
+            </div>
+        )
+    } else if (isSearchInvite) {
+        actionsContainer = (
+            <div className="kick-actions">
+                {group.pendingID.findIndex((u) => u._id == member._id) < 0 && <button className="add-btn" onClick={() => handleAddUserSubmit(member._id)}>Invite</button>}
+                {group.pendingID.findIndex((u) => u._id == member._id) >= 0 && <div>Invite sent!</div>}
+            </div>
+        )
+    } else {
+        actionsContainer = (
+            <div className="kick-actions">
+                {canManage && member._id != user._id && !isKicking && <button className="remove-btn" onClick={handleOnKick}>Kick</button>}
+                {isKicking && <button className="add-btn" onClick={handleRemoveUserSubmit}>Yes</button>}
+                {isKicking && <button className="remove-btn" onClick={()=>setIsKicking(false)}>No</button>}
+            </div>
+        )
+    }
     
     return (
         <li className="member">
@@ -52,11 +84,7 @@ const Member = ({ group, member, role, canManage }) => {
                 />
                 {isKicking && <div className="member-name">Confirm kick - {member.displayname + " @" + member.username + (role ? " - " + role : "")}?</div>}
                 {!isKicking && <div className="member-name">{member.displayname + " @" + member.username + (role ? " - " + role : "")}</div>}
-                <div className="kick-actions">
-                    {canManage && member._id != user._id && !isKicking && <button className="remove-btn" onClick={handleOnKick}>Kick</button>}
-                    {isKicking && <button className="add-btn" onClick={handleRemoveUserSubmit}>Yes</button>}
-                    {isKicking && <button className="remove-btn" onClick={()=>setIsKicking(false)}>No</button>}
-                </div>
+                {actionsContainer}
             </div>
         </li>
     )

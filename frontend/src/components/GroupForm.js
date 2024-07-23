@@ -16,26 +16,26 @@ const GroupForm = ({ isOpen, setIsOpen, onGroupCreated }) => {
             return
         }
 
-        const title = name + " (Group)"
+        // const title = name + " (Group)"
 
-        const responseSection = await fetch('/api/sections/createGroupSection', {
-            method: 'POST',
-            body: JSON.stringify({title: title}),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            }
-        })
+        // const responseSection = await fetch('/api/sections/createGroupSection', {
+        //     method: 'POST',
+        //     body: JSON.stringify({title: title}),
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Authorization': `Bearer ${user.token}`
+        //     }
+        // })
 
-        const jsonSection = await responseSection.json()
+        // const jsonSection = await responseSection.json()
 
-        if (!responseSection.ok) {
-            setError(jsonSection.error)
-        }
+        // if (!responseSection.ok) {
+        //     setError(jsonSection.error)
+        // }
 
         const group = { 
             name, 
-            sectionID: jsonSection._id
+            //sectionID: jsonSection._id
         }
 
         const response = await fetch('/api/group/create', {
@@ -49,16 +49,19 @@ const GroupForm = ({ isOpen, setIsOpen, onGroupCreated }) => {
 
         const json = await response.json()
 
-        if (!response.ok) {
+        if (response.ok) {
+            onClose()
+            onGroupCreated(json);
+        } else {
             setError(json.error)
         }
-        if (response.ok) {
-            setError(null)
-            setEmptyFields([])
-            setName('')
-            setIsOpen(false)
-            onGroupCreated(json);
-        }
+    }
+
+    const onClose = () => {
+        setError(null)
+        setEmptyFields([])
+        setName('')
+        setIsOpen(false)
     }
 
     return (
@@ -66,7 +69,7 @@ const GroupForm = ({ isOpen, setIsOpen, onGroupCreated }) => {
             <div className="popup-content group-members">
                 <form className="Group-form" onSubmit={handleSubmit}>
                 <h2 className="title">Start a Group!</h2>
-                <span className="close-btn" onClick={() => setIsOpen(false)}>&times;</span>
+                <span className="close-btn" onClick={onClose}>&times;</span>
                     <label>Group Name: </label>
                     <input
                         type="text"

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useGroupContext } from "../hooks/useGroupContext";
 
 import JoinGroup from "./JoinGroup";
 
 const Request = () => {
     const { user } = useAuthContext();
+    const { groups, dispatch } = useGroupContext();
+
     const [error, setError] = useState(null);
     const [inviteRequests, setInviteRequests] = useState([]);
     const [loadingInvite, setLoadingInvite] = useState(true);
@@ -58,7 +61,7 @@ const Request = () => {
         }
 
         fetchInviteRequests()
-        fetchJoinRequests()
+        //fetchJoinRequests()
     }, [user])
 
     const handleApproveInvite = async (groupId) => {
@@ -69,14 +72,18 @@ const Request = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
-                body: JSON.stringify({ user_id: user._id })
+                //body: JSON.stringify({ user_id: user._id })
             })
             if (response.ok) {
+                const updatedGroup = await response.json()
+                dispatch({ type: 'CREATE_GROUP', payload: updatedGroup });
+                dispatch({ type: 'UPDATE_GROUP', payload: updatedGroup });
+                setInviteRequests(inviteRequests.filter(group => group._id != groupId))
                 setActionStatus({ success: true, message: 'Invite approved' });
-                window.location.reload()
+                //window.location.reload()
             } else {
                 const error = await response.json();
-                setActionStatus({ success: false, message: `Failed to approve invite: ${error.message}` });
+                setActionStatus({ success: false, message: `Failed to approve invite: ${error.error}` });
             }
         } catch (error) {
             console.error("Error approving invite:", error);
@@ -92,20 +99,21 @@ const Request = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
-                body: JSON.stringify({ user_id: user._id })
+                //body: JSON.stringify({ user_id: user._id })
             })
             if (response.ok) {
+                setInviteRequests(inviteRequests.filter(group => group._id != groupId))
                 setActionStatus({ success: true, message: 'Invite rejected' });
             } else {
                 const error = await response.json();
-                setActionStatus({ success: false, message: `Failed to approve invite: ${error.message}` });
+                setActionStatus({ success: false, message: `Failed to reject invite: ${error.error}` });
             }
         } catch (error) {
             console.error("Error approving invite:", error);
-            setActionStatus({ success: false, message: `Failed to approve invite: ${error.message}` });
+            setActionStatus({ success: false, message: `Failed to reject invite: ${error.message}` });
         }
         finally {
-            window.location.reload()
+            //window.location.reload()
         }
     }
 
@@ -121,7 +129,7 @@ const Request = () => {
             })
             if (response.ok) {
                 setrequestActionStatus({ success: true, message: 'Request approved' });
-                window.location.reload()
+                //window.location.reload()
             } else {
                 const error = await response.json();
                 setrequestActionStatus({ success: false, message: `Failed to approve Request: ${error.message}` });
@@ -144,7 +152,7 @@ const Request = () => {
             })
             if (response.ok) {
                 setrequestActionStatus({ success: true, message: 'Request approved' });
-                window.location.reload()
+                //window.location.reload()
             } else {
                 const error = await response.json();
                 setrequestActionStatus({ success: false, message: `Failed to approve Request: ${error.message}` });
@@ -166,7 +174,7 @@ const Request = () => {
                     inviteRequests.map(request => (
                         <div key={request._id} className="request-item">
                             <p><h3>{request.createdByID.username} invited you to join {request.name} </h3></p>
-                            <p><b>Members:</b> {request.membersID.map(member => member.username).join(', ')}</p>
+                            {/* <p><b>Members:</b> {request.membersID.map(member => member.username).join(', ')}</p> */}
                             <button className="approve-btn" onClick={() => handleApproveInvite(request._id)}>Join</button>
                             <button className="reject-btn" onClick={() => handleRejectInvite(request._id)}>Reject</button>
                         </div>
@@ -174,7 +182,7 @@ const Request = () => {
                 ) : (
                     !loadingInvite && <p>No invite requests</p>
                 )}
-                {actionStatus && (
+                {actionStatus && actionStatus.message && (
                     <div className={`status-message ${actionStatus.success ? 'success' : 'error'}`}>
                         {actionStatus.message}
                     </div>

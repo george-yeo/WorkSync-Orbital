@@ -35,7 +35,6 @@ const Group = () => {
                 const json = await response.json();
 
                 if (response.ok) {
-                    console.log(json)
                     dispatch({ type: 'SET_GROUPS', payload: json });
                 } else {
                     console.error("Error fetching groups:", json.message);
@@ -215,86 +214,66 @@ const Group = () => {
     //     }
     // };
 
-    let groupsList
-    if (groups == null) {
-        groupsList = (
-            <div>
-                Loading groups...
-            </div>
-        )
-    } else if (groups && searchResults == null) {
-        groupsList = groups.length > 0 ? (
-            groups.map((group) => (
-                <GroupItem group={group}/>
-            ))
-        ) : (
-            <p>No groups to display</p>
-        )
-    } else if (searchResults) {
-        groupsList = searchResults.length > 0 ? (
-            searchResults.map((group) => (
-                <GroupItem group={group}/>
-            ))
-        ) : (
-            <p>No groups to display</p>
-        )
+    let groupsList = []
+    
+    if (searchResults != null) {
+        groupsList = searchResults
+    } else if (groups != null) {
+        groupsList = groups
     }
+
+    groupsList.filter(group => group.createdByID._id == user._id || group.requestID.some(u => u._id == user._id) || group.membersID.some(u => u._id == user._id))
+    
+    // if (groups == null) {
+    //     groupsList = (
+    //         <div>
+    //             Loading groups...
+    //         </div>
+    //     )
+    // } else if (groups && searchResults == null) {
+    //     groupsList = groups.sort((a, b) => a.name < b.name ? -1 : 1).length > 0 ? (
+    //         groups.map((group) => (
+    //             <GroupItem group={group}/>
+    //         ))
+    //     ) : (
+    //         <p>No groups to display</p>
+    //     )
+    // } else if (searchResults) {
+    //     groupsList = searchResults.length > 0 ? (
+    //         searchResults.sort((a, b) => a.name < b.name ? -1 : 1).map((group) => (
+    //             <GroupItem group={group}/>
+    //         ))
+    //     ) : (
+    //         <p>No groups to display</p>
+    //     )
+    // }
 
     return (
         <div className="groups">
             <div className="groups-header">
-                {searchResults == null && <div className="top">
-                    <h1>My Groups</h1>
+                <div className="top">
+                    <h1>{searchResults == null ? "My Groups" : "Search Results"}</h1>
                     <button className="create add-btn" onClick={()=>setIsAddGroupModalOpen(true)}>
                         Create
                         <span className="material-symbols-outlined">create</span>
                     </button>
                     <GroupForm isOpen={isAddGroupModalOpen} setIsOpen={setIsAddGroupModalOpen} onGroupCreated={(newGroup) => dispatch({ type: 'CREATE_GROUP', payload: newGroup })} />
-                </div>}
-                {searchResults != null && <div className="top">
-                    <h1>Search Results</h1>
-                </div>}
+                </div>
                 <JoinGroup/>
             </div>
             <div className="groups-list">
                 {/* <GroupForm onGroupCreated={(newGroup) => dispatch({ type: 'CREATE_GROUP', payload: newGroup })} /> */}
-                {groupsList}
+                {groupsList.length > 0 ? (
+                    groupsList.sort((a, b) => a.name < b.name ? -1 : 1).map((group) => (
+                        <GroupItem group={group}/>
+                    ))
+                ) : (
+                    <p>No groups to display</p>
+                )}
             </div>
             <div className="request-list">
                 <Request />
             </div>
-
-            {/* Remove User Confirmation Modal */}
-            <Modal
-                isOpen={isRemoveUserModalOpen}
-                onRequestClose={() => setIsRemoveUserModalOpen(false)}
-                contentLabel="Confirm Remove User"
-                className="removeUser-popup-form"
-                ariaHideApp={false}
-            >
-                <h2>Confirm Remove Member</h2>
-                <span className="close-btn" onClick={() => setIsRemoveUserModalOpen(false)}>&times;</span>
-                <p>Are you sure you want to remove <strong>{usernameToRemove}</strong> from the group?</p>
-                <div className="modal-buttons">
-                    <button onClick={handleRemoveUserSubmit}>Yes, Remove</button>
-                </div>
-            </Modal>
-
-             {/* Delete Group Confirmation Modal */}
-             <Modal
-                isOpen={isDeleteGroupModalOpen}
-                onRequestClose={() => setIsDeleteGroupModalOpen(false)}
-                contentLabel="Confirm Delete Group"
-                className="deleteGroup-popup-form"
-                ariaHideApp={false}
-            >
-                <h2>Confirm Delete Group</h2>
-                <span className="close-btn" onClick={() => setIsDeleteGroupModalOpen(false)}>&times;</span>
-                <p>Are you sure you want to delete this group?</p>
-                <div className="modal-buttons">
-                    <button onClick={handleDeleteGroupSubmit}>Yes, Delete</button>
-                </div>
-            </Modal>
         </div>
     );
 };
@@ -346,4 +325,35 @@ export default Group;
 //         {addUserStatus.message}
 //     </div>
 // )}
+// </Modal>
+// {/* Remove User Confirmation Modal */}
+// <Modal
+// isOpen={isRemoveUserModalOpen}
+// onRequestClose={() => setIsRemoveUserModalOpen(false)}
+// contentLabel="Confirm Remove User"
+// className="removeUser-popup-form"
+// ariaHideApp={false}
+// >
+// <h2>Confirm Remove Member</h2>
+// <span className="close-btn" onClick={() => setIsRemoveUserModalOpen(false)}>&times;</span>
+// <p>Are you sure you want to remove <strong>{usernameToRemove}</strong> from the group?</p>
+// <div className="modal-buttons">
+//     <button onClick={handleRemoveUserSubmit}>Yes, Remove</button>
+// </div>
+// </Modal>
+
+// {/* Delete Group Confirmation Modal */}
+// <Modal
+// isOpen={isDeleteGroupModalOpen}
+// onRequestClose={() => setIsDeleteGroupModalOpen(false)}
+// contentLabel="Confirm Delete Group"
+// className="deleteGroup-popup-form"
+// ariaHideApp={false}
+// >
+// <h2>Confirm Delete Group</h2>
+// <span className="close-btn" onClick={() => setIsDeleteGroupModalOpen(false)}>&times;</span>
+// <p>Are you sure you want to delete this group?</p>
+// <div className="modal-buttons">
+//     <button onClick={handleDeleteGroupSubmit}>Yes, Delete</button>
+// </div>
 // </Modal>

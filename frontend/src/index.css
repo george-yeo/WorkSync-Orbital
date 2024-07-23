@@ -520,6 +520,10 @@ form.signup ul {
   cursor: pointer;
 }
 
+/* .chat-search .close-btn {
+  right: 5px;
+} */
+
 .close-btn:hover,
 .close-btn:focus {
   color: black;
@@ -741,6 +745,8 @@ form.signup ul {
   column-gap: 10px;
   row-gap: 20px;;
   max-width: 1250px;
+  max-height: 580px;
+  overflow-y: auto;
   /* width: 60%;
   float: left; */
 }
@@ -764,6 +770,8 @@ form.signup ul {
 }
 
 .request-list {
+  position: absolute;
+  right: 10%;
   float: right
 }
 
@@ -795,7 +803,7 @@ form.signup ul {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
-  margin-left: 50px;
+  margin-left: 10px;
 }
 .delete-btn:hover {
   background-color: #f0467c; /* Darker green on hover */
@@ -876,6 +884,20 @@ form.signup ul {
   min-width: 50px;
 }
 .remove-btn:hover {
+  background-color: #f0467c; /* Darker green on hover */
+}
+
+.red-btn {
+  background: var(--error);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 50px;
+}
+.red-btn:hover {
   background-color: #f0467c; /* Darker green on hover */
 }
 
@@ -1089,7 +1111,7 @@ form.signup ul {
   object-fit: fill;
 }
 
-.group-members .title {
+.group-page .title {
   margin-top: 0;
 }
 
@@ -1102,12 +1124,11 @@ form.signup ul {
   overflow-y: auto;
 }
 .group-members ul li {
-  position: relative;
+  position: static;
   background: #ffffff;
   
   transition-property: height;
   transition-duration: 200ms;
-  overflow: hidden;
 
   /* make the list items unselectable */
   -webkit-user-select: none;
@@ -1115,16 +1136,22 @@ form.signup ul {
   -ms-user-select: none;
   user-select: none;
 }
+.group-members li {
+  position: relative;
+  width: 100%;
+}
 
 .group-members .member-details {
   margin-bottom: 5px;
   display: grid;
-  grid-template-columns: 30px 1fr .2fr;
+  grid-template-columns: 30px 4fr 1fr;
   column-gap: 10px;
   align-items: center;
 }
 
-.group-members .kick-actions {
+.kick-actions {
+  position: relative;
+  right: 0;
   display: flex;
   flex-direction: row;
   justify-content: right;
@@ -1150,8 +1177,47 @@ form.signup ul {
 
 .group-members .search-result {
   display: flex;
-  grid-template-columns: 1fr 80px;
+  grid-template-columns: 1fr 100px;
   column-gap: 10px;
   justify-content: space-between;
   align-items: center;
+}
+
+.group-manage .setting {
+  display: flex;
+  column-gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.group-manage .rename-group {
+  display: grid;
+  grid-template-columns: 1fr 80px;
+  column-gap: 10px;
+  align-items: center;
+}
+
+.group-manage .rename-group input {
+  margin: 0;
+}
+
+.group-leave .title {
+  text-align: center;
+}
+
+.leave-actions {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+div.success {
+  padding: 10px;
+  background: #fff;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 4px;
+  margin: 20px 0;
 }

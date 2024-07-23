@@ -19,12 +19,16 @@ export const groupReducer = (state, action) => {
                 ...state,
                 groups: state.groups.map(group =>
                     group._id === action.payload._id ? action.payload : group // Updates the specific group
-                )
+                ),
+                searchResults: state.searchResults !== null ? state.searchResults.map(group =>
+                    group._id === action.payload._id ? action.payload : group // Updates the specific group
+                ) : null
             }
         case 'DELETE_GROUP':
             return {
                 ...state,
-                groups: state.groups.filter(group => group._id !== action.payload) // Removes the specific group by ID
+                groups: state.groups.filter(group => group._id !== action.payload), // Removes the specific group by ID
+                //searchResults: state.searchResults !== null ? state.searchResults.filter(group => group._id !== action.payload) : null // Removes the specific group by ID
             }
         case 'SET_SEARCH_RESULTS':
             return {
