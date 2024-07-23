@@ -8,6 +8,7 @@ const JoinGroup = () => {
     const { groups, dispatch } = useGroupContext();
     const [isSearchGroupModalOpen, setIsSearchGroupModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [lastSearched, setLastSearched] = useState('');
     //const [searchResults, setSearchResults] = useState([]);
     const [requestStatus, setRequestStatus] = useState('');
 
@@ -23,6 +24,10 @@ const JoinGroup = () => {
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
         if (!user) return;
+
+        if (searchQuery == lastSearched) return
+
+        setLastSearched(searchQuery)
         
         if (!searchQuery || searchQuery == '') {
             dispatch({ type: 'SET_SEARCH_RESULTS', payload: null });

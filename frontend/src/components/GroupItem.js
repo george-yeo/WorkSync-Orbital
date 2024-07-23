@@ -5,7 +5,7 @@ import { useGroupContext } from "../hooks/useGroupContext";
 const GroupItem = ({ group }) => {
     const { user } = useAuthContext();
     const { groups, dispatch } = useGroupContext();
-
+    
     // Function to handle request to join a group
     const handleRequestJoin = async () => {
         if (!user) return;
@@ -17,24 +17,55 @@ const GroupItem = ({ group }) => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
-                body: JSON.stringify({ user_id: user._id })
             });
 
-            const updatedGroup = await response.json();
+            const json = await response.json();
 
             if (response.ok) {
+                const updatedGroup = structuredClone(group)
+                updatedGroup.requestID = [...updatedGroup.requestID, user]
                 dispatch({ type: 'UPDATE_GROUP', payload: updatedGroup });
+                dispatch({ type: 'CREATE_GROUP', payload: updatedGroup });
             } else {
-                console.error("Failed to send request to join group:", updatedGroup.error);
+                console.error("Failed to send request to join group:", json.error);
             }
         } catch (error) {
             console.error("Failed to send request to join group:", error);
         }
     };
 
+    // Function to cancel request to join a group
+    const handleCancelRequest = async () => {
+        if (!user) return;
+
+        try {
+            const response = await fetch(`/api/group/cancel/${group._id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+            });
+
+            const json = await response.json();
+
+            if (response.ok) {
+                const updatedGroup = structuredClone(group)
+                updatedGroup.requestID = group.requestID.filter(u => u._id !== user._id)
+                dispatch({ type: 'UPDATE_GROUP', payload: updatedGroup });
+                dispatch({ type: 'DELETE_GROUP', payload: group._id });
+            } else {
+                console.error("Failed to cancel request:", json.error);
+            }
+        } catch (error) {
+            console.error("Failed to cancel request:", error);
+        }
+    };
+
     const isMember = group.createdByID._id == user._id || group.membersID.findIndex(u => u._id == user._id) >= 0
     const isRequested = group.requestID.findIndex(u => u._id == user._id) >= 0
-    console.log(group)
+    const isPrivate = group.isPrivate == true
+    
     return (
         <div className="group-item" key={group._id}>
             <div className="group-header">
@@ -45,7 +76,7 @@ const GroupItem = ({ group }) => {
                 <div className="group-details">
                     <h2>{group.name}</h2>
                     <div className="group-stats">
-                        Public
+                        {isPrivate ? "Private" : "Public"}
                         <div className="members">
                             {group.membersID.length+1} <span className="material-symbols-outlined">group</span>
                         </div>
@@ -55,8 +86,8 @@ const GroupItem = ({ group }) => {
                     </div>
                 </div>
             </div>
-            {!isMember && !isRequested && <button className="add-btn view" onClick={handleRequestJoin}>Request Join</button>}
-            {!isMember && isRequested && "Request pending..."}
+            {!isMember && !isPrivate && !isRequested && <button className="add-btn view" onClick={handleRequestJoin}>Request Join</button>}
+            {!isMember && isRequested && <button className="delete-btn view" onClick={() => handleCancelRequest(user._id)}>Cancel Request</button>}
             {isMember && <Link className="add-btn view" to={"/group/"+group._id}>View</Link>}
         </div>
     )

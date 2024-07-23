@@ -39,13 +39,14 @@ const groupSchema = new Schema ({
             return validator.isBase64(value) && value.length <= 10485760; // 10 MB limit for example
           },
           message: 'Invalid group picture. Ensure it is a base64 encoded string and not too large.'
-        }
+        },
+        required: true
     },
-    sectionID: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'Section'
-    },
+    // sectionID: {
+    //     type: Schema.Types.ObjectId,
+    //     required: true,
+    //     ref: 'Section'
+    // },
     isGrowingTree: {
         type: Schema.Types.Boolean,
         default: false,
@@ -61,6 +62,10 @@ const groupSchema = new Schema ({
         default: 0,
         required: true
     },
+    isPrivate: {
+        type: Schema.Types.Boolean,
+        default: true
+    }
 })
 
 groupSchema.statics.createGroup = async function (name, user, sectionID) {
@@ -86,8 +91,9 @@ groupSchema.statics.createGroup = async function (name, user, sectionID) {
         name,
         createdByID: user._id,
         chatChannelID: chatChannel._id,
-        sectionID
     })
+
+    group.createTaskSection(user._id)
 
     return group
 }
@@ -129,7 +135,8 @@ groupSchema.methods.addMember = async function(userId) {
             { _id: this._id},
             { $push: { membersID: userId }}
         ),
-        this.addToChat(await this.model("User").findById(userId))
+        this.addToChat(await this.model("User").findById(userId)),
+        this.createTaskSection(userId)
     ])
 }
 
@@ -140,7 +147,8 @@ groupSchema.methods.removeMember = async function(userId) {
             { _id: this._id},
             { $pull: { membersID: userId }}
         ),
-        this.removeFromChat(userId)
+        this.removeFromChat(userId),
+        this.deleteTaskSection(userId)
     ])
 }
 
@@ -149,9 +157,40 @@ groupSchema.statics.findGroupByName = async function(name) {
     return this.find({ name: {"$regex": "^"+name, "$options": "i"} }).limit(8).exec()
 }
 
+// method check if owner
+groupSchema.methods.isOwner = async function(userId) {
+    return this.createdByID.equals(userId)
+}
+
 // method check if member
 groupSchema.methods.isMember = async function(userId) {
     return this.membersID.includes(userId) || this.createdByID.equals(userId)
+}
+
+// method check if member has privileges
+groupSchema.methods.canManage = async function(userId) {
+    return this.createdByID.equals(userId)
+}
+
+// method create new task section for member
+groupSchema.methods.deleteTaskSection = async function(userId) {
+    await this.model("TaskSection").deleteOne({
+        user_id: userId,
+        group_id: this._id,
+        isGroup: true
+    })
+}
+
+// method create task section for member
+groupSchema.methods.createTaskSection = async function(userId) {
+    const section = await this.model("TaskSection").create({
+        title: this.name + " (Group)",
+        user_id: userId,
+        isGroup: true,
+        group_id: this._id,
+    })
+
+    return section
 }
 
 // method format all data for sending to client

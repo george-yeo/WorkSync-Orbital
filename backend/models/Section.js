@@ -13,7 +13,10 @@ const taskSectionSchema = new Schema({
     },
     isGroup: {
         type: Boolean,
-        required: true
+        default: false
+    },
+    group_id: {
+        type: Schema.Types.ObjectId,
     }
 }, {})
 

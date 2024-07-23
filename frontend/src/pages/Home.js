@@ -41,54 +41,54 @@ const Home = () => {
       }
     };
 
-    const fetchGroupSections = async () => {
-      const groupSectionsResponse = await fetch("/api/group/", {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      const groups = await groupSectionsResponse.json();
+    // const fetchGroupSections = async () => {
+    //   const groupSectionsResponse = await fetch("/api/group/", {
+    //     headers: { Authorization: `Bearer ${user.token}` },
+    //   });
+    //   const groups = await groupSectionsResponse.json();
       
-      if (groupSectionsResponse.ok) {
-        const groupSectionsPromises = groups.map(async (group) => {
-          const sectionResponse = await fetch(`/api/sections/getGroupSection/${group.sectionID}`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${user.token}`,
-            },
-          });
-          const sections = await sectionResponse.json();
+    //   if (groupSectionsResponse.ok) {
+    //     const groupSectionsPromises = groups.map(async (group) => {
+    //       const sectionResponse = await fetch(`/api/sections/getGroupSection/${group.sectionID}`, {
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //           Authorization: `Bearer ${user.token}`,
+    //         },
+    //       });
+    //       const sections = await sectionResponse.json();
     
-          const sectionsWithTasks = await Promise.all(sections.map(async (section) => {
-            const tasksResponse = await fetch(`/api/tasks/getGroupTasks/${section._id}`, {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${user.token}`,
-              },
-            });
-            const tasks = await tasksResponse.json();
+    //       const sectionsWithTasks = await Promise.all(sections.map(async (section) => {
+    //         const tasksResponse = await fetch(`/api/tasks/getGroupTasks/${section._id}`, {
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Bearer ${user.token}`,
+    //           },
+    //         });
+    //         const tasks = await tasksResponse.json();
     
-            return { ...section, tasks };
-          }));
+    //         return { ...section, tasks };
+    //       }));
     
-          return { groupName: group.name, sections: sectionsWithTasks };
-        });
+    //       return { groupName: group.name, sections: sectionsWithTasks };
+    //     });
     
-        const resolvedGroupSections = await Promise.all(groupSectionsPromises);
+    //     const resolvedGroupSections = await Promise.all(groupSectionsPromises);
     
-        resolvedGroupSections.forEach(({ sections }) => {
-          sections.forEach((section) => {
-            sectionContext.dispatch({ type: 'UPDATE_SECTION', payload: section });
-            section.tasks.forEach((task) => {
-              taskContext.dispatch({ type: 'UPDATE_TASK', payload: task });
-            });
-          });
-        });
-      }
-    };    
+    //     resolvedGroupSections.forEach(({ sections }) => {
+    //       sections.forEach((section) => {
+    //         sectionContext.dispatch({ type: 'UPDATE_SECTION', payload: section });
+    //         section.tasks.forEach((task) => {
+    //           taskContext.dispatch({ type: 'UPDATE_TASK', payload: task });
+    //         });
+    //       });
+    //     });
+    //   }
+    // };    
 
     if (user) {
       fetchTasks();
       fetchSections();
-      fetchGroupSections();
+      // fetchGroupSections();
     }
   }, [user, sortBy, sortOrder]);
 

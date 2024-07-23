@@ -9,13 +9,18 @@ const {
     getInvite,
     rejectGroup,
     removeMember,
+    leaveGroup,
     deleteGroup,
     searchGroup,
     getRequest,
+    cancelRequest,
     joinGroup,
     acceptUser,
     rejectUser,
+    revokeInvite,
     plantTree,
+    setPrivacy,
+    setName,
 } = require('../controllers/groupController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -44,6 +49,12 @@ router.get('/invite', getInvite)
 //remove member
 router.patch('/remove/:id', removeMember)
 
+//revoke invite
+router.patch('/revoke/:id', revokeInvite)
+
+//leave group
+router.patch('/leave/:id', leaveGroup)
+
 //delete group
 router.delete('/delete/:id', deleteGroup)
 
@@ -52,6 +63,9 @@ router.get('/search/:group', searchGroup)
 
 //join group
 router.patch('/join/:id', joinGroup)
+
+//cancel request
+router.patch('/cancel/:id', cancelRequest)
 
 //get request
 router.get('/request', getRequest)
@@ -67,5 +81,11 @@ router.get('/:id', getGroupData)
 
 //plant tree
 router.patch('/plant-tree/:id', plantTree)
+
+//set privacy
+router.patch('/privacy/:id', setPrivacy)
+
+//change name
+router.patch('/rename/:id', setName)
 
 module.exports = router

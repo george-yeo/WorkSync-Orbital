@@ -5,8 +5,8 @@ const {
   createSection,
   deleteSection,
   updateSection,
-  createGroupSection,
-  getGroupSection
+  // createGroupSection,
+  // getGroupSection
 } = require('../controllers/sectionController.js')
 const requireAuth = require('../middleware/requireAuth.js')
 
@@ -30,10 +30,10 @@ router.delete('/:id', deleteSection)
 // UPDATE a section
 router.patch('/:id', updateSection)
 
-// GET group section
-router.get('/getGroupSection/:id', getGroupSection)
+// // GET group section
+// router.get('/getGroupSection/:id', getGroupSection)
 
-// POST a new group section
-router.post('/createGroupSection', createGroupSection)
+// // POST a new group section
+// router.post('/createGroupSection', createGroupSection)
   
 module.exports = router

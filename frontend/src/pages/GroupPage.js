@@ -5,12 +5,16 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import Modal from 'react-modal';
 
 import MembersModal from "../components/group-page/MembersModal";
+import ManageGroupModal from "../components/group-page/ManageGroupModal";
+import LeaveGroupModal from "../components/group-page/LeaveGroupModal";
 
 const GroupPage = () => {
     const { id: groupId } = useParams()
     const { user } = useAuthContext();
     const groupPageContext = useGroupPageContext();
     const [isMembersOpen, setIsMembersOpen] = useState(false)
+    const [isManageOpen, setIsManageOpen] = useState(false)
+    const [isLeaveOpen, setIsLeaveOpen] = useState(false)
     
     useEffect(() => {
         const fetchGroupDetail = async () => {
@@ -66,11 +70,13 @@ const GroupPage = () => {
 
     let growthPic = "sprout"
     let canManage = false
+    let isOwner = false
     if (group) {
         if (group.treeGrowthProgress >= 50) {
             growthPic = "sapling"
         }
         canManage = group.createdByID._id == user._id
+        isOwner = group.createdByID._id == user._id
     }
 
     return (
@@ -92,9 +98,12 @@ const GroupPage = () => {
             <div className="group-actions">
                 <button className="add-btn" onClick={()=>setIsMembersOpen(!isMembersOpen)}>View Members</button>
                 <button className="add-btn">Add Comment</button>
-                {canManage && <button className="add-btn">Manage Group</button>}
+                {canManage && <button className="add-btn" onClick={()=>setIsManageOpen(!isManageOpen)}>Manage Group</button>}
+                {!isOwner && <button className="red-btn" onClick={()=>setIsLeaveOpen(!isLeaveOpen)}>Leave Group</button>}
             </div>
             <MembersModal isOpen={isMembersOpen} setIsMembersOpen={setIsMembersOpen} canManage={canManage} />
+            {canManage && <ManageGroupModal isOpen={isManageOpen} setIsManageOpen={setIsManageOpen} isOwner={isOwner} />}
+            {!isOwner && <LeaveGroupModal isOpen={isLeaveOpen} setIsLeaveOpen={setIsLeaveOpen} />}
         </div> :
         <div></div>
     );
