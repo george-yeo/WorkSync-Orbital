@@ -27,10 +27,10 @@ const taskSchema = new Schema({
         type: String,
         required: true
     },
-    isGroup: {
-        type: Boolean,
-        required: true,
-    }
+    // isGroup: {
+    //     type: Boolean,
+    //     required: true,
+    // }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Task', taskSchema)

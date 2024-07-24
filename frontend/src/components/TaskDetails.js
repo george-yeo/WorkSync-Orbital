@@ -66,9 +66,11 @@ const TaskDetails = ({ task }) => {
 
     const isOverdue = task.deadline ? differenceInSeconds(new Date(), new Date(task.deadline)) >= 0 : false
 
+    const desc = task.description != "" ? task.description : "None provided"
+
     const contents = (
         <div>
-            <p><strong>Description: </strong>{task.description}</p>
+            <p><strong>Description: </strong>{desc}</p>
             {task.deadline && <p className={isOverdue ? "overdue" : ''}><strong>Deadline: </strong>{formatDistanceToNow(new Date(task.deadline), { addSuffix: true })}</p>}
             <p>Created {formatDistanceToNow(new Date(task.createdAt), { addSuffix: true })}</p>
         </div>
