@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTaskContext } from '../hooks/useTaskContext';
 import { useAuthContext } from '../hooks/useAuthContext';
 
-const TaskForm = ({ section, closePopup, editingTask }) => {
+const TaskForm = ({ section, closePopup, editingTask, isGroup, group_id }) => {
   const { dispatch } = useTaskContext();
   const { user } = useAuthContext();
 
@@ -39,28 +39,39 @@ const TaskForm = ({ section, closePopup, editingTask }) => {
         }
       })
     } else {
-      if (section.isGroup){
-        task = { title, description, deadline, isCompleted: false, sectionId: section._id, user_id: section.user_id }
-        response = await fetch('/api/tasks/createGroupTask', {
-          method: 'POST',
-          body: JSON.stringify(task),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}`
-          }
-        });
-      } else {
-        task = { title, description, deadline, isCompleted: false, sectionId: section._id }
+      // if (section.isGroup){
+      //   task = { title, description, deadline, isCompleted: false, sectionId: section._id, user_id: section.user_id }
+      //   response = await fetch('/api/tasks/createGroupTask', {
+      //     method: 'POST',
+      //     body: JSON.stringify(task),
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       'Authorization': `Bearer ${user.token}`
+      //     }
+      //   });
+      // } else {
+        task = { title, description, deadline, isCompleted: false, sectionId: section._id, group_id }
 
-        response = await fetch('/api/tasks', {
-          method: 'POST',
-          body: JSON.stringify(task),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}`
-          }
-        });
-      }
+        if (group_id) {
+          response = await fetch('/api/tasks/createGroupTask', {
+            method: 'POST',
+            body: JSON.stringify(task),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${user.token}`
+            }
+          });
+        } else {
+          response = await fetch('/api/tasks', {
+            method: 'POST',
+            body: JSON.stringify(task),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${user.token}`
+            }
+          });
+        }
+      // }
     }
 
     const json = await response.json();

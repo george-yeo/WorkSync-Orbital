@@ -33,7 +33,7 @@ router.patch('/:id', updateTask)
 // POST a new group task
 router.post('/createGroupTask', createGroupTask)
 
-//get group tasks
-router.get('/getGroupTasks/:sectionId', getGroupTasks)
+// //get group tasks
+// router.get('/getGroupTasks/:sectionId', getGroupTasks)
   
 module.exports = router
