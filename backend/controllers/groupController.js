@@ -589,7 +589,53 @@ const setPicture = async (req, res) => {
 
         await Group.findOneAndUpdate({_id: id}, { groupPic:base64String })
 
-        return res.status(200).json({ message: 'Profile picture updated successfully' })
+        group = await Group.findById(id)
+
+        return res.status(200).json(group.groupPic)
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+const addGrowthProgress = async (req, res) => {
+    const user_id = req.user._id
+    const { id } = req.params
+
+    try {
+        let group = await Group.findOne({
+            _id: id,
+        })
+
+        if (!group) {
+            return res.status(404).json("Group not found")
+        }
+
+        group.treeGrowthProgress++
+        await group.save()
+
+        return res.status(200).json(group.treeGrowthProgress)
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+const subGrowthProgress = async (req, res) => {
+    const user_id = req.user._id
+    const { id } = req.params
+
+    try {
+        let group = await Group.findOne({
+            _id: id,
+        })
+
+        if (!group) {
+            return res.status(404).json("Group not found")
+        }
+
+        group.treeGrowthProgress--
+        await group.save()
+
+        return res.status(200).json(group.treeGrowthProgress)
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -616,5 +662,7 @@ module.exports = {
     plantTree,
     setPrivacy,
     setName,
-    setPicture
+    setPicture,
+    addGrowthProgress,
+    subGrowthProgress,
 }
