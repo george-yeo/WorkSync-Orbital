@@ -25,7 +25,6 @@ const Profile = () => {
           
           const json = await response.json()
           setUserData(json[0])
-          console.log('user', userData.profilePic)
         }
         if(user){
           fetchUser()

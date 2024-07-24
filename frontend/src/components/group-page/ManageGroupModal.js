@@ -14,6 +14,8 @@ const ManageGroupModal = ({ isOpen, setIsManageOpen }) => {
     const [status, setStatus] = useState(null);
     const [groupName, setGroupName] = useState('')
     const [isDeleting, setIsDeleting] = useState(false)
+    const [showPopup, setShowPopup] = useState(false);
+    const [file, setFile] = useState(null);
     const navigate = useNavigate()
 
     const group = groupPageContext.group;
@@ -117,8 +119,46 @@ const ManageGroupModal = ({ isOpen, setIsManageOpen }) => {
         setIsManageOpen(false)
     }
 
-    const handleUploadPic = () => {
-        // TODO
+    const openPopup = () => {
+        setShowPopup(true);
+      };
+    
+    const closePopup = () => {
+        setShowPopup(false);
+    };
+
+
+    const handleUploadPic = async() => {
+        if (!file || !user) return;
+
+        const formData = new FormData();
+        formData.append('groupPic', file);
+
+        try {
+            const response = await fetch(`/api/group/change-pic/${group._id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: formData
+            });
+
+            const json = await response.json();
+
+            if (response.ok) {
+                window.location.reload()
+                dispatch({ type: 'UPDATE_GROUP', payload: group });
+                groupPageContext.dispatch({ type: 'SET_GROUP', payload: group });
+                setStatus({ success: true, message: "Picture updated successfully!" });
+                closePopup();
+            } else {
+                console.error("Error uploading picture:", json.error);
+                setStatus({ success: false, message: json.error });
+            }
+        } catch (error) {
+            console.error("Failed to upload picture:", error);
+            setStatus({ success: false, message: error.message });
+        }
     }
 
     return (
@@ -132,7 +172,17 @@ const ManageGroupModal = ({ isOpen, setIsManageOpen }) => {
                 </div>
                 <div className="setting">
                     Change Group Picture
-                    <button className="add-btn" onClick={handleUploadPic}>Upload</button>
+                    <button className="add-btn" onClick={openPopup}>Upload</button>
+                    {showPopup && (
+                        <div className="popup-form">
+                            <div className="popup-content">
+                                <h3>Upload Profile Picture</h3>
+                                <span className="close-btn" onClick={closePopup}>&times;</span>
+                                <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+                                <button className="add-btn" onClick={handleUploadPic}>Upload</button>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <div className="setting">
                     Rename Group
