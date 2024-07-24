@@ -1,4 +1,5 @@
 const express = require('express')
+const multer = require('multer')
 
 const {
     createGroup,
@@ -21,6 +22,7 @@ const {
     plantTree,
     setPrivacy,
     setName,
+    setPicture,
 } = require('../controllers/groupController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -87,5 +89,15 @@ router.patch('/privacy/:id', setPrivacy)
 
 //change name
 router.patch('/rename/:id', setName)
+
+// Multer setup for file upload
+const storage = multer.memoryStorage() // Store file in memory buffer temporarily
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // Limit size to 10MB
+})
+
+//change picture
+router.patch('/change-pic/:id',upload.single('groupPic'), setPicture)
 
 module.exports = router

@@ -53,7 +53,6 @@ export const useProfile = ( ) => {
   const uploadPic = async ( profilePic ) => {
     const formData = new FormData();
     formData.append('profilePic', profilePic);
-    console.log(formData)
 
     const response = await fetch ('api/user/upload-profile-pic/' + user._id, {
       method: 'PATCH',

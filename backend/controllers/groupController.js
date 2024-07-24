@@ -559,6 +559,42 @@ const setName = async (req, res) => {
     }
 }
 
+const setPicture = async (req, res) => {
+    const user_id = req.user._id
+    const { id } = req.params
+
+    try {
+        let group = await Group.findOne({
+            _id: id,
+        })
+
+        if (!group) {
+            return res.status(404).json("Group not found")
+        }
+
+        const canManage = group.canManage(req.user._id)
+        if (!canManage) {
+            return res.status(400).json({ error: "User has no privileges." });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' })
+        }
+        
+        if (!req.file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+            throw Error('Only image files are allowed!')
+        }
+        // Convert file buffer to Base64 string
+        const base64String = req.file.buffer.toString('base64')
+
+        await Group.findOneAndUpdate({_id: id}, { groupPic:base64String })
+
+        return res.status(200).json({ message: 'Profile picture updated successfully' })
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
 module.exports = {
     createGroup,
     addUser,
@@ -580,4 +616,5 @@ module.exports = {
     plantTree,
     setPrivacy,
     setName,
+    setPicture
 }

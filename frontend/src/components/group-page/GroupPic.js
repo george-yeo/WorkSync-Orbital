@@ -1,8 +1,8 @@
 import { useState } from "react"
-import { useProfile } from "../hooks/useProfile"
+import { useGroup } from "../../hooks/useGroup";
 
-const ProfilePic = ( {closePopup} ) => {
-    const { uploadPic, error } = useProfile()
+const GroupPic = ( {closePopup} ) => {
+    const { uploadPic, error } = useGroup()
     const [image, setImage] = useState('');
 
     const handleSubmit = async (e) => {
@@ -40,4 +40,5 @@ const ProfilePic = ( {closePopup} ) => {
     )
 }
 
-export default ProfilePic;
+export default GroupPic
+export { GroupPic }
