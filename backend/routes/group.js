@@ -23,6 +23,8 @@ const {
     setPrivacy,
     setName,
     setPicture,
+    addGrowthProgress,
+    subGrowthProgress,
 } = require('../controllers/groupController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -99,5 +101,11 @@ const upload = multer({
 
 //change picture
 router.patch('/change-pic/:id',upload.single('groupPic'), setPicture)
+
+//add tree growth
+router.patch('/addGrowth/:id', addGrowthProgress)
+
+//sub tree growth
+router.patch('/subGrowth/:id', subGrowthProgress)
 
 module.exports = router

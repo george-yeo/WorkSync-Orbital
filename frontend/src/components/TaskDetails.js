@@ -57,6 +57,35 @@ const TaskDetails = ({ task }) => {
 
         if (response.ok) {
             dispatch({type: 'UPDATE_TASK', payload: json})
+
+            const sectionResponse = await fetch('api/sections/' + task.sectionId, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            })
+
+            const section = await sectionResponse.json()
+
+            if (section[0].isGroup){
+                if(task.isCompleted) {
+                    const addResponse = await fetch('api/group/addGrowth/' + section[0].group_id, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${user.token}`
+                        }
+                    })
+                    const addJson = await addResponse.json()
+                } else {
+                    const subResponse = await fetch('api/group/subGrowth/' + section[0].group_id, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${user.token}`
+                        }
+                    })
+                    const subJson = await subResponse.json()
+                }
+            }
         }
     }
 

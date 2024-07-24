@@ -146,7 +146,7 @@ const ManageGroupModal = ({ isOpen, setIsManageOpen }) => {
             const json = await response.json();
 
             if (response.ok) {
-                window.location.reload()
+                group.groupPic = json
                 dispatch({ type: 'UPDATE_GROUP', payload: group });
                 groupPageContext.dispatch({ type: 'SET_GROUP', payload: group });
                 setStatus({ success: true, message: "Picture updated successfully!" });
@@ -176,7 +176,7 @@ const ManageGroupModal = ({ isOpen, setIsManageOpen }) => {
                     {showPopup && (
                         <div className="popup-form">
                             <div className="popup-content">
-                                <h3>Upload Profile Picture</h3>
+                                <h3>Upload Group Picture</h3>
                                 <span className="close-btn" onClick={closePopup}>&times;</span>
                                 <input type="file" onChange={(e) => setFile(e.target.files[0])} />
                                 <button className="add-btn" onClick={handleUploadPic}>Upload</button>
