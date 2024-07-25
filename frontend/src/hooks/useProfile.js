@@ -28,7 +28,7 @@ export const useProfile = ( ) => {
       setError(json.error)
       return false
     }
-    return true
+    return json
   }
 
   const changePassword = async ( currPassword, newPassword, confirmPassword ) => {

@@ -54,6 +54,7 @@ const SectionForm = ({ section }) => {
                 onChange={(e) => setTitle(e.target.value)}
                 value={title}
                 className={emptyFields.includes('title') ? 'error' : ''}
+                placeholder="Enter name..."
             />
 
             <button>Add Section</button>

@@ -237,8 +237,35 @@ nav button {
   font-size: 1em;
   margin-left: 10px;
 }
+nav .profile-pic {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 5px;
+}
 nav .username {
-  padding-right: 10px;
+  vertical-align: middle;
+}
+nav .user-details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 5px;
+  cursor: pointer;
+}
+.links {
+  width: 60%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  margin-left: 10px;
+  column-gap: 30px;
+  margin-right: 20px;
+}
+nav .logout {
+  margin-left: 30px;
 }
 /* auth forms */
 form.signup, form.login {
@@ -590,23 +617,45 @@ form.signup ul {
 .profile-title {
   position: absolute;
   top: 120px;
-  left: 60px;
+  margin-left: 5px;
 }
 
 .profile-content {
   display: flex;
+  column-gap: 40px;
 }
-
 
 .profile-container {
   background-color: white;
-  padding: 20px;
+  padding: 40px;
+  padding-top: 20px;
+  padding-bottom: 10px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
+  width: 20%;
   text-align: center;
   margin-top: 50px;
-  margin-left: -100px;
+}
+
+@media (max-width: 1050px) {
+  .profile-content {
+    flex-direction: column;
+    align-items: center;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .profile-container {
+    width: 100%;
+  }
+}
+
+.profile-container .profile-pic .pic {
+  cursor: pointer;
+}
+
+.profile-container .profile-pic .edit-pic {
+  cursor: pointer;
 }
 
 .profile-container img {
@@ -617,15 +666,20 @@ form.signup ul {
   object-fit: cover;
 }
 
+.profile-container p {
+  margin-top: 0px;
+}
+
 .profile-info {
   background-color: white;
   padding: 40px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 1000px;
+  width: 100%;
   text-align: left;
   margin-top: 50px;
-  margin-left: 40px;
 }
 
 .info-item {
@@ -635,7 +689,7 @@ form.signup ul {
 }
 
 .info-item strong {
-  width: 300px; /* Adjust width as needed */
+  width: 150px; /* Adjust width as needed */
   display: inline-block;
 }
 
@@ -651,8 +705,6 @@ form.signup ul {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 20px;
-  margin-left: -50px;
 }
 
 .button-change-password {
@@ -663,12 +715,12 @@ form.signup ul {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 20px;
 }
 
-.buttons {
+.profile .buttons {
   display: flex;
   gap: 20px;
+  margin-top: 20px;
 }
 
 .password-field {
@@ -1020,7 +1072,7 @@ form.signup ul {
   border-radius: 50%;
   width: 58px;
   height: 58px;
-  object-fit: fill;
+  object-fit: cover;
 }
 
 .group-item a {
@@ -1087,7 +1139,7 @@ form.signup ul {
 }
 
 .group-page .synctree {
-  width: 80%;
+  width: 761px;
   height: 800px;
   position: relative;
 }
@@ -1104,8 +1156,22 @@ form.signup ul {
 .group-page .synctree .tree {
   position: absolute;
   left: 50%;
-  height: 30%;
-  bottom: 10%;
+  height: 70%;
+  bottom: 15%;
+}
+
+.group-page .synctree .sapling {
+  position: absolute;
+  left: 50%;
+  height: 40%;
+  bottom: 12.5%;
+}
+
+.group-page .synctree .sprout {
+  position: absolute;
+  left: 50%;
+  height: 15%;
+  bottom: 12.5%;
 }
 
 .group-page .synctree .soil {
@@ -1113,6 +1179,42 @@ form.signup ul {
   left: 50%;
   height: 15%;
   bottom: 0;
+}
+
+.group-page .synctree .comment {
+  position: absolute;
+  left: 85%;
+  height: 30%;
+  bottom: 12.5%;
+  transform: translate(-50%, 0);
+}
+
+.group-page .synctree .comment img {
+  height: 100%;
+  left: 50%;
+  transform: translate(0, 0);
+}
+
+.group-page .synctree .comment .message {
+  position: absolute;
+  top: 10%;
+  text-align: center;
+  width: 90%;
+  height: 42.5%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.group-page .synctree .comment .sender {
+  position: absolute;
+  top: 52.5%;
+  text-align: right;
+  width: 80%;
+  height: 10%;
+  left: 45%;
+  transform: translate(-50%, 0);
 }
 
 .group-page .group-actions {
@@ -1127,7 +1229,8 @@ form.signup ul {
   border-radius: 50%;
   width: 140px;
   height: 140px;
-  object-fit: fill;
+  object-fit: cover;
+  margin-bottom: -20px;
 }
 
 .group-page .title {

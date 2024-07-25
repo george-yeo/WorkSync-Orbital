@@ -4,6 +4,10 @@ export const SectionContext = createContext()
 
 export const sectionsReducer = (state, action) => {
     switch (action.type) {
+        case 'RESET':
+            return {
+                sections: null
+            }
         case 'SET_SECTIONS':
             return {
                 sections: action.payload

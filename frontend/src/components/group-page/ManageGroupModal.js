@@ -3,9 +3,6 @@ import { useNavigate  } from 'react-router-dom'
 import { useGroupContext } from "../../hooks/useGroupContext";
 import { useGroupPageContext } from "../../hooks/useGroupPageContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import Modal from 'react-modal';
-
-import Member from "./Member";
 
 const ManageGroupModal = ({ isOpen, setIsManageOpen }) => {
     const { user } = useAuthContext();

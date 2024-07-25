@@ -108,7 +108,24 @@ const updateTask = async (req, res) => {
         return res.status(404).json({error: noTaskFound})
     }
 
-    res.status(200).json(await Task.findById(id))
+    try {
+        const section = await Task.model("TaskSection").findById(task.sectionId)
+        if (section.isGroup) {
+            const group = await Task.model("Group").findById(section.group_id)
+            if (req.body.isCompleted !== null && req.body.isCompleted !== task.isCompleted) {
+                if (req.body.isCompleted) {
+                    await group.addGrowthProgress()
+                } else {
+                    await group.subGrowthProgress()
+                }
+            }
+            return res.status(200).json({task: await Task.findById(task._id), group: await group.getSafeData()})
+        } else {
+            return res.status(200).json({task: await Task.findById(task._id)})
+        }
+    } catch (error) {
+        return res.status(400).json({error: error.message})
+    }
 }
 
 // create new task

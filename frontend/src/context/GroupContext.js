@@ -4,6 +4,11 @@ export const GroupContext = createContext()
 
 export const groupReducer = (state, action) => {
     switch (action.type) {
+        case 'RESET':
+            return {
+                groups: null,
+                searchResults: null
+            }
         case 'SET_GROUPS':
             return {
                 ...state,
