@@ -65,7 +65,11 @@ const groupSchema = new Schema ({
     isPrivate: {
         type: Schema.Types.Boolean,
         default: true
-    }
+    },
+    comments: [{
+        type: Schema.Types.ObjectId,
+        ref: 'GroupComment'
+    }],
 })
 
 groupSchema.statics.createGroup = async function (name, user, sectionID) {
@@ -206,6 +210,50 @@ groupSchema.methods.getSafeData = async function() {
     data.pendingID = data.pendingID.map((user) => user.getSafeData())
     data.membersID = data.membersID.map((user) => user.getSafeData())
     data.requestID = data.requestID.map((user) => user.getSafeData())
+    
+    return data
+}
+
+// method add growth progress
+groupSchema.methods.addGrowthProgress = async function() {
+    if (!this.isGrowingTree) return
+
+    this.treeGrowthProgress = Math.min(100, this.treeGrowthProgress + 10)
+    if (this.treeGrowthProgress == 100) {
+        this.isGrowingTree = false
+        this.treesGrown++
+    }
+
+    await this.save()
+}
+
+// method subtract growth progress
+groupSchema.methods.subGrowthProgress = async function() {
+    if (!this.isGrowingTree) return
+    
+    this.treeGrowthProgress = Math.max(0, this.treeGrowthProgress - 10)
+    await this.save()
+}
+
+// method format all data for sending to client
+groupSchema.methods.getSafeData = async function() {
+    let data = (({ comments,...object }) => object)((await this.model("Group").find({ _id: this._id })
+        .populate('createdByID')
+        .populate('pendingID')
+        .populate('membersID')
+        .populate('requestID')
+        .exec())[0]._doc)
+    
+    data.createdByID = data.createdByID.getSafeData()
+    data.pendingID = data.pendingID.map((user) => user.getSafeData())
+    data.membersID = data.membersID.map((user) => user.getSafeData())
+    data.requestID = data.requestID.map((user) => user.getSafeData())
+
+    if (this.comments.length > 0) {
+        const selectedComment = Math.floor(Math.random()*Math.min(5, this.comments.length))
+        data.selectedComment = {...(await this.model("GroupComment").findById(this.comments[this.comments.length-1-selectedComment]))._doc}
+        data.selectedComment.sender = await (await this.model("User").findById(data.selectedComment.sender_id)).getSafeData()
+    }
     
     return data
 }

@@ -4,6 +4,10 @@ export const TaskContext = createContext()
 
 export const tasksReducer = (state, action) => {
     switch (action.type) {
+        case 'RESET':
+            return {
+                tasks: null
+            }
         case 'SET_TASKS':
             return {
                 tasks: action.payload

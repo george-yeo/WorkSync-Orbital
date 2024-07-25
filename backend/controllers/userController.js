@@ -66,7 +66,7 @@ const updateUser = async (req, res) => {
       email, username, displayname, gender
     })
 
-    res.status(200).json(await User.find({_id: id }))
+    res.status(200).json(await User.findById(id))
   } catch (error) {
     res.status(400).json({error: error.message})
   }

@@ -1,4 +1,5 @@
 const Group = require('../models/Group')
+const GroupComment = require('../models/GroupComment')
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
@@ -17,7 +18,7 @@ const createGroup = async (req, res) => {
         res.status(200).json(await group.getSafeData())
     } catch(error) {
         console.log(error.message)
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -58,7 +59,7 @@ const addUser = async (req, res) => {
         )
         res.status(200).json(await (await Group.findById(id)).getSafeData())
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -87,7 +88,7 @@ const acceptGroup = async (req, res) => {
         console.log(group.membersID)
         res.status(200).json(await group.getSafeData())
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -123,7 +124,7 @@ const rejectGroup = async (req, res) => {
         )
         res.status(200).json(true)
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -197,7 +198,7 @@ const removeMember = async (req, res) => {
         await group.removeMember(user_id)
         res.status(200).json(await group.getSafeData())
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -288,7 +289,7 @@ const joinGroup = async (req, res) => {
         res.status(200).json(true)
     } catch (error) {
         console.log(error.message)
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -339,7 +340,7 @@ const cancelRequest = async (req, res) => {
         )
         res.status(200).json(await group.getSafeData())
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -409,7 +410,7 @@ const acceptUser = async (req, res) => {
         await group.addMember(user_id)
         res.status(200).json(true)
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -444,7 +445,7 @@ const rejectUser = async (req, res) => {
         )
         res.status(200).json(true)
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -464,11 +465,11 @@ const getGroupData = async (req, res) => {
         if (group) {
             return res.status(200).json(await group.getSafeData())
         } else {
-            return res.status(404).json("Group not found")
+            return res.status(404).json({error: "Group not found"})
         }
     } catch (error) {
         console.log(error.message)
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -482,14 +483,51 @@ const plantTree = async (req, res) => {
         })
         
         if (group && await group.isMember(user_id) && group.isGrowingTree == false) {
+            group.treeGrowthProgress = 0
             group.isGrowingTree = true
             await group.save()
             return res.status(200).json(true)
         } else {
-            return res.status(404).json("Group not found")
+            return res.status(404).json({error: "Group not found"})
         }
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
+    }
+}
+
+const addComment = async (req, res) => {
+    const user_id = req.user._id
+    const { id } = req.params
+    let { message } = req.body
+
+    try {
+        let group = await Group.findOne({
+            _id: id,
+        })
+
+        message = message.trim()
+        if (message === '') {
+            return res.status(400).json({error: "Comment is empty"})
+        }
+        
+        if (group && await group.isMember(user_id)) {
+            const comment =  await GroupComment.create({
+                message: message,
+                sender_id: user_id,
+                group_id: group._id,
+            })
+            group.comments.push(comment._id)
+            await group.save()
+            const sender = await User.findById(user_id)
+            const returnData = {...comment._doc}
+            returnData.sender = sender.getSafeData()
+            return res.status(200).json(returnData)
+        } else {
+            return res.status(404).json({error: "Group not found"})
+        }
+    } catch (error) {
+        console.log(error.message)
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -504,7 +542,7 @@ const setPrivacy = async (req, res) => {
         })
 
         if (!group) {
-            return res.status(404).json("Group not found")
+            return res.status(404).json({error: "Group not found"})
         }
 
         const canManage = group.canManage(req.user._id)
@@ -516,7 +554,7 @@ const setPrivacy = async (req, res) => {
         await group.save()
         return res.status(200).json(group.isPrivate)
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -531,7 +569,7 @@ const setName = async (req, res) => {
         })
 
         if (!group) {
-            return res.status(404).json("Group not found")
+            return res.status(404).json({error: "Group not found"})
         }
 
         const canManage = group.canManage(req.user._id)
@@ -555,7 +593,7 @@ const setName = async (req, res) => {
         await group.save()
         return res.status(200).json(group.name)
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
@@ -569,7 +607,7 @@ const setPicture = async (req, res) => {
         })
 
         if (!group) {
-            return res.status(404).json("Group not found")
+            return res.status(404).json({error: "Group not found"})
         }
 
         const canManage = group.canManage(req.user._id)
@@ -593,53 +631,53 @@ const setPicture = async (req, res) => {
 
         return res.status(200).json(group.groupPic)
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Internal server error"})
     }
 }
 
-const addGrowthProgress = async (req, res) => {
-    const user_id = req.user._id
-    const { id } = req.params
+// const addGrowthProgress = async (req, res) => {
+//     const user_id = req.user._id
+//     const { id } = req.params
 
-    try {
-        let group = await Group.findOne({
-            _id: id,
-        })
+//     try {
+//         let group = await Group.findOne({
+//             _id: id,
+//         })
 
-        if (!group) {
-            return res.status(404).json("Group not found")
-        }
+//         if (!group) {
+//             return res.status(404).json("Group not found")
+//         }
 
-        group.treeGrowthProgress++
-        await group.save()
+//         group.treeGrowthProgress++
+//         await group.save()
 
-        return res.status(200).json(group.treeGrowthProgress)
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
-}
+//         return res.status(200).json(group.treeGrowthProgress)
+//     } catch (error) {
+//         res.status(400).json({error: "Internal server error"})
+//     }
+// }
 
-const subGrowthProgress = async (req, res) => {
-    const user_id = req.user._id
-    const { id } = req.params
+// const subGrowthProgress = async (req, res) => {
+//     const user_id = req.user._id
+//     const { id } = req.params
 
-    try {
-        let group = await Group.findOne({
-            _id: id,
-        })
+//     try {
+//         let group = await Group.findOne({
+//             _id: id,
+//         })
 
-        if (!group) {
-            return res.status(404).json("Group not found")
-        }
+//         if (!group) {
+//             return res.status(404).json("Group not found")
+//         }
 
-        group.treeGrowthProgress--
-        await group.save()
+//         group.treeGrowthProgress--
+//         await group.save()
 
-        return res.status(200).json(group.treeGrowthProgress)
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
-}
+//         return res.status(200).json(group.treeGrowthProgress)
+//     } catch (error) {
+//         res.status(400).json({error: "Internal server error"})
+//     }
+// }
 
 module.exports = {
     createGroup,
@@ -663,6 +701,7 @@ module.exports = {
     setPrivacy,
     setName,
     setPicture,
-    addGrowthProgress,
-    subGrowthProgress,
+    addComment,
+    // addGrowthProgress,
+    // subGrowthProgress,
 }

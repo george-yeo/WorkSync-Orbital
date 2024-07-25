@@ -8,7 +8,7 @@ const ProfileForm = ({ closePopup }) => {
     const [gender, setGender] = useState('')
     const [displayname, setDisplayname] = useState('')
     const { update, error} = useProfile()
-    const { user } = useAuthContext()
+    const { user, dispatch } = useAuthContext()
     const [userData, setUserData] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 
@@ -38,7 +38,12 @@ const ProfileForm = ({ closePopup }) => {
       const success = await update(email, username, displayname, gender)
       if (success){
         closePopup();
-        window.location.reload()
+        setUserData(success);
+        setUsername(success.username)
+        setEmail(success.email)
+        setDisplayname(success.displayname)
+        setGender(success.gender)
+        dispatch({ type: 'UPDATE', payload: success }) 
       }
     }
 

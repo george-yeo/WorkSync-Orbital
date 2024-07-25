@@ -4,66 +4,79 @@ import { useGroupContext } from "../../hooks/useGroupContext";
 import { useGroupPageContext } from "../../hooks/useGroupPageContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
-const ManageGroupModal = ({ isOpen, setIsLeaveOpen }) => {
+const CommentModal = ({ isOpen, setIsCommentOpen }) => {
     const { user } = useAuthContext();
     const { groups, dispatch } = useGroupContext();
     const groupPageContext = useGroupPageContext();
     const navigate = useNavigate()
+    const [message, setMessage] = useState('');
     const [status, setStatus] = useState(null);
 
     const group = groupPageContext.group;
 
-    const handleLeave = async () => {
-        if (!user) return;
+    const handleSubmit = async (e) => {
+        if (e) {
+            e.preventDefault()
+        }
+        
+        if (!user || message == '') return;
     
         try {
             // Add the user to the group
-            const response = await fetch(`/api/group/leave/` + group._id, {
-                method: 'PATCH',
+            const response = await fetch(`/api/group/comment/` + group._id, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
+                body: JSON.stringify({ message: message })
             });
 
             const json = await response.json();
             
             if (response.ok) {
-                dispatch({ type: 'DELETE_GROUP', payload: group._id });
-                setStatus({ success: true });
-                navigate("/group")
+                groupPageContext.dispatch({ type: 'ADD_COMMENT', payload: json });
+                onClose()
             } else {
-                console.error("Error leaving:", json.error);
+                console.error("Error comment:", json.error);
                 setStatus({ success: false, message: json.error });
             }
         } catch (error) {
-            console.error("Failed to leave:", error);
+            console.error("Failed to comment:", error);
             setStatus({ success: false, message: error.message });
         }
     }
 
     const onClose = () => {
         setStatus(null)
-        setIsLeaveOpen(false)
+        setIsCommentOpen(false)
     }
 
     return (
         isOpen && <div className="popup-form">
-            <div className="popup-content group-leave">
-                <h2 className="title">Leave the Group?</h2>
+            <div className="popup-content group-comment">
+                <h2 className="title">Add Comment</h2>
                 <span className="close-btn" onClick={onClose}>&times;</span>
+                <div className="search-user">
+                    <form onSubmit={handleSubmit}>
+                        <input
+                            type="text"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            placeholder="Enter comment here..."
+                        />
+                        <button className="add-btn view" onClick={handleSubmit}>Post</button>
+                    </form>
+                </div>
+                
                 {status && status.message && (
                     <div className={`status-message ${status.success ? 'success' : 'error'}`}>
                         {status.message}
                     </div>
                 )}
-                <div className="leave-actions">
-                    <button className="add-btn" onClick={handleLeave}>Yes</button>
-                    <button className="remove-btn" onClick={onClose}>No</button>
-                </div>
             </div>
         </div>
     )
 }
 
-export default ManageGroupModal
+export default CommentModal

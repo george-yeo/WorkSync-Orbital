@@ -8,6 +8,7 @@ import Modal from 'react-modal';
 
 import Section from "../components/Section";
 import MembersModal from "../components/group-page/MembersModal";
+import CommentModal from "../components/group-page/CommentModal";
 import ManageGroupModal from "../components/group-page/ManageGroupModal";
 import LeaveGroupModal from "../components/group-page/LeaveGroupModal";
 
@@ -18,6 +19,7 @@ const GroupPage = () => {
     const sectionContext = useSectionContext();
     const taskContext = useTaskContext();
     const [isMembersOpen, setIsMembersOpen] = useState(false)
+    const [isCommentOpen, setIsCommentOpen] = useState(false)
     const [isManageOpen, setIsManageOpen] = useState(false)
     const [isLeaveOpen, setIsLeaveOpen] = useState(false)
     
@@ -100,7 +102,7 @@ const GroupPage = () => {
             )
         }
     }
-
+    
     return (
         group ?
         <div className="group-page">
@@ -115,18 +117,24 @@ const GroupPage = () => {
                     <h3>{"SyncTrees Grown: " + group.treesGrown}</h3>
                     {group.isGrowingTree == true && <h3>{"Growth - " + group.treeGrowthProgress + "%"}</h3>}
                     {group.isGrowingTree == false && group.treesGrown > 0 && <img className="tree" src="../tree.png"></img>}
-                    {group.isGrowingTree == true && <img className="tree" src={"../"+growthPic+".png"}></img>}
+                    {group.isGrowingTree == true && <img className={growthPic} src={"../"+growthPic+".png"}></img>}
+                    {group.selectedComment && <div className="comment">
+                        <img src="../sign.png" />
+                        <div className="message">{group.selectedComment.message}</div>
+                        <div className="sender">-{group.selectedComment.sender.displayname}</div>
+                    </div>}
                     <img className="soil" src="../soil.png"></img>
                 </div>
                 <div className="group-actions">
                     <button className="add-btn" onClick={()=>setIsMembersOpen(!isMembersOpen)}>View Members</button>
-                    <button className="add-btn">Add Comment</button>
+                    <button className="add-btn" onClick={()=>setIsCommentOpen(!isCommentOpen)}>Add Comment</button>
                     {canManage && <button className="add-btn" onClick={()=>setIsManageOpen(!isManageOpen)}>Manage Group</button>}
                     {!isOwner && <button className="red-btn" onClick={()=>setIsLeaveOpen(!isLeaveOpen)}>Leave Group</button>}
                 </div>
             </div>
             {sectionContainer}
             <MembersModal isOpen={isMembersOpen} setIsMembersOpen={setIsMembersOpen} canManage={canManage} />
+            <CommentModal isOpen={isCommentOpen} setIsCommentOpen={setIsCommentOpen} />
             {canManage && <ManageGroupModal isOpen={isManageOpen} setIsManageOpen={setIsManageOpen} isOwner={isOwner} />}
             {!isOwner && <LeaveGroupModal isOpen={isLeaveOpen} setIsLeaveOpen={setIsLeaveOpen} />}
         </div> :
