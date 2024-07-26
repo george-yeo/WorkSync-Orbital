@@ -15,7 +15,7 @@ const createGroup = async (req, res) => {
 
     try {      
         const group = await Group.createGroup(name, user, sectionID)
-        res.status(200).json(await group.getSafeData())
+        res.status(200).json({group: await group.getSafeData(), section: await Group.model("TaskSection").findOne({ group_id: group._id, user_id: user._id})})
     } catch(error) {
         console.log(error.message)
         res.status(400).json({error: error.message})
@@ -85,8 +85,7 @@ const acceptGroup = async (req, res) => {
 
     try {
         await group.addMember(user_id)
-        console.log(group.membersID)
-        res.status(200).json(await group.getSafeData())
+        res.status(200).json({group: await group.getSafeData(), section: await Group.model("TaskSection").findOne({ group_id: group._id, user_id: user_id})})
     } catch (error) {
         res.status(400).json({error: "Internal server error"})
     }
@@ -582,7 +581,7 @@ const setName = async (req, res) => {
             return res.status(400).json({ error: "User has no privileges." });
         }
 
-        if (!validator.isAlphanumeric(name)) {
+        if (!validator.isAlphanumeric(name, "en-US", {ignore: " -"})) {
             return res.status(400).json({ error: 'Group name can only contain contains only letters and numbers (a-z A-Z 0-9)' });
         }
         if (!validator.isLength(name, { min: 4, max: 20 })) {
