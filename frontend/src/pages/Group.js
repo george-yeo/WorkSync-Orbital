@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGroupContext } from "../hooks/useGroupContext";
+import { useSectionContext } from "../hooks/useSectionContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import Modal from 'react-modal';
 
@@ -11,6 +12,7 @@ import JoinGroup from "../components/JoinGroup";
 const Group = () => {
     const { groups, searchResults, dispatch } = useGroupContext();
     const { user } = useAuthContext();
+    const sectionContext = useSectionContext()
     const [addUserStatus, setAddUserStatus] = useState(null);
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
     const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
@@ -249,6 +251,12 @@ const Group = () => {
     //     )
     // }
 
+    const onGroupCreated = (json) => {
+        console.log(json)
+        dispatch({ type: 'CREATE_GROUP', payload: json.group})
+        sectionContext.dispatch({type: 'CREATE_SECTION', payload: json.section})
+    }
+
     return (
         <div className="groups">
             <div className="groups-header">
@@ -258,7 +266,7 @@ const Group = () => {
                         Create
                         <span className="material-symbols-outlined">create</span>
                     </button>
-                    <GroupForm isOpen={isAddGroupModalOpen} setIsOpen={setIsAddGroupModalOpen} onGroupCreated={(newGroup) => dispatch({ type: 'CREATE_GROUP', payload: newGroup })} />
+                    <GroupForm isOpen={isAddGroupModalOpen} setIsOpen={setIsAddGroupModalOpen} onGroupCreated={onGroupCreated} />
                 </div>
                 <JoinGroup/>
             </div>
