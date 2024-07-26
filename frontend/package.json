@@ -1,5 +1,5 @@
 {
-  "proxy": "35.160.120.126:4000",
+  "proxy": "https://worksync-orbital.onrender.com:4000",
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
