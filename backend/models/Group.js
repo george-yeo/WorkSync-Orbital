@@ -73,7 +73,8 @@ const groupSchema = new Schema ({
 })
 
 groupSchema.statics.createGroup = async function (name, user, sectionID) {
-    if (!validator.isAlphanumeric(name)) {
+    name = name.trim()
+    if (!validator.isAlphanumeric(name, "en-US", {ignore: " -"})) {
         throw Error('Group name can only contain contains only letters and numbers (a-z A-Z 0-9)')
     }
     if (!validator.isLength(name, { min: 4, max: 20 })) {

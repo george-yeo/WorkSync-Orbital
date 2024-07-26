@@ -36,6 +36,7 @@ const Group = () => {
 
                 if (response.ok) {
                     dispatch({ type: 'SET_GROUPS', payload: json });
+                    dispatch({ type: 'SET_SEARCH_RESULTS', payload: null });
                 } else {
                     console.error("Error fetching groups:", json.message);
                 }
