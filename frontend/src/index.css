@@ -370,14 +370,15 @@ form.signup ul {
   margin: 0;
 }
 .chat-channel .picture {
-  width: 20%;
-  height: 100%;
+  margin-top: 5px;
+  width: 38px;
+  height: 38px;
   float: left;
 }
 .chat-channel .picture img {
   height: 100%;
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   border-radius: 50%;
 }
 .chat-channel .content {
@@ -441,9 +442,9 @@ form.signup ul {
   float: left;
 }
 .chat-chat .channel-header .picture img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
   border-radius: 50%;
 }
 .chat-chat .channel-header .content {
