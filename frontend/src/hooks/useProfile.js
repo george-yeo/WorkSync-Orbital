@@ -5,6 +5,7 @@ export const useProfile = ( ) => {
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(null)
   const { user } = useAuthContext()
+  const { dispatch } = useAuthContext()
 
 
   const update = async (email, username, displayname, gender) => {
@@ -66,9 +67,11 @@ export const useProfile = ( ) => {
     if (!response.ok) {
       setError(json.error)
       return false
+    } else {
+      user.profilePic = json
+      dispatch({ type: 'UPDATE', payload: user });
+      return true
     }
-
-    return true
   }
 
   return { update, changePassword, uploadPic, isLoading, error }

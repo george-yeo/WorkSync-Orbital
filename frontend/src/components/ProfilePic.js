@@ -10,7 +10,6 @@ const ProfilePic = ( {closePopup} ) => {
         const success = await uploadPic(image)
         if (success){
             closePopup();
-            window.location.reload()
         }
     }
 

@@ -147,7 +147,7 @@ const uploadProfilePic = async (req, res) => {
 
     await User.findOneAndUpdate({_id: id}, { profilePic:base64String })
 
-    res.status(200).json({ message: 'Profile picture updated successfully' })
+    res.status(200).json(base64String)
 
   } catch (error) {
     res.status(500).json({ error: error.message })
