@@ -85,8 +85,7 @@ const acceptGroup = async (req, res) => {
 
     try {
         await group.addMember(user_id)
-        console.log(group.membersID)
-        res.status(200).json(await group.getSafeData())
+        res.status(200).json({group: await group.getSafeData(), section: await Group.model("TaskSection").findOne({ group_id: group._id, user_id: user_id})})
     } catch (error) {
         res.status(400).json({error: "Internal server error"})
     }

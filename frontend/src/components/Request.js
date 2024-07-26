@@ -3,10 +3,12 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { useGroupContext } from "../hooks/useGroupContext";
 
 import JoinGroup from "./JoinGroup";
+import { useSectionContext } from "../hooks/useSectionContext";
 
 const Request = () => {
     const { user } = useAuthContext();
     const { groups, dispatch } = useGroupContext();
+    const sectionContext = useSectionContext();
 
     const [error, setError] = useState(null);
     const [inviteRequests, setInviteRequests] = useState([]);
@@ -75,9 +77,10 @@ const Request = () => {
                 //body: JSON.stringify({ user_id: user._id })
             })
             if (response.ok) {
-                const updatedGroup = await response.json()
-                dispatch({ type: 'CREATE_GROUP', payload: updatedGroup });
-                dispatch({ type: 'UPDATE_GROUP', payload: updatedGroup });
+                const json = await response.json()
+                dispatch({ type: 'CREATE_GROUP', payload: json.group });
+                dispatch({ type: 'UPDATE_GROUP', payload: json.group });
+                sectionContext.dispatch({type: 'CREATE_SECTION', payload: json.section})
                 setInviteRequests(inviteRequests.filter(group => group._id != groupId))
                 setActionStatus({ success: true, message: 'Invite approved' });
                 //window.location.reload()
