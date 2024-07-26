@@ -15,7 +15,7 @@ const createGroup = async (req, res) => {
 
     try {      
         const group = await Group.createGroup(name, user, sectionID)
-        res.status(200).json(await group.getSafeData())
+        res.status(200).json({group: await group.getSafeData(), section: await Group.model("TaskSection").findOne({ group_id: group._id, user_id: user._id})})
     } catch(error) {
         console.log(error.message)
         res.status(400).json({error: error.message})
