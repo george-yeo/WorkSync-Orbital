@@ -54,7 +54,7 @@ const Signup = () => {
           </button>
         </div>
         <ul className="password-reqs">
-          <li>7 characters</li>
+          <li>At least 8 characters</li>
           <li>Upper and lowercase</li>
           <li>Numbers and special characters</li>
         </ul>
