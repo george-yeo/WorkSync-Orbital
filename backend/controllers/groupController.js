@@ -595,6 +595,11 @@ const setName = async (req, res) => {
 
         group.name = name
         await group.save()
+        await Group.model("TaskSection").updateMany({
+            group_id: group._id
+        },{
+            title: group.name + " (Group)"
+        })
         return res.status(200).json(group.name)
     } catch (error) {
         res.status(400).json({error: "Internal server error"})
