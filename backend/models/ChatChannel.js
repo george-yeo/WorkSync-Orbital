@@ -51,7 +51,7 @@ chatChannelSchema.methods.getChannelInfo = async function(senderId) {
     if (info.type === "direct" || (info.type == "group" && isParticipant)) {
         info.participants = info.participants.map(user => user.getSafeData())
     } else {
-        info.particpants = null
+        info.participants = null
     }
     
     if (isParticipant && this.messages[0]) {
@@ -73,6 +73,7 @@ chatChannelSchema.methods.getChannelInfo = async function(senderId) {
 
         if (!isParticipant) {
             info.accessLocked = true
+            info.isPrivate = group.isPrivate
             if (group.isRequesting(senderId)) {
                 info.isRequesting = true
             }

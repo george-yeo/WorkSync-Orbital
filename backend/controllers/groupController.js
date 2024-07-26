@@ -281,6 +281,11 @@ const joinGroup = async (req, res) => {
         return res.status(400).json({ error: "User is the owner." });
     }
 
+    const isPrivate = group.isPrivate === true
+    if (isPrivate) {
+        return res.status(400).json({ error: "This group is private." });
+    }
+
     try {
         await Group.updateOne(
             { _id: id},

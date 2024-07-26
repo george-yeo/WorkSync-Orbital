@@ -32,6 +32,7 @@ const Channel = () => {
     }
     if (response.ok) {
         setError(null)
+        console.log(json)
         chatContext.dispatch({type: 'SET_CHANNELS', payload: json, isRecent: !keyword})
     }
   }

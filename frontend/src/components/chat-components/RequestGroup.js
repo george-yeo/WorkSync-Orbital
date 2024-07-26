@@ -8,10 +8,10 @@ const RequestGroup = ({ channel }) => {
   if (!user) return
 
   const handleClick = async () => {
-    if (requestSent) return
+    if (requestSent || channel.isPrivate === true) return
     
     setRequestSent(true)
-    console.log(channel)
+    
     const response = await fetch(`/api/group/join/${channel.groupID}`, {
         method: 'PATCH',
         headers: {
@@ -33,12 +33,18 @@ const RequestGroup = ({ channel }) => {
   }
 
   return (
-    <div className="none-selected">
-      <p>Join this group to access the chat!</p>
-      <div>
-        <button className="chat-request-group-btn" onClick={handleClick}>{!requestSent ? "Request" : "Request sent!"}</button>
+    channel.isPrivate ? (
+      <div className="none-selected">
+        <p>This group is private and closed to requests...</p>
       </div>
-    </div>
+    ) : (
+      <div className="none-selected">
+        <p>Join this group to access the chat!</p>
+        <div>
+          <button className="chat-request-group-btn" onClick={handleClick}>{!requestSent ? "Request" : "Request sent!"}</button>
+        </div>
+      </div>
+    )
   )
 }
 
