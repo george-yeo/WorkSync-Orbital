@@ -5,7 +5,8 @@ By 165 Titans
 Soo Yi Tao
 Yeo Bing Teck, George
 
-# Our WebApp
+# Loading our WebApp
+We have deployed
 https://worksync-orbital.onrender.com
 
 ### Attribution
