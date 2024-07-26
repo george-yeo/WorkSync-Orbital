@@ -114,7 +114,7 @@ chatChannelSchema.methods.addParticipant = function(user) {
 chatChannelSchema.methods.removeParticipant = function(userId) {
     if (this.type == "direct") throw Error("Cannot remove participant from dm")
     
-    this.participants = this.participants.filter((user_id) => user_id != userId)
+    this.participants = this.participants.filter((user_id) => !user_id.equals(userId))
     this.save()
 }
 

@@ -87,7 +87,7 @@ const TaskForm = ({ section, closePopup, editingTask, isGroup, group_id }) => {
       setError(null);
       setEmptyFields([]);
 
-      dispatch({ type: editingTask ? 'UPDATE_TASK' : 'CREATE_TASK', payload: json });
+      dispatch({ type: editingTask ? 'UPDATE_TASK' : 'CREATE_TASK', payload: editingTask ? json.task : json });
 
       closePopup();
     }
