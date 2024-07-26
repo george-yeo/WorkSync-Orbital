@@ -8,6 +8,7 @@ const sectionRoutes = require('./routes/section')
 const userRoutes = require('./routes/user')
 const chatRoutes = require('./routes/chat')
 const groupRoutes = require('./routes/group')
+const path = require('path')
 
 // express app
 const { app, server }  = require("./socket/socket.js")
@@ -35,6 +36,14 @@ app.use('/api/sections', sectionRoutes)
 app.use('/api/chats', chatRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/group', groupRoutes)
+
+// use client
+app.use(express.static(path.join(__dirname, '/client/build')))
+
+// render client for any path
+app.get('*', (req, res) =>
+  res.sendFile(path.join(__dirname, '/client/build/index.html'))
+)
 
 // connect to db
 mongoose.connect(process.env.MONGO_URI)
