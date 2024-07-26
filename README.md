@@ -6,8 +6,7 @@ Soo Yi Tao
 Yeo Bing Teck, George
 
 # Loading our WebApp
-We have deployed
-https://worksync-orbital.onrender.com
+We have deployed our app here, https://worksync-orbital.onrender.com
 
-### Attribution
+# Attribution
 Some images used are Designed by Freepik, www.freepik.com
