@@ -582,7 +582,7 @@ const setName = async (req, res) => {
             return res.status(400).json({ error: "User has no privileges." });
         }
 
-        if (!validator.isAlphanumeric(name)) {
+        if (!validator.isAlphanumeric(name, "en-US", {ignore: " -"})) {
             return res.status(400).json({ error: 'Group name can only contain contains only letters and numbers (a-z A-Z 0-9)' });
         }
         if (!validator.isLength(name, { min: 4, max: 20 })) {
