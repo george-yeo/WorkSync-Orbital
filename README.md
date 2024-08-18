@@ -1,9 +1,10 @@
 # Overview
 WorkSync is a collaborative productivity web app designed to enhance both individual and team productivity. It provides a variety of tools to help users manage tasks, collaborate with team members, and stay organized in productive settings.
 
-Made for NUS Orbital 23/24
-By 165 Titans
-Soo Yi Tao
+Made for NUS Orbital 23/24<be>
+
+By 165 Titans:<br>
+Soo Yi Tao<br>
 Yeo Bing Teck, George
 
 # Features
