@@ -1,0 +1,312 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource-variable/atkinson-hyperlegible-next';
+
+/* ------------------------------------------------------------------------------------------
+   Tokens. Raw light/dark values, combined with light-dark() so the page follows the OS
+   preference by default and a pinned choice (data-theme / meta color-scheme) overrides it.
+   ------------------------------------------------------------------------------------------ */
+:root {
+  color-scheme: light dark;
+
+  --mist-l: #eff2ec;
+  --mist-d: #0e1511;
+  --paper-l: #fbfcf9;
+  --paper-d: #15201a;
+  --sunken-l: #e4e9e1;
+  --sunken-d: #0b110d;
+  --ink-l: #162019;
+  --ink-d: #e3eae2;
+  --muted-l: #5b6a60;
+  --muted-d: #93a398;
+  --line-l: #d5ddd2;
+  --line-d: #26332b;
+  --pine-l: #1e4636;
+  --pine-d: #7fc79d;
+  --pine-ink-l: #ffffff;
+  --pine-ink-d: #0e1511;
+  --pine-soft-l: #dde9e0;
+  --pine-soft-d: #1d3528;
+  --sprout-l: #8fb33a;
+  --sprout-d: #bbdb5e;
+  --sprout-soft-l: #eaf3cf;
+  --sprout-soft-d: #2a3618;
+  --ember-l: #c4471d;
+  --ember-d: #f07e55;
+  --ember-soft-l: #fbe6dd;
+  --ember-soft-d: #3a1d13;
+  --bark-l: #8a5a3b;
+  --bark-d: #c99a74;
+
+  /* Fallback for browsers without light-dark(): follow the media query. */
+  --c-mist: var(--mist-l);
+  --c-paper: var(--paper-l);
+  --c-sunken: var(--sunken-l);
+  --c-ink: var(--ink-l);
+  --c-muted: var(--muted-l);
+  --c-line: var(--line-l);
+  --c-pine: var(--pine-l);
+  --c-pine-ink: var(--pine-ink-l);
+  --c-pine-soft: var(--pine-soft-l);
+  --c-sprout: var(--sprout-l);
+  --c-sprout-soft: var(--sprout-soft-l);
+  --c-ember: var(--ember-l);
+  --c-ember-soft: var(--ember-soft-l);
+  --c-bark: var(--bark-l);
+
+  @media (prefers-color-scheme: dark) {
+    --c-mist: var(--mist-d);
+    --c-paper: var(--paper-d);
+    --c-sunken: var(--sunken-d);
+    --c-ink: var(--ink-d);
+    --c-muted: var(--muted-d);
+    --c-line: var(--line-d);
+    --c-pine: var(--pine-d);
+    --c-pine-ink: var(--pine-ink-d);
+    --c-pine-soft: var(--pine-soft-d);
+    --c-sprout: var(--sprout-d);
+    --c-sprout-soft: var(--sprout-soft-d);
+    --c-ember: var(--ember-d);
+    --c-ember-soft: var(--ember-soft-d);
+    --c-bark: var(--bark-d);
+  }
+
+  @supports (color: light-dark(white, black)) {
+    --c-mist: light-dark(var(--mist-l), var(--mist-d));
+    --c-paper: light-dark(var(--paper-l), var(--paper-d));
+    --c-sunken: light-dark(var(--sunken-l), var(--sunken-d));
+    --c-ink: light-dark(var(--ink-l), var(--ink-d));
+    --c-muted: light-dark(var(--muted-l), var(--muted-d));
+    --c-line: light-dark(var(--line-l), var(--line-d));
+    --c-pine: light-dark(var(--pine-l), var(--pine-d));
+    --c-pine-ink: light-dark(var(--pine-ink-l), var(--pine-ink-d));
+    --c-pine-soft: light-dark(var(--pine-soft-l), var(--pine-soft-d));
+    --c-sprout: light-dark(var(--sprout-l), var(--sprout-d));
+    --c-sprout-soft: light-dark(var(--sprout-soft-l), var(--sprout-soft-d));
+    --c-ember: light-dark(var(--ember-l), var(--ember-d));
+    --c-ember-soft: light-dark(var(--ember-soft-l), var(--ember-soft-d));
+    --c-bark: light-dark(var(--bark-l), var(--bark-d));
+  }
+
+  accent-color: var(--c-pine);
+  scrollbar-color: var(--c-line) transparent;
+}
+
+/* A pinned theme overrides the system preference. */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+@supports not (color: light-dark(white, black)) {
+  :root[data-theme='light'] {
+    --c-mist: var(--mist-l);
+    --c-paper: var(--paper-l);
+    --c-sunken: var(--sunken-l);
+    --c-ink: var(--ink-l);
+    --c-muted: var(--muted-l);
+    --c-line: var(--line-l);
+    --c-pine: var(--pine-l);
+    --c-pine-ink: var(--pine-ink-l);
+    --c-pine-soft: var(--pine-soft-l);
+    --c-sprout: var(--sprout-l);
+    --c-sprout-soft: var(--sprout-soft-l);
+    --c-ember: var(--ember-l);
+    --c-ember-soft: var(--ember-soft-l);
+    --c-bark: var(--bark-l);
+  }
+  :root[data-theme='dark'] {
+    --c-mist: var(--mist-d);
+    --c-paper: var(--paper-d);
+    --c-sunken: var(--sunken-d);
+    --c-ink: var(--ink-d);
+    --c-muted: var(--muted-d);
+    --c-line: var(--line-d);
+    --c-pine: var(--pine-d);
+    --c-pine-ink: var(--pine-ink-d);
+    --c-pine-soft: var(--pine-soft-d);
+    --c-sprout: var(--sprout-d);
+    --c-sprout-soft: var(--sprout-soft-d);
+    --c-ember: var(--ember-d);
+    --c-ember-soft: var(--ember-soft-d);
+    --c-bark: var(--bark-d);
+  }
+}
+
+@theme inline {
+  --color-mist: var(--c-mist);
+  --color-paper: var(--c-paper);
+  --color-sunken: var(--c-sunken);
+  --color-ink: var(--c-ink);
+  --color-muted: var(--c-muted);
+  --color-line: var(--c-line);
+  --color-pine: var(--c-pine);
+  --color-pine-ink: var(--c-pine-ink);
+  --color-pine-soft: var(--c-pine-soft);
+  --color-sprout: var(--c-sprout);
+  --color-sprout-soft: var(--c-sprout-soft);
+  --color-ember: var(--c-ember);
+  --color-ember-soft: var(--c-ember-soft);
+  --color-bark: var(--c-bark);
+
+  --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Atkinson Hyperlegible Next Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Modular scale, ratio 1.25 from a 16px base. */
+  --text-xs: 0.8rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5625rem;
+  --text-2xl: 1.953rem;
+  --text-3xl: 2.441rem;
+  --text-4xl: 3.052rem;
+}
+
+/* ------------------------------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------------------------------ */
+@layer base {
+  html {
+    background: var(--c-mist);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-pine);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--c-sprout-soft);
+  }
+
+  /* Inputs only show their error state after the person has interacted with them. */
+  .field-input:user-invalid {
+    border-color: var(--c-ember);
+    background: var(--c-ember-soft);
+  }
+  .field:has(.field-input:user-invalid) .field-hint {
+    color: var(--c-ember);
+  }
+}
+
+/* ------------------------------------------------------------------------------------------
+   Native <dialog> with animated entry/exit through the top layer.
+   ------------------------------------------------------------------------------------------ */
+dialog.ws-dialog {
+  opacity: 0;
+  translate: 0 12px;
+  transition-property: opacity, translate, display, overlay;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    translate: 0 0;
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 12px;
+    }
+  }
+
+  &::backdrop {
+    background-color: rgb(10 20 14 / 0);
+    transition:
+      display 180ms allow-discrete,
+      overlay 180ms allow-discrete,
+      background-color 180ms ease-out;
+  }
+
+  &[open]::backdrop {
+    background-color: rgb(10 20 14 / 0.45);
+
+    @starting-style {
+      background-color: rgb(10 20 14 / 0);
+    }
+  }
+}
+
+/* Toasts live in the top layer via popover="manual". */
+.ws-toast {
+  inset: auto 1rem 1rem auto;
+  margin: 0;
+  opacity: 0;
+  translate: 0 8px;
+  transition-property: opacity, translate, display, overlay;
+  transition-duration: 200ms;
+  transition-behavior: allow-discrete;
+
+  &:popover-open {
+    opacity: 1;
+    translate: 0 0;
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 8px;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------------------
+   Motion
+   ------------------------------------------------------------------------------------------ */
+@keyframes grow-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateY(12%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes check-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-check {
+  animation: check-pop 220ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after,
+  dialog.ws-dialog,
+  .ws-toast {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    translate: none !important;
+  }
+}
