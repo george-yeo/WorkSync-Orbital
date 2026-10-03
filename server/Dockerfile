@@ -19,4 +19,6 @@ COPY --from=build /app/server/dist server/dist
 USER node
 EXPOSE 8000
 ENV PORT=8000
+# Keep the V8 heap well inside a 256 MB container.
+ENV NODE_OPTIONS=--max-old-space-size=160
 CMD ["node", "server/dist/server.js"]

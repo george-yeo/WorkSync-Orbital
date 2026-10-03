@@ -1,5 +1,15 @@
-/** Base URL of the API. Empty in development (Vite proxies /api), set in production builds. */
-export const API_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
+/**
+ * Base URL of the API. Empty in development (Vite proxies /api), set in production builds.
+ * A value without a scheme (e.g. "api.example.com") would be treated as a relative path by the
+ * browser, so default it to https://.
+ */
+function normaliseApiUrl(raw: string | undefined): string {
+  const value = (raw ?? '').trim().replace(/\/+$/, '')
+  if (!value) return ''
+  return /^https?:\/\//i.test(value) ? value : `https://${value}`
+}
+
+export const API_URL = normaliseApiUrl(import.meta.env.VITE_API_URL)
 
 const TOKEN_KEY = 'worksync.token'
 

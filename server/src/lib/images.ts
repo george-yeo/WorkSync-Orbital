@@ -1,6 +1,10 @@
 import sharp from 'sharp'
 import { badRequest } from './http-error.js'
 
+// Small instances (256 MB): don't keep decoded images cached, and process one at a time.
+sharp.cache(false)
+sharp.concurrency(1)
+
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 const OUTPUT_SIZE = 256
 

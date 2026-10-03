@@ -18,7 +18,7 @@ import { usersRouter } from './modules/users/users.routes.js'
 export function createApp() {
   const app = express()
 
-  // Behind Koyeb's (or any PaaS) load balancer: trust the first proxy hop for client IPs.
+  // Behind the hosting platform's load balancer: trust the first proxy hop for client IPs.
   app.set('trust proxy', 1)
   app.disable('x-powered-by')
 

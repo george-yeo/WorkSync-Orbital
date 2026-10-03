@@ -11,7 +11,7 @@ Shared task lists, real-time group chat, and a **SyncTree** that grows every tim
 ![React 19](https://img.shields.io/badge/React-19-149eca)
 ![Node 22](https://img.shields.io/badge/Node-22-5fa04e)
 
-**[Live demo](https://worksync.pages.dev)**: click _Explore the demo_ to get a private sandbox account, no sign-up needed.
+**[Live demo](https://worksync.vercel.app)**: click _Explore the demo_ to get a private sandbox account, no sign-up needed.
 
 <img src="docs/screenshots/group.webp" alt="A WorkSync group page showing three grown SyncTrees, a sapling at 60% growth, a pinned note and the group's task list" width="100%" />
 
@@ -75,7 +75,7 @@ The idea is simple: productivity is easier when it's shared and visible. Every g
 | **Server**   | Node 22, Express 5, TypeScript, Mongoose 9, Socket.IO, Zod, sharp, pino                                    |
 | **Database** | MongoDB (Atlas)                                                                                            |
 | **Testing**  | Vitest + Supertest integration tests against a real MongoDB (in-memory locally, a service container in CI) |
-| **Hosting**  | Cloudflare Pages (client), Koyeb (API), MongoDB Atlas; all on free tiers                                   |
+| **Hosting**  | Vercel (client), Northflank (API, Docker), MongoDB Atlas; all on free tiers                                |
 
 ## Architecture
 
@@ -137,7 +137,7 @@ In development the Vite dev server proxies `/api` and `/socket.io` to the API, s
 ```
 .
 ├── client/                 React app (Vite)
-│   ├── public/             favicon, SyncTree artwork, Cloudflare Pages headers
+│   ├── public/             favicon, SyncTree artwork
 │   └── src/
 │       ├── auth/           session + current user
 │       ├── realtime/       Socket.IO provider (presence, unread, cache updates)
@@ -159,7 +159,7 @@ In development the Vite dev server proxies `/api` and `/socket.io` to the API, s
 
 ## Deployment
 
-See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for step-by-step setup of MongoDB Atlas, the API on Koyeb and the client on Cloudflare Pages.
+See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for step-by-step setup of MongoDB Atlas, the API on Northflank and the client on Vercel.
 
 ## Roadmap
 
